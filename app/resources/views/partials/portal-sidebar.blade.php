@@ -1,0 +1,12 @@
+<aside class="border-b border-[#E7E2D8] bg-white lg:sticky lg:top-0 lg:h-screen lg:w-[240px] lg:border-b-0 lg:border-r">
+    <div class="flex h-[72px] items-center px-5">
+        <a href="{{ route('portal.dashboard') }}" class="text-lg font-semibold tracking-tight">ClientFlow</a>
+    </div>
+    <nav class="flex gap-2 overflow-x-auto px-4 pb-4 text-sm lg:block lg:space-y-1 lg:overflow-visible">
+        @foreach (['Dashboard', 'Proyectos', 'Timeline', 'Diario visual', 'Documentos', 'Entregables', 'Comentarios', 'Perfil'] as $item)
+            <a href="{{ $item === 'Dashboard' ? route('portal.dashboard') : '#' }}" class="block whitespace-nowrap rounded-xl px-3 py-2.5 font-medium {{ $item === 'Dashboard' ? 'bg-[#F4F1EA] text-[#111827]' : 'text-[#6B7280] hover:bg-[#F4F1EA] hover:text-[#111827]' }}">
+                {{ $item }}
+            </a>
+        @endforeach
+    </nav>
+</aside>

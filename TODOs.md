@@ -20,33 +20,33 @@
 
 ## Sprint 1: base
 
-- [ ] Instalar autenticacion Laravel adecuada para Blade/Livewire.
-- [ ] Crear enum `UserRole` con `admin` y `client`.
-- [ ] Anadir campo `role` a `users`.
-- [ ] Crear middleware para rutas admin.
-- [ ] Crear middleware para rutas cliente.
-- [ ] Configurar redireccion post-login por rol.
-- [ ] Crear layout admin.
-- [ ] Crear layout cliente.
-- [ ] Crear layout auth.
-- [ ] Crear sidebar admin.
-- [ ] Crear sidebar cliente.
-- [ ] Crear `/admin/dashboard`.
-- [ ] Crear `/portal/dashboard`.
-- [ ] Proteger rutas para que cada rol solo acceda a su zona.
+- [x] Instalar autenticacion Laravel adecuada para Blade/Livewire.
+- [x] Crear enum `UserRole` con `admin` y `client`.
+- [x] Anadir campo `role` a `users`.
+- [x] Crear middleware para rutas admin.
+- [x] Crear middleware para rutas cliente.
+- [x] Configurar redireccion post-login por rol.
+- [x] Crear layout admin.
+- [x] Crear layout cliente.
+- [x] Crear layout auth.
+- [x] Crear sidebar admin.
+- [x] Crear sidebar cliente.
+- [x] Crear `/admin/dashboard`.
+- [x] Crear `/portal/dashboard`.
+- [x] Proteger rutas para que cada rol solo acceda a su zona.
 
 ## Sprint 2: clientes y proyectos
 
-- [ ] Crear migracion `clients`.
-- [ ] Crear migracion `client_invitations`.
-- [ ] Crear migracion `projects`.
-- [ ] Crear modelos y relaciones principales.
-- [ ] Crear CRUD clientes.
-- [ ] Crear flujo de invitacion cliente.
-- [ ] Crear CRUD proyectos.
-- [ ] Asociar proyectos a clientes.
-- [ ] Mostrar proyectos en dashboard admin.
-- [ ] Mostrar proyectos visibles en dashboard cliente.
+- [x] Crear migracion `clients`.
+- [x] Crear migracion `client_invitations`.
+- [x] Crear migracion `projects`.
+- [x] Crear modelos y relaciones principales.
+- [x] Crear CRUD clientes.
+- [x] Crear flujo de invitacion cliente.
+- [x] Crear CRUD proyectos.
+- [x] Asociar proyectos a clientes.
+- [x] Mostrar proyectos en dashboard admin.
+- [x] Mostrar proyectos visibles en dashboard cliente.
 
 ## Sprint 3: comunicacion basica
 
