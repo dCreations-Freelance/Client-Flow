@@ -1,0 +1,68 @@
+name: clientflow
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    container_name: clientflow_app
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - clientflow
+
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: clientflow_nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - app
+    networks:
+      - clientflow
+
+  mysql:
+    image: mysql:8.4
+    container_name: clientflow_mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_DATABASE: clientflow
+      MYSQL_USER: clientflow
+      MYSQL_PASSWORD: clientflow
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - clientflow
+
+  node:
+    image: node:22-alpine
+    container_name: clientflow_node
+    working_dir: /var/www/html
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/var/www/html
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    networks:
+      - clientflow
+
+volumes:
+  mysql_data:
+
+networks:
+  clientflow:
+    driver: bridge
