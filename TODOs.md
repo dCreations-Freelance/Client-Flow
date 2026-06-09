@@ -50,19 +50,19 @@
 
 ## Sprint 3: comunicacion basica
 
-- [ ] Crear migracion `project_updates`.
-- [ ] Crear timeline admin.
-- [ ] Crear timeline cliente.
-- [ ] Implementar visibilidad publica/interna.
-- [ ] Preparar notificacion email simple.
+- [x] Crear migracion `project_updates`.
+- [x] Crear timeline admin.
+- [x] Crear timeline cliente.
+- [x] Implementar visibilidad publica/interna.
+- [x] Preparar notificacion email simple.
 
 ## Sprint 4: diario visual
 
-- [ ] Crear migracion `visual_entries`.
-- [ ] Implementar subida de imagen/video/audio.
-- [ ] Crear diario visual admin.
-- [ ] Crear diario visual cliente.
-- [ ] Crear vista detalle de media.
+- [x] Crear migracion `visual_entries`.
+- [x] Implementar subida de imagen/video/audio.
+- [x] Crear diario visual admin.
+- [x] Crear diario visual cliente.
+- [x] Crear vista detalle de media.
 
 ## Sprint 5: entregables
 

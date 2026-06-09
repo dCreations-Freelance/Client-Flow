@@ -30,6 +30,16 @@
                             <div class="h-3 rounded-full bg-white"><div class="h-3 rounded-full bg-[#111827]" style="width: {{ $project->progress }}%"></div></div>
                         </div>
                         <p class="mt-4 text-sm text-[#6B7280]">Próximo hito: {{ $project->next_milestone ?: 'Pendiente de definir' }}</p>
+                        @if ($project->updates->isNotEmpty())
+                            <div class="mt-4 rounded-2xl bg-white p-4 text-sm">
+                                <p class="font-medium">Último avance: {{ $project->updates->first()->title }}</p>
+                                <p class="mt-2 line-clamp-2 text-[#6B7280]">{{ $project->updates->first()->content }}</p>
+                            </div>
+                        @endif
+                        <div class="mt-5 flex flex-wrap gap-3">
+                            <a href="{{ route('portal.projects.timeline', $project) }}" class="inline-flex rounded-xl border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#FAFAF7]">Ver timeline</a>
+                            <a href="{{ route('portal.projects.visual-entries.index', $project) }}" class="inline-flex rounded-xl border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#FAFAF7]">Diario visual</a>
+                        </div>
                     </article>
                 @empty
                     <div class="rounded-[20px] border border-dashed border-[#D8D0C3] bg-[#FAFAF7] p-8 text-center">

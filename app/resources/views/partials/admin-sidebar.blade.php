@@ -9,7 +9,7 @@
             ['Proyectos', route('admin.projects.index'), request()->routeIs('admin.projects.*')],
             ['Comentarios', '#', false],
             ['Entregables', '#', false],
-            ['Diario visual', '#', false],
+            ['Diario visual', route('admin.visual-entries.index'), request()->routeIs('admin.visual-entries.*')],
             ['Documentos', '#', false],
             ['Centro IA', '#', false],
             ['Actividad', '#', false],
