@@ -1,8 +1,10 @@
 {{--
-    Sidebar del portal cliente. En fase 1 solo muestra el enlace a
-    Dashboard. En fases siguientes se anaden proyectos, calendario y
-    notificaciones. Se usa el mismo patron visual que admin pero con
-    anchura 220px para diferenciarse sutilmente.
+    Sidebar del portal cliente.
+
+    Se actualizo en fase 2 para anadir el enlace a "Proyectos" como
+    vista dedicada. Los enlaces a fases siguientes (Calendario,
+    Notificaciones) se iran habilitando a medida que existan sus
+    rutas.
 --}}
 @php
     $current = request()->route()?->getName() ?? '';
@@ -17,9 +19,15 @@
             <span>Inicio</span>
         </a>
 
+        @if (Route::has('portal.projects.index'))
+            <a href="{{ route('portal.projects.index') }}"
+               class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium transition-colors {{ str_starts_with($current, 'portal.projects') ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#6B7280] hover:bg-[#F4F1EA] hover:text-[#111827]' }}">
+                <span>Proyectos</span>
+            </a>
+        @endif
+
         <span class="mt-4 px-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Pronto</span>
 
-        <span class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-[#9CA3AF]">Proyectos</span>
         <span class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-[#9CA3AF]">Calendario</span>
     </nav>
 </aside>

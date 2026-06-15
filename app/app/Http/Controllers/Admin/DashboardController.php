@@ -4,16 +4,17 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Organization;
+use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
  * Dashboard del panel de administracion.
  *
- * Muestra tarjetas con contadores agregados y una lista de las
- * organizaciones mas recientes. Los proyectos y tareas se anadiran
- * en fases siguientes, asi que en fase 1 los huecos quedan con valor
- * cero explicito.
+ * Muestra tarjetas con contadores agregados, una lista de las
+ * organizaciones mas recientes y otra de los proyectos mas
+ * recientes. Los huecos para tareas y mensajes se mantienen en
+ * cero hasta que lleguen las fases 3 y 5.
  */
 class DashboardController extends Controller
 {
@@ -32,8 +33,17 @@ class DashboardController extends Controller
             ->get()
             ->sum('pending_invitations_count');
 
+        $projectsCount = Project::count();
+        $activeProjectsCount = Project::active()->count();
+
         $recentOrganizations = Organization::query()
             ->withCount('members')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $recentProjects = Project::query()
+            ->with('organization')
             ->latest()
             ->take(5)
             ->get();
@@ -43,10 +53,12 @@ class DashboardController extends Controller
                 'organizations' => $organizationsCount,
                 'activeOrganizations' => $activeOrganizationsCount,
                 'pendingInvitations' => $pendingInvitationsCount,
-                'projects' => 0,
+                'projects' => $projectsCount,
+                'activeProjects' => $activeProjectsCount,
                 'tasks' => 0,
             ],
             'recentOrganizations' => $recentOrganizations,
+            'recentProjects' => $recentProjects,
         ]);
     }
 }

@@ -1,11 +1,9 @@
 {{--
     Sidebar del panel de administracion.
 
-    Lista los modulos disponibles. En fase 1 solo se muestra Dashboard.
-    Organizaciones y resto de secciones se iran anadiendo en fases
-    siguientes. El item activo se detecta comparando el prefijo de la
-    ruta actual. Se usa `Route::has(...)` para no romper la vista si la
-    ruta aun no existe.
+    Lista los modulos disponibles. El item activo se detecta
+    comparando el prefijo de la ruta actual. Se usa `Route::has(...)`
+    para no romper la vista si la ruta aun no existe.
 --}}
 @php
     $current = request()->route()?->getName() ?? '';
@@ -27,9 +25,15 @@
             </a>
         @endif
 
+        @if (Route::has('admin.projects.index'))
+            <a href="{{ route('admin.projects.index') }}"
+               class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium transition-colors {{ str_starts_with($current, 'admin.projects') ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#6B7280] hover:bg-[#F4F1EA] hover:text-[#111827]' }}">
+                <span>Proyectos</span>
+            </a>
+        @endif
+
         <span class="mt-4 px-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Pronto</span>
 
-        <span class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-[#9CA3AF]">Proyectos</span>
         <span class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-[#9CA3AF]">Plantillas IA</span>
     </nav>
 </aside>
