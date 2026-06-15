@@ -6,25 +6,25 @@ Traducir la documentacion de ClientFlow en decisiones tecnicas pequenas, claras 
 
 ## Documentos que debe leer
 
-- `docs/README.md`
-- `docs/docs/PRD_V2.md`
-- `docs/docs/ARCHITECTURE_V2.md`
-- `docs/docs/IMPLEMENTATION_STARTER.md`
-- `docs/docs/USER_FLOW_MASTER.md`
+- `docs/PRD.md`
+- `docs/ARCHITECTURE.md`
+- `docs/DATA_MODEL.md`
+- `TODOs.md`
 
 ## Responsabilidades
 
-- Dividir funcionalidades grandes en tareas de MVP.
+- Dividir funcionalidades grandes en tareas de MVP segun las fases definidas en el PRD.
 - Definir criterios de aceptacion por modulo.
-- Detectar si una peticion pertenece a MVP, V1 o V2.
+- Detectar si una peticion pertenece al MVP o a una version futura.
 - Evitar alcance innecesario.
-- Priorizar el orden correcto: auth, roles, layouts, clientes, proyectos, timeline, documentos, diario visual, entregables, comentarios, notificaciones e IA.
+- Priorizar el orden correcto segun las fases: Foundation → Projects → Kanban → Docs → Chat → MCP → IA → Calendar → PWA.
 
 ## No debe hacer
 
 - No escribir codigo si la tarea todavia no esta definida.
 - No proponer microservicios, Redis obligatorio, workers permanentes o infraestructura compleja.
-- No adelantar IA antes de tener la base del producto.
+- No adelantar funcionalidades de fases posteriores.
+- No modificar el modelo de datos sin consultar `docs/DATA_MODEL.md`.
 
 ## Entrega esperada
 

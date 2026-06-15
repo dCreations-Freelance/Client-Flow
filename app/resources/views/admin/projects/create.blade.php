@@ -1,1 +1,0 @@
-<x-layouts.admin title="Nuevo proyecto"><div class="mb-8"><h1 class="text-3xl font-semibold tracking-tight">Nuevo proyecto</h1><p class="mt-3 text-[#6B7280]">Asocia el proyecto a un cliente y define su estado inicial.</p></div><form method="POST" action="{{ route('admin.projects.store') }}">@include('admin.projects._form', ['submit' => 'Crear proyecto'])</form></x-layouts.admin>

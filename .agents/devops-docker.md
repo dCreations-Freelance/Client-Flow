@@ -4,6 +4,11 @@
 
 Mantener el entorno local Docker de ClientFlow simple, reproducible y sin Laravel Sail.
 
+## Documentos que debe leer
+
+- `docs/CLEANUP.md`
+- `TODOs.md`
+
 ## Responsabilidades
 
 - Mantener `app/docker-compose.yml`.
@@ -19,6 +24,7 @@ Mantener el entorno local Docker de ClientFlow simple, reproducible y sin Larave
 - Mantener puertos locales predecibles: app `8080`, Vite `5173`, MySQL `3307`.
 - Preferir servicios oficiales y configuracion minima.
 - No guardar secretos reales en `.env.example`.
+- PHP 8.4 en Docker para desarrollo local.
 
 ## Comandos base
 

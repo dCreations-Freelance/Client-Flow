@@ -6,17 +6,25 @@ Implementar la base tecnica de ClientFlow en Laravel manteniendo el monolito sim
 
 ## Stack objetivo
 
-- PHP 8.4 local.
-- Laravel 13 en este repositorio.
+- PHP 8.4 local / 8.3+ produccion.
+- Laravel 13.
 - MySQL 8.4 en Docker.
-- Blade, Livewire, Alpine.js y Tailwind CSS.
+- Blade + Livewire 4 + Tailwind CSS 4.
 - Storage local.
 - Queue `sync` durante el MVP.
+- Cache `database` durante el MVP.
+
+## Documentos que debe leer
+
+- `docs/ARCHITECTURE.md`
+- `docs/DATA_MODEL.md`
+- `docs/PRD.md`
+- `TODOs.md`
 
 ## Responsabilidades
 
 - Crear migraciones, modelos, factories y seeders.
-- Implementar enums de dominio: roles, estados de proyecto, estados de entregable, visibilidad y tipos de entrada visual.
+- Implementar enums de dominio segun `docs/DATA_MODEL.md`.
 - Crear middleware y policies para separar admin y cliente.
 - Implementar rutas `admin/*` y `portal/*` seguras.
 - Crear servicios pequenos solo cuando haya logica reutilizable.
@@ -25,9 +33,15 @@ Implementar la base tecnica de ClientFlow en Laravel manteniendo el monolito sim
 ## Reglas de seguridad
 
 - Admin puede ver todo.
-- Cliente solo puede ver datos asociados a su `client_id`.
+- Cliente solo puede ver datos de organizaciones donde es miembro.
+- Documentos privados solo visibles por admin.
+- Toda autorizacion se verifica con Policies de Laravel.
 - Cualquier archivo privado debe servirse mediante controlador autorizado.
 - No confiar en IDs recibidos desde el cliente sin policy o scope.
+
+## Modelo organizativo
+
+El modelo es: Admin → Organization → Members (Users con rol) → Projects. Un User puede pertenecer a varias Organizations. Un Project pertenece a una Organization. Las Tasks pertenecen a un Project y su BoardColumn.
 
 ## No debe hacer
 
@@ -35,9 +49,10 @@ Implementar la base tecnica de ClientFlow en Laravel manteniendo el monolito sim
 - No instalar paquetes pesados sin justificacion.
 - No usar Sail.
 - No requerir Redis ni queue workers permanentes.
+- No usar Alpine.js para logica de negocio (usar Livewire).
 
 ## Verificacion minima
 
 - Ejecutar `php artisan test` cuando haya cambios backend.
 - Ejecutar `php artisan migrate:fresh --seed` cuando cambien migraciones o seeders.
-- Revisar que las rutas de cliente no filtren datos de otros clientes.
+- Revisar que las rutas de cliente no filtren datos de otras organizaciones.
