@@ -69,25 +69,6 @@
                             <p class="mt-1 text-xs text-[#DC2626]">{{ $message }}</p>
                         @enderror
                     </div>
-
-                    <div>
-                        <label for="progress" class="mb-1 block text-sm font-medium text-[#111827]">
-                            Progreso (0-100) <span class="text-[#DC2626]">*</span>
-                        </label>
-                        <input
-                            type="number"
-                            name="progress"
-                            id="progress"
-                            min="0"
-                            max="100"
-                            value="{{ old('progress', $project->progress) }}"
-                            required
-                            class="w-full rounded-lg border border-[#E7E2D8] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
-                        >
-                        @error('progress')
-                            <p class="mt-1 text-xs text-[#DC2626]">{{ $message }}</p>
-                        @enderror
-                    </div>
                 </div>
 
                 <div class="grid gap-4 sm:grid-cols-2">

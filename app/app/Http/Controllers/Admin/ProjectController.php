@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreProjectRequest;
 use App\Http\Requests\Admin\UpdateProjectRequest;
 use App\Models\Organization;
 use App\Models\Project;
+use App\Services\DefaultBoardColumnsService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -77,7 +78,8 @@ class ProjectController extends Controller
 
     /**
      * Persiste el proyecto. El admin actual no se anade al equipo:
-     * su relacion con el proyecto es via la organizacion.
+     * su relacion con el proyecto es via la organizacion. Tras la
+     * creacion se generan las columnas default del kanban.
      *
      * @param  \App\Http\Requests\Admin\StoreProjectRequest  $request
      * @return \Illuminate\Http\RedirectResponse
@@ -88,10 +90,11 @@ class ProjectController extends Controller
 
         $data = $request->validated();
         $data['is_visible_to_client'] = $request->boolean('is_visible_to_client', true);
-        $data['progress'] = 0;
         $data['status'] = $data['status'] ?? \App\Enums\ProjectStatus::Planning->value;
 
         $project = Project::create($data);
+
+        app(DefaultBoardColumnsService::class)->create($project);
 
         return redirect()
             ->route('admin.projects.show', $project)

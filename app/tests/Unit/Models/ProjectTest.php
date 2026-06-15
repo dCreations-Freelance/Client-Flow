@@ -5,6 +5,7 @@ namespace Tests\Unit\Models;
 use App\Enums\ProjectStatus;
 use App\Models\Organization;
 use App\Models\Project;
+use App\Models\Task;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -128,17 +129,51 @@ class ProjectTest extends TestCase
         $this->assertFalse($project->fresh()->isVisibleToClient());
     }
 
-    public function test_casts_status_y_progress_correctamente(): void
+    public function test_casts_status_y_flags_correctamente(): void
     {
         $project = Project::factory()->create([
             'status' => ProjectStatus::InProgress,
-            'progress' => 42,
             'is_visible_to_client' => 0,
         ]);
 
         $this->assertInstanceOf(ProjectStatus::class, $project->status);
         $this->assertSame(ProjectStatus::InProgress, $project->status);
-        $this->assertSame(42, $project->progress);
         $this->assertFalse($project->is_visible_to_client);
+    }
+
+    public function test_progreso_calculado_devuelve_cero_sin_tareas(): void
+    {
+        $project = Project::factory()->create();
+
+        $this->assertSame(0, $project->tasks_progress_percent);
+        $this->assertSame(0, $project->total_tasks_count);
+        $this->assertSame(0, $project->completed_tasks_count);
+    }
+
+    public function test_progreso_calculado_desde_tareas_raiz(): void
+    {
+        $project = Project::factory()->create();
+
+        // 2 tareas raiz pendientes, 1 raiz completada.
+        Task::factory()->count(2)->create(['project_id' => $project->id]);
+        Task::factory()->completed()->create(['project_id' => $project->id]);
+
+        // 2 subtareas (no deben contar en el progreso raiz).
+        $parent = Task::factory()->create(['project_id' => $project->id]);
+        Task::factory()->completed()->create(['project_id' => $project->id, 'parent_id' => $parent->id]);
+        Task::factory()->create(['project_id' => $project->id, 'parent_id' => $parent->id]);
+
+        $this->assertSame(4, $project->total_tasks_count);
+        $this->assertSame(1, $project->completed_tasks_count);
+        $this->assertSame(25, $project->tasks_progress_percent);
+    }
+
+    public function test_progreso_devuelve_cien_si_todas_las_raiz_estan_completadas(): void
+    {
+        $project = Project::factory()->create();
+        Task::factory()->completed()->create(['project_id' => $project->id]);
+        Task::factory()->completed()->create(['project_id' => $project->id]);
+
+        $this->assertSame(100, $project->tasks_progress_percent);
     }
 }

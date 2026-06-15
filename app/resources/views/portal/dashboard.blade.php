@@ -88,7 +88,7 @@
                                     <x-partials.status-badge :status="$project->status" />
                                 </div>
                                 <div class="mt-2">
-                                    <x-partials.progress-bar :value="$project->progress" :showPercent="false" />
+                                    <x-partials.progress-bar :value="$project->tasks_progress_percent" :showPercent="false" />
                                 </div>
                             </li>
                         @endforeach

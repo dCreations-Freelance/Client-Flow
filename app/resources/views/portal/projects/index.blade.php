@@ -31,7 +31,7 @@
                                 <p class="mt-3 line-clamp-2 text-sm text-[#6B7280]">{{ $project->description }}</p>
                             @endif
                             <div class="mt-4">
-                                <x-partials.progress-bar :value="$project->progress" />
+                                <x-partials.progress-bar :value="$project->tasks_progress_percent" />
                             </div>
                         </x-ui.card>
                     </a>

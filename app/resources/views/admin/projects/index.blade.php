@@ -73,7 +73,7 @@
                                 <x-partials.status-badge :status="$project->status" />
                             </td>
                             <td class="px-4 py-3 text-sm">
-                                <x-partials.progress-bar :value="$project->progress" :showPercent="false" class="w-32" />
+                                <x-partials.progress-bar :value="$project->tasks_progress_percent" :showPercent="false" class="w-32" />
                             </td>
                             <td class="px-4 py-3 text-sm text-[#6B7280]">{{ $project->members_count }}</td>
                             <td class="px-4 py-3 text-right text-sm">

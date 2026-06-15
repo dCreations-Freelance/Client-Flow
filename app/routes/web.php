@@ -1,18 +1,22 @@
 <?php
 
+use App\Http\Controllers\Admin\BoardColumnController as AdminBoardColumnController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\KanbanController as AdminKanbanController;
 use App\Http\Controllers\Admin\OrganizationController as AdminOrganizationController;
 use App\Http\Controllers\Admin\OrganizationMemberController as AdminOrganizationMemberController;
 use App\Http\Controllers\Admin\ProjectArchiveController as AdminProjectArchiveController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\ProjectMemberController as AdminProjectMemberController;
-use App\Http\Controllers\Admin\ProjectProgressController as AdminProjectProgressController;
+use App\Http\Controllers\Admin\TaskController as AdminTaskController;
+use App\Http\Controllers\Admin\TaskMoveController as AdminTaskMoveController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Portal\DashboardController as PortalDashboardController;
+use App\Http\Controllers\Portal\KanbanController as PortalKanbanController;
 use App\Http\Controllers\Portal\ProjectController as PortalProjectController;
 use Illuminate\Support\Facades\Route;
 
@@ -41,8 +45,6 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-// Aceptacion de invitacion: vive fuera de `guest` porque si el usuario
-// ya esta logueado, aceptamos la invitacion directamente.
 Route::get('invitation/{token}', [InvitationAcceptanceController::class, 'show'])->name('invitation.accept');
 Route::post('invitation/{token}', [InvitationAcceptanceController::class, 'store']);
 
@@ -64,7 +66,6 @@ Route::middleware('guest')->group(function (): void {
     Route::post('password/reset', [NewPasswordController::class, 'store'])->name('password.update');
 });
 
-// Logout: solo accesible para usuarios autenticados.
 Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
@@ -91,21 +92,40 @@ Route::middleware(['auth', 'admin'])
 
         // Proyectos
         Route::resource('projects', AdminProjectController::class);
-
-        // Miembros de proyecto (rutas anidadas).
         Route::post('projects/{project}/members', [AdminProjectMemberController::class, 'store'])
             ->name('projects.members.store');
         Route::delete('projects/{project}/members/{user}', [AdminProjectMemberController::class, 'destroy'])
             ->name('projects.members.destroy');
-
-        // Archivado y progreso: endpoints dedicados para mantener
-        // los formularios pequenos y la logica aislada.
         Route::post('projects/{project}/archive', [AdminProjectArchiveController::class, 'archive'])
             ->name('projects.archive');
         Route::post('projects/{project}/unarchive', [AdminProjectArchiveController::class, 'unarchive'])
             ->name('projects.unarchive');
-        Route::patch('projects/{project}/progress', [AdminProjectProgressController::class, 'update'])
-            ->name('projects.progress.update');
+
+        // Kanban: tablero, columnas y tareas.
+        Route::get('projects/{project}/board', [AdminKanbanController::class, 'index'])
+            ->name('projects.board');
+
+        Route::post('projects/{project}/columns', [AdminBoardColumnController::class, 'store'])
+            ->name('projects.columns.store');
+        Route::put('projects/{project}/columns/{column}', [AdminBoardColumnController::class, 'update'])
+            ->name('projects.columns.update');
+        Route::delete('projects/{project}/columns/{column}', [AdminBoardColumnController::class, 'destroy'])
+            ->name('projects.columns.destroy');
+        Route::post('projects/{project}/columns/reorder', [AdminBoardColumnController::class, 'reorder'])
+            ->name('projects.columns.reorder');
+
+        Route::post('projects/{project}/tasks', [AdminTaskController::class, 'store'])
+            ->name('projects.tasks.store');
+        Route::put('projects/{project}/tasks/{task}', [AdminTaskController::class, 'update'])
+            ->name('projects.tasks.update');
+        Route::delete('projects/{project}/tasks/{task}', [AdminTaskController::class, 'destroy'])
+            ->name('projects.tasks.destroy');
+        Route::patch('projects/{project}/tasks/{task}/move', [AdminTaskMoveController::class, 'update'])
+            ->name('projects.tasks.move');
+        Route::post('projects/{project}/tasks/{task}/complete', [AdminTaskController::class, 'complete'])
+            ->name('projects.tasks.complete');
+        Route::post('projects/{project}/tasks/{task}/reopen', [AdminTaskController::class, 'reopen'])
+            ->name('projects.tasks.reopen');
     });
 
 // ---------------------------------------------------------------------
@@ -119,12 +139,13 @@ Route::middleware(['auth', 'client'])
         Route::get('/', fn () => redirect()->route('portal.dashboard'));
         Route::get('dashboard', [PortalDashboardController::class, 'index'])->name('dashboard');
 
-        // Organizaciones: el cliente ve la lista desde el dashboard y
-        // puede entrar al detalle para explorar los proyectos.
         Route::get('organizations/{organization}', [PortalProjectController::class, 'showOrganization'])
             ->name('organizations.show');
 
-        // Proyectos
         Route::get('projects', [PortalProjectController::class, 'index'])->name('projects.index');
         Route::get('projects/{project}', [PortalProjectController::class, 'show'])->name('projects.show');
+        Route::get('projects/{project}/board', [PortalKanbanController::class, 'index'])
+            ->name('projects.board');
+        Route::get('projects/{project}/tasks/{task}', [PortalKanbanController::class, 'showTask'])
+            ->name('projects.tasks.show');
     });

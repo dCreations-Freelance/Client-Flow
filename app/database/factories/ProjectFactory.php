@@ -14,10 +14,8 @@ class ProjectFactory extends Factory
 {
     /**
      * Estado por defecto: proyecto en planificacion dentro de una
-     * organizacion recien creada, visible al cliente, sin progreso.
-     * El slug se genera automaticamente en el evento `creating` del
-     * modelo, por lo que no lo fijamos aqui para que respete el
-     * nombre que se pase en `create([...])`.
+     * organizacion recien creada, visible al cliente. El progreso
+     * se calcula a partir de las tareas, no se almacena.
      *
      * @return array<string, mixed>
      */
@@ -28,7 +26,6 @@ class ProjectFactory extends Factory
             'name' => fake()->unique()->catchPhrase(),
             'description' => fake()->paragraph(),
             'status' => ProjectStatus::Planning,
-            'progress' => 0,
             'starts_at' => now()->toDateString(),
             'estimated_ends_at' => now()->addMonths(2)->toDateString(),
             'cover_path' => null,
@@ -59,7 +56,6 @@ class ProjectFactory extends Factory
     {
         return $this->state(fn (): array => [
             'status' => ProjectStatus::Completed,
-            'progress' => 100,
         ]);
     }
 

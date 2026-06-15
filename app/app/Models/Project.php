@@ -40,7 +40,6 @@ class Project extends Model
         'slug',
         'description',
         'status',
-        'progress',
         'starts_at',
         'estimated_ends_at',
         'cover_path',
@@ -55,7 +54,6 @@ class Project extends Model
     {
         return [
             'status' => ProjectStatus::class,
-            'progress' => 'integer',
             'is_visible_to_client' => 'boolean',
             'starts_at' => 'date',
             'estimated_ends_at' => 'date',
@@ -164,13 +162,62 @@ class Project extends Model
     }
 
     /**
-     * Acceso al porcentaje de progreso normalizado. Devuelve 0-100,
-     * equivalente al valor almacenado pero como float para
-     * integraciones que esperen ese tipo.
+     * Acceso al porcentaje de progreso calculado a partir de las
+     * tareas raiz del proyecto. Devuelve 0-100 como entero.
+     *
+     * Logica: (tareas raiz completadas / total tareas raiz) * 100.
+     * Si el proyecto no tiene tareas raiz devuelve 0.
      */
-    public function getProgressPercentAttribute(): float
+    public function getTasksProgressPercentAttribute(): int
     {
-        return (float) $this->progress;
+        $total = $this->rootTasks()->count();
+        if ($total === 0) {
+            return 0;
+        }
+
+        $completed = $this->rootTasks()->whereNotNull('completed_at')->count();
+
+        return (int) round(($completed / $total) * 100);
+    }
+
+    /**
+     * Numero de tareas raiz completadas.
+     */
+    public function getCompletedTasksCountAttribute(): int
+    {
+        return $this->rootTasks()->whereNotNull('completed_at')->count();
+    }
+
+    /**
+     * Numero total de tareas raiz del proyecto. Es la base sobre
+     * la que se calcula el progreso.
+     */
+    public function getTotalTasksCountAttribute(): int
+    {
+        return $this->rootTasks()->count();
+    }
+
+    /**
+     * Tareas raiz (sin parent). Pensado para scopes y conteos
+     * sin necesidad de cargar la coleccion.
+     *
+     * @return HasMany<Task>
+     */
+    public function rootTasks(): HasMany
+    {
+        return $this->hasMany(Task::class)->whereNull('parent_id');
+    }
+
+    /**
+     * Asegura que el proyecto tiene las columnas por defecto del
+     * kanban. Es idempotente: si ya tiene columnas no hace nada.
+     * Pensado para uso en seeders, comandos artisan y tests.
+     *
+     * @return void
+     */
+    public function ensureDefaultBoardColumns(): void
+    {
+        app(\App\Services\DefaultBoardColumnsService::class)->ensure($this);
     }
 
     /**

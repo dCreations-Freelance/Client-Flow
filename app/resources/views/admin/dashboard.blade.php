@@ -81,7 +81,7 @@
                             </div>
                             <div class="ml-3 flex shrink-0 items-center gap-3">
                                 <x-partials.status-badge :status="$project->status" />
-                                <span class="text-xs font-medium text-[#6B7280]">{{ $project->progress }}%</span>
+                                <span class="text-xs font-medium text-[#6B7280]">{{ $project->tasks_progress_percent }}%</span>
                             </div>
                         </li>
                     @empty

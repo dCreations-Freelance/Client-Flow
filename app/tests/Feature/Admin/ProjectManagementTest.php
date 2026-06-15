@@ -50,7 +50,8 @@ class ProjectManagementTest extends TestCase
 
         $this->assertNotNull($project);
         $this->assertSame('lanzamiento-web', $project->slug);
-        $this->assertSame(0, $project->progress);
+        // El progreso ahora se calcula a partir de las tareas.
+        $this->assertSame(0, $project->tasks_progress_percent);
         $response->assertRedirect(route('admin.projects.show', $project));
     }
 
@@ -131,14 +132,12 @@ class ProjectManagementTest extends TestCase
                 'organization_id' => $project->organization_id,
                 'description' => 'X',
                 'status' => ProjectStatus::Archived->value,
-                'progress' => 50,
                 'is_visible_to_client' => true,
             ])->assertRedirect(route('admin.projects.show', $project));
 
         $project->refresh();
         $this->assertSame('Nuevo nombre', $project->name);
         $this->assertNotNull($project->archived_at);
-        $this->assertSame(50, $project->progress);
     }
 
     public function test_admin_puede_eliminar_un_proyecto(): void

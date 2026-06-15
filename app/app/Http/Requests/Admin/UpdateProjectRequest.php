@@ -38,7 +38,6 @@ class UpdateProjectRequest extends FormRequest
                 ProjectStatus::Completed->value,
                 ProjectStatus::Archived->value,
             ])],
-            'progress' => ['required', 'integer', 'min:0', 'max:100'],
             'starts_at' => ['nullable', 'date'],
             'estimated_ends_at' => ['nullable', 'date', 'after_or_equal:starts_at'],
             'is_visible_to_client' => ['nullable', 'boolean'],
@@ -49,7 +48,6 @@ class UpdateProjectRequest extends FormRequest
     {
         $this->merge([
             'is_visible_to_client' => $this->boolean('is_visible_to_client'),
-            'progress' => (int) $this->input('progress', 0),
         ]);
     }
 
@@ -60,9 +58,6 @@ class UpdateProjectRequest extends FormRequest
     {
         return [
             'name.required' => 'Introduce un nombre para el proyecto.',
-            'progress.required' => 'Indica el progreso del proyecto.',
-            'progress.min' => 'El progreso no puede ser negativo.',
-            'progress.max' => 'El progreso maximo es 100.',
             'status.in' => 'El estado seleccionado no es valido.',
             'estimated_ends_at.after_or_equal' => 'La fecha estimada de fin debe ser igual o posterior a la fecha de inicio.',
         ];

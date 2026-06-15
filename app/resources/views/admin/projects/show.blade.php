@@ -61,6 +61,10 @@
                 </div>
 
                 <div class="flex flex-wrap gap-2">
+                    <a href="{{ route('admin.projects.board', $project) }}" class="inline-flex items-center justify-center rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]">
+                        Abrir tablero
+                    </a>
+
                     <a href="{{ route('admin.projects.edit', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#F4F1EA]">
                         Editar
                     </a>
@@ -71,7 +75,14 @@
 
             <div class="mt-6">
                 <p class="mb-1 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Progreso</p>
-                <livewire:admin.project.project-progress :project="$project" />
+                <x-partials.progress-bar :value="$project->tasks_progress_percent" :showPercent="true" />
+                <p class="mt-2 text-xs text-[#6B7280]">
+                    @if ($project->total_tasks_count === 0)
+                        Sin tareas todavia. Crea tareas en el tablero para empezar a medir el progreso.
+                    @else
+                        {{ $project->completed_tasks_count }} de {{ $project->total_tasks_count }} tareas completadas.
+                    @endif
+                </p>
             </div>
         </x-ui.card>
 

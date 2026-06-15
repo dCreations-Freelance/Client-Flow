@@ -35,8 +35,23 @@
 
             <div class="mt-6">
                 <p class="mb-1 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Progreso</p>
-                <x-partials.progress-bar :value="$project->progress" />
+                <x-partials.progress-bar :value="$project->tasks_progress_percent" />
+                <p class="mt-2 text-xs text-[#6B7280]">
+                    @if ($project->total_tasks_count === 0)
+                        Sin tareas todavia.
+                    @else
+                        {{ $project->completed_tasks_count }} de {{ $project->total_tasks_count }} tareas completadas.
+                    @endif
+                </p>
             </div>
+
+            @if (Route::has('portal.projects.board'))
+                <div class="mt-6">
+                    <a href="{{ route('portal.projects.board', $project) }}" class="inline-flex items-center justify-center rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]">
+                        Ver tablero kanban
+                    </a>
+                </div>
+            @endif
         </x-ui.card>
 
         @if ($project->description)
