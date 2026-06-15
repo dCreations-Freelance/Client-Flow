@@ -155,3 +155,36 @@ Servicios: PHP-FPM 8.4, Nginx 1.27, MySQL 8.4, Node 22.
   - `search_documents` → Buscar en documentos
   - `get_project_status` → Resumen de estado del proyecto
 - Sin capacidad de escritura en MVP.
+
+## Codigo
+
+### Comentarios
+
+- Todo el codigo y los comentarios se escriben en **castellano**.
+- Los comentarios explican el **"por que"** (motivacion, contexto), no el "que" (el codigo ya dice lo que hace).
+- No dejar codigo comentado sin eliminar.
+
+### PHPDoc
+
+- Todo metodo **publico** debe llevar PHPDoc con:
+  - Descripcion breve de una linea.
+  - `@param` para cada parametro con tipo y descripcion.
+  - `@return` con tipo y descripcion.
+  - `@throws` solo si es relevante para quien llama.
+- Metodos `protected` y `private` pueden omitir PHPDoc si el nombre es suficientemente claro.
+- Las propiedades con atributos nativos de PHP 8 (`#[Fillable]`, `#[Hidden]`, etc.) no necesitan PHPDoc redundante.
+
+### Nombre de clases, metodos y variables
+
+- Clases y traits: `PascalCase` (ej. `EnsureUserIsAdmin`).
+- Metodos y funciones: `camelCase` (ej. `isAdmin()`).
+- Variables y propiedades: `camelCase`.
+- Constantes de clase: `UPPER_SNAKE_CASE`.
+- Tablas y columnas en BD: `snake_case`.
+- Rutas: `kebab-case` (ej. `/admin/project-tasks`).
+
+### Estructura de archivos
+
+- Un archivo por clase.
+- Namespace alineado con la ruta del directorio.
+- Importaciones ordenadas: primero Laravel core, luego paquetes propios, luego modelos, etc.

@@ -47,10 +47,13 @@ ClientFlow es una web app open source para freelancers y agencias pequenas que q
 
 ```txt
 docs/
-├── PRD.md            # Product Requirements Document
-├── ARCHITECTURE.md   # Arquitectura tecnica
-├── DATA_MODEL.md     # Modelo de datos
-└── CLEANUP.md         # Instrucciones de reset del proyecto
+├── PRD.md              # Product Requirements Document
+├── ARCHITECTURE.md     # Arquitectura tecnica
+├── DATA_MODEL.md       # Modelo de datos
+├── DESIGN.md           # Design system y guias visuales
+├── USER_FLOWS.md       # Flujos de usuario y pantallas
+├── IMPLEMENTATION.md   # Convenciones y patrones de codigo
+└── CLEANUP.md           # Instrucciones de reset del proyecto
 ```
 
 ## Arranque con Docker

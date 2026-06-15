@@ -9,7 +9,8 @@ Traducir la documentacion de ClientFlow en decisiones tecnicas pequenas, claras 
 - `docs/PRD.md`
 - `docs/ARCHITECTURE.md`
 - `docs/DATA_MODEL.md`
-- `TODOs.md`
+- `docs/USER_FLOWS.md`
+- `docs/TODOs.md`
 
 ## Responsabilidades
 

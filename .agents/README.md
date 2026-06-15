@@ -12,6 +12,9 @@ Esta carpeta define agentes de apoyo para desarrollar ClientFlow de forma ordena
 - No introducir Redis, workers permanentes ni servicios obligatorios fuera de Docker local.
 - Usar Livewire 4 para toda la UI interactiva. No usar Alpine.js para logica de negocio.
 - Consultar `TODOs.md` para saber que falta por implementar.
+- Escribir el codigo y los comentarios en castellano.
+- Anadir PHPDoc en todo metodo publico: descripcion breve, parametros `@param` y retorno `@return`.
+- Los comentarios deben explicar el "por que", no el "que" (el codigo ya dice el que).
 
 ## Agentes disponibles
 

@@ -9,6 +9,8 @@ Revisar cambios antes de cerrarlos, buscando bugs, riesgos de permisos, regresio
 - `docs/PRD.md`
 - `docs/ARCHITECTURE.md`
 - `docs/DATA_MODEL.md`
+- `docs/USER_FLOWS.md`
+- `docs/IMPLEMENTATION.md`
 - `TODOs.md`
 
 ## Responsabilidades

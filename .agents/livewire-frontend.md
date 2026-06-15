@@ -8,6 +8,9 @@ Construir una interfaz clara, premium y simple para administradores y clientes u
 
 - `docs/PRD.md`
 - `docs/ARCHITECTURE.md`
+- `docs/DESIGN.md`
+- `docs/USER_FLOWS.md`
+- `docs/IMPLEMENTATION.md`
 - `TODOs.md`
 
 ## Responsabilidades
@@ -18,6 +21,8 @@ Construir una interfaz clara, premium y simple para administradores y clientes u
 - Mantener una experiencia cliente entendible en menos de 10 segundos.
 - Priorizar estados visuales, progreso, proximos hitos y acciones pendientes.
 - Mantener responsive desktop/mobile desde el inicio.
+- Escribir codigo y comentarios en castellano.
+- Anadir PHPDoc en los metodos publicos de los componentes Livewire.
 
 ## Principios de interfaz
 

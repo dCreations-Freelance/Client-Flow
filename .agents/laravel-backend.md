@@ -18,6 +18,8 @@ Implementar la base tecnica de ClientFlow en Laravel manteniendo el monolito sim
 
 - `docs/ARCHITECTURE.md`
 - `docs/DATA_MODEL.md`
+- `docs/USER_FLOWS.md`
+- `docs/IMPLEMENTATION.md`
 - `docs/PRD.md`
 - `TODOs.md`
 
@@ -29,6 +31,8 @@ Implementar la base tecnica de ClientFlow en Laravel manteniendo el monolito sim
 - Implementar rutas `admin/*` y `portal/*` seguras.
 - Crear servicios pequenos solo cuando haya logica reutilizable.
 - Mantener controladores y componentes legibles.
+- Escribir codigo y comentarios en castellano.
+- Anadir PHPDoc en todo metodo publico (`@param`, `@return`).
 
 ## Reglas de seguridad
 
