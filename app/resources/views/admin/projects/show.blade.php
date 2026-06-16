@@ -71,6 +71,28 @@
                         </a>
                     @endif
 
+                    @if (Route::has('admin.projects.chat'))
+                        <a href="{{ route('admin.projects.chat', $project) }}" class="relative inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#F4F1EA]">
+                            Chat
+                            @php
+                                $chatUnread = \App\Models\ProjectChatRead::query()
+                                    ->where('project_id', $project->id)
+                                    ->where('user_id', auth()->id())
+                                    ->first();
+                                $unreadQuery = \App\Models\ProjectMessage::where('project_id', $project->id);
+                                if ($chatUnread !== null) {
+                                    $unreadQuery->where('id', '>', (int) $chatUnread->last_read_message_id);
+                                }
+                                $unreadCount = $unreadQuery->count();
+                            @endphp
+                            @if ($unreadCount > 0)
+                                <span class="ml-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#DC2626] px-1.5 text-[10px] font-semibold text-white">
+                                    {{ $unreadCount }}
+                                </span>
+                            @endif
+                        </a>
+                    @endif
+
                     <a href="{{ route('admin.projects.edit', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#F4F1EA]">
                         Editar
                     </a>

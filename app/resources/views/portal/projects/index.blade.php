@@ -18,11 +18,19 @@
         @else
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($projects as $project)
+                    @php $unread = $unreadByProject[$project->id] ?? 0; @endphp
                     <a href="{{ route('portal.projects.show', $project) }}" class="block">
                         <x-ui.card hover>
                             <div class="flex items-start justify-between gap-2">
                                 <h3 class="text-base font-semibold text-[#111827]">{{ $project->name }}</h3>
-                                <x-partials.status-badge :status="$project->status" />
+                                <div class="flex shrink-0 items-center gap-2">
+                                    @if (Route::has('portal.projects.chat') && $unread > 0)
+                                        <span class="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#DC2626] px-1.5 text-[10px] font-semibold text-white">
+                                            {{ $unread }}
+                                        </span>
+                                    @endif
+                                    <x-partials.status-badge :status="$project->status" />
+                                </div>
                             </div>
                             @if ($project->organization)
                                 <p class="mt-1 text-xs text-[#6B7280]">{{ $project->organization->name }}</p>

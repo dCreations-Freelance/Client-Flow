@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
+use App\Services\Activity\ProjectActivityLogger;
 use Illuminate\Http\RedirectResponse;
 
 /**
@@ -17,7 +18,9 @@ class ProjectArchiveController extends Controller
 {
     /**
      * Archiva el proyecto. Idempotente: archivar dos veces no
-     * modifica la fecha original.
+     * modifica la fecha original. Ademas registra un mensaje
+     * automatico en el chat del proyecto para que los participantes
+     * tengan constancia del cambio.
      *
      * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\RedirectResponse
@@ -28,11 +31,15 @@ class ProjectArchiveController extends Controller
 
         $project->archive();
 
+        app(ProjectActivityLogger::class)->projectArchived($project, request()->user());
+
         return back()->with('status', 'Proyecto archivado.');
     }
 
     /**
-     * Desarchiva el proyecto.
+     * Desarchiva el proyecto. Tambien registra un mensaje automatico
+     * en el chat, aunque menos relevante (el cliente ya no veia el
+     * proyecto archivado).
      *
      * @param  \App\Models\Project  $project
      * @return \Illuminate\Http\RedirectResponse
@@ -42,6 +49,8 @@ class ProjectArchiveController extends Controller
         $this->authorize('archive', $project);
 
         $project->unarchive();
+
+        app(ProjectActivityLogger::class)->projectUnarchived($project, request()->user());
 
         return back()->with('status', 'Proyecto desarchivado.');
     }

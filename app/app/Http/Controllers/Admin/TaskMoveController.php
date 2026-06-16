@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\MoveTaskRequest;
 use App\Models\BoardColumn;
 use App\Models\Project;
 use App\Models\Task;
+use App\Services\Activity\ProjectActivityLogger;
 use App\Services\TaskMoveService;
 use Illuminate\Http\RedirectResponse;
 
@@ -42,6 +43,9 @@ class TaskMoveController extends Controller
         } catch (\InvalidArgumentException $e) {
             return back()->withErrors(['column_id' => $e->getMessage()]);
         }
+
+        // Mensaje automatico en el chat del proyecto.
+        app(ProjectActivityLogger::class)->taskMoved($project, $task, $column, $request->user());
 
         return back()->with('status', 'Tarea movida.');
     }

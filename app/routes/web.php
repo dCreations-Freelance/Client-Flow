@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\ProjectArchiveController as AdminProjectArchiveCo
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\ProjectDocumentController as AdminProjectDocumentController;
 use App\Http\Controllers\Admin\ProjectMemberController as AdminProjectMemberController;
+use App\Http\Controllers\Admin\ProjectMessageController as AdminProjectMessageController;
 use App\Http\Controllers\Admin\TaskController as AdminTaskController;
 use App\Http\Controllers\Admin\TaskMoveController as AdminTaskMoveController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Portal\DashboardController as PortalDashboardController
 use App\Http\Controllers\Portal\KanbanController as PortalKanbanController;
 use App\Http\Controllers\Portal\ProjectController as PortalProjectController;
 use App\Http\Controllers\Portal\ProjectDocumentController as PortalProjectDocumentController;
+use App\Http\Controllers\Portal\ProjectMessageController as PortalProjectMessageController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -146,6 +148,14 @@ Route::middleware(['auth', 'admin'])
             ->name('projects.documents.update');
         Route::delete('projects/{project}/documents/{document}', [AdminProjectDocumentController::class, 'destroy'])
             ->name('projects.documents.destroy');
+
+        // Chat del proyecto. El grueso de la interaccion se hace
+        // via componente Livewire; el POST es para tests y como
+        // fallback si Livewire falla.
+        Route::get('projects/{project}/chat', [AdminProjectMessageController::class, 'index'])
+            ->name('projects.chat');
+        Route::post('projects/{project}/messages', [AdminProjectMessageController::class, 'store'])
+            ->name('projects.chat.store');
     });
 
 // ---------------------------------------------------------------------
@@ -175,4 +185,10 @@ Route::middleware(['auth', 'client'])
             ->name('projects.documents.index');
         Route::get('projects/{project}/documents/{document}', [PortalProjectDocumentController::class, 'show'])
             ->name('projects.documents.show');
+
+        // Chat del proyecto (cliente).
+        Route::get('projects/{project}/chat', [PortalProjectMessageController::class, 'index'])
+            ->name('projects.chat');
+        Route::post('projects/{project}/messages', [PortalProjectMessageController::class, 'store'])
+            ->name('projects.chat.store');
     });

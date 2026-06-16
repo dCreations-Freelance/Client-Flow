@@ -56,6 +56,7 @@
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#6B7280]">Estado</th>
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#6B7280]">Progreso</th>
                         <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#6B7280]">Miembros</th>
+                        <th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-[#6B7280]">Chat</th>
                         <th class="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-[#6B7280]">Acciones</th>
                     </tr>
                 </thead>
@@ -76,13 +77,28 @@
                                 <x-partials.progress-bar :value="$project->tasks_progress_percent" :showPercent="false" class="w-32" />
                             </td>
                             <td class="px-4 py-3 text-sm text-[#6B7280]">{{ $project->members_count }}</td>
+                            <td class="px-4 py-3 text-sm">
+                                @if (Route::has('admin.projects.chat'))
+                                    @php $unread = $unreadByProject[$project->id] ?? 0; @endphp
+                                    <a href="{{ route('admin.projects.chat', $project) }}" class="inline-flex items-center gap-1.5 text-[#6B7280] hover:text-[#2563EB]">
+                                        <span>Chat</span>
+                                        @if ($unread > 0)
+                                            <span class="inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#DC2626] px-1.5 text-[10px] font-semibold text-white">
+                                                {{ $unread }}
+                                            </span>
+                                        @endif
+                                    </a>
+                                @else
+                                    <span class="text-[#9CA3AF]">—</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-3 text-right text-sm">
                                 <a href="{{ route('admin.projects.show', $project) }}" class="font-medium text-[#2563EB] hover:text-[#1D4ED8]">Ver</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-sm text-[#6B7280]">
+                            <td colspan="7" class="px-4 py-8 text-center text-sm text-[#6B7280]">
                                 Aun no hay proyectos. Crea el primero.
                             </td>
                         </tr>

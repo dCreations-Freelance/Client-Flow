@@ -115,16 +115,16 @@
 
 ## Fase 5: Chat por proyecto
 
-- [ ] Crear migracion `project_messages`
-- [ ] Crear enum `MessageType` (text, system, file)
-- [ ] Crear modelo `ProjectMessage` con relaciones
-- [ ] Crear vista chat por proyecto (admin)
-- [ ] Crear vista chat por proyecto (portal)
-- [ ] Implementar polling Livewire para mensajes nuevos (cada 5s)
-- [ ] Generar mensajes de sistema automaticos (tarea creada, estado cambiado, etc.)
-- [ ] Implementar notificaciones in-app por mensajes nuevos
-- [ ] Implementar notificaciones email por mensajes nuevos
-- [ ] Indicador de mensajes no leidos por proyecto en sidebar
+- [x] Crear migracion `project_messages`
+- [x] Crear enum `MessageType` (text, system, file)
+- [x] Crear modelo `ProjectMessage` con relaciones
+- [x] Crear vista chat por proyecto (admin)
+- [x] Crear vista chat por proyecto (portal)
+- [x] Implementar polling Livewire para mensajes nuevos (cada 5s)
+- [x] Generar mensajes de sistema automaticos (tarea creada, estado cambiado, etc.)
+- [x] Implementar notificaciones in-app por mensajes nuevos
+- [x] Implementar notificaciones email por mensajes nuevos
+- [x] Indicador de mensajes no leidos por proyecto en sidebar
 - [ ] Implementar doble check de leido (visto) en mensajes
 - [ ] Crear migracion `message_reads` (pivot message_id, user_id, read_at)
 - [ ] Mostrar indicador "Visto" en burbujas propias al ser leido

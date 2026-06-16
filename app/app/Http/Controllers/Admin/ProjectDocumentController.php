@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\StoreProjectDocumentRequest;
 use App\Http\Requests\Admin\UpdateProjectDocumentRequest;
 use App\Models\Project;
 use App\Models\ProjectDocument;
+use App\Services\Activity\ProjectActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -94,6 +95,10 @@ class ProjectDocumentController extends Controller
 
         $document = ProjectDocument::create($data);
 
+        // Si el documento se crea ya como publico, dejamos constancia
+        // en el chat del proyecto.
+        app(ProjectActivityLogger::class)->documentPublished($project, $document, $request->user());
+
         return redirect()
             ->route('admin.projects.documents.show', [$project, $document])
             ->with('status', 'Documento creado.');
@@ -161,7 +166,18 @@ class ProjectDocumentController extends Controller
 
         abort_unless($document->project_id === $project->id, 404);
 
+        // Capturamos la visibilidad antes de actualizar para detectar
+        // transiciones de privado a publico. Asi solo emitimos un
+        // mensaje automatico en la primera publicacion, no en cada
+        // edicion posterior del contenido.
+        $wasPublic = $document->visibility?->isPublic() ?? false;
+
         $document->update($request->documentData());
+
+        $isPublic = $document->visibility?->isPublic() ?? false;
+        if ($isPublic && ! $wasPublic) {
+            app(ProjectActivityLogger::class)->documentPublished($project, $document, $request->user());
+        }
 
         return redirect()
             ->route('admin.projects.documents.show', [$project, $document])

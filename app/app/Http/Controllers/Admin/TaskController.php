@@ -7,6 +7,7 @@ use App\Http\Requests\Admin\StoreTaskRequest;
 use App\Http\Requests\Admin\UpdateTaskRequest;
 use App\Models\Project;
 use App\Models\Task;
+use App\Services\Activity\ProjectActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -60,6 +61,9 @@ class TaskController extends Controller
             ->max('position') + 1;
 
         $task = Task::create($data);
+
+        // Mensaje automatico en el chat del proyecto.
+        app(ProjectActivityLogger::class)->taskCreated($project, $task);
 
         return back()->with('status', 'Tarea creada.');
     }
@@ -137,6 +141,8 @@ class TaskController extends Controller
 
         $task->markCompleted();
 
+        app(ProjectActivityLogger::class)->taskCompleted($project, $task, request()->user());
+
         return back()->with('status', 'Tarea completada.');
     }
 
@@ -148,6 +154,8 @@ class TaskController extends Controller
         $this->authorize('reopen', $task);
 
         $task->markPending();
+
+        app(ProjectActivityLogger::class)->taskReopened($project, $task, request()->user());
 
         return back()->with('status', 'Tarea re-abierta.');
     }

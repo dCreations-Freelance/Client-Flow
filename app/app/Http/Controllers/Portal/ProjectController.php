@@ -33,9 +33,46 @@ class ProjectController extends Controller
             ->latest()
             ->paginate(15);
 
+        // Calculamos en una sola vuelta los mensajes no leidos
+        // para evitar N queries en el listado.
+        $unreadByProject = $this->unreadCountsFor($projects->pluck('id')->all(), $request->user()->id);
+
         return view('portal.projects.index', [
             'projects' => $projects,
+            'unreadByProject' => $unreadByProject,
         ]);
+    }
+
+    /**
+     * Calcula el numero de mensajes no leidos por proyecto para
+     * un usuario en una sola query agregada. Si el usuario no
+     * tiene marcador en un proyecto, todos sus mensajes cuentan
+     * como no leidos.
+     *
+     * @param  array<int, int>  $projectIds
+     * @return array<int, int>  mapa project_id => unread_count
+     */
+    private function unreadCountsFor(array $projectIds, int $userId): array
+    {
+        if ($projectIds === []) {
+            return [];
+        }
+
+        $reads = \App\Models\ProjectChatRead::query()
+            ->whereIn('project_id', $projectIds)
+            ->where('user_id', $userId)
+            ->pluck('last_read_message_id', 'project_id');
+
+        $counts = [];
+        foreach ($projectIds as $projectId) {
+            $lastRead = (int) ($reads[$projectId] ?? 0);
+            $counts[$projectId] = \App\Models\ProjectMessage::query()
+                ->where('project_id', $projectId)
+                ->where('id', '>', $lastRead)
+                ->count();
+        }
+
+        return $counts;
     }
 
     /**
