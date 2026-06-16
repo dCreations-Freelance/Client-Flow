@@ -45,11 +45,19 @@
                 </p>
             </div>
 
-            @if (Route::has('portal.projects.board'))
-                <div class="mt-6">
-                    <a href="{{ route('portal.projects.board', $project) }}" class="inline-flex items-center justify-center rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]">
-                        Ver tablero kanban
-                    </a>
+            @if (Route::has('portal.projects.board') || Route::has('portal.projects.documents.index'))
+                <div class="mt-6 flex flex-wrap gap-2">
+                    @if (Route::has('portal.projects.board'))
+                        <a href="{{ route('portal.projects.board', $project) }}" class="inline-flex items-center justify-center rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]">
+                            Ver tablero kanban
+                        </a>
+                    @endif
+
+                    @if (Route::has('portal.projects.documents.index'))
+                        <a href="{{ route('portal.projects.documents.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                            Ver documentos
+                        </a>
+                    @endif
                 </div>
             @endif
         </x-ui.card>

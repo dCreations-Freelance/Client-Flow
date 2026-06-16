@@ -9,15 +9,26 @@ User (admin/client)
  │                                      ├── Project ──────── BoardColumn ──── Task
  │                                      │                       │                  │
  │                                      │                       │            (self-ref: parent_id)
+ │                                      │                       │                  │
+ │                                      │                       │            ├── TaskAttachment
+ │                                      │                       │            ├── TimeEntry
+ │                                      │                       │            └── ActivityLog
  │                                      │                       │
  │                                      │                       ├── ProjectDocument
- │                                      │                       ├── ProjectMessage
+ │                                      │                       ├── ProjectMessage ──── MessageAttachment
+ │                                      │                       │                  └── MessageRead (pivot)
  │                                      │                       ├── CalendarEvent
- │                                      │                       └── ProjectAgent (pivot)
- │                                      │                               │
- │                                      │                       AgentTemplate
+ │                                      │                       │       └── CalendarEventUser (pivot)
+ │                                      │                       ├── ProjectAgent (pivot)
+ │                                      │                       │       └── AgentTemplate
+ │                                      │                       └── ActivityLog
  │                                      │
  │                                      └── OrganizationInvitation
+ │
+ └── ProjectTemplate
+      ├── ProjectTemplateColumn
+      ├── ProjectTemplateTask
+      └── ProjectTemplateDocument
 
 AiConfig (global o por proyecto)
 AiChatSession ──── AiChatMessage
@@ -200,6 +211,120 @@ Los mensajes de tipo `system` se generan automaticamente (tarea creada, estado c
 | user_id | bigint FK | users.id, cascadeOnDelete |
 | created_at | timestamp | |
 
+### task_attachments
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | bigint | PK |
+| task_id | bigint FK | tasks.id, cascadeOnDelete |
+| user_id | bigint FK | users.id |
+| filename | string | nombre interno en disco |
+| original_name | string | nombre original del archivo |
+| mime_type | string | image/png, application/pdf, etc. |
+| size | integer | en bytes |
+| created_at | timestamp | |
+
+### message_attachments
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | bigint | PK |
+| message_id | bigint FK | project_messages.id, cascadeOnDelete |
+| user_id | bigint FK | users.id |
+| filename | string | nombre interno en disco |
+| original_name | string | nombre original del archivo |
+| mime_type | string | |
+| size | integer | en bytes |
+| created_at | timestamp | |
+
+### time_entries
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | bigint | PK |
+| task_id | bigint FK | tasks.id, cascadeOnDelete |
+| user_id | bigint FK | users.id |
+| project_id | bigint FK | projects.id, cascadeOnDelete |
+| description | text | nullable |
+| type | enum(manual, timer) | default: manual |
+| minutes | integer | duracion en minutos |
+| started_at | timestamp | nullable, solo para tipo timer |
+| billed | boolean | default: false, facturable |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+### message_reads (pivot)
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| message_id | bigint FK | project_messages.id, cascadeOnDelete |
+| user_id | bigint FK | users.id, cascadeOnDelete |
+| read_at | timestamp | |
+
+Primary key compuesto: (message_id, user_id)
+
+### project_templates
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | bigint | PK |
+| name | string | |
+| slug | string | unique |
+| description | text | nullable |
+| category | string | nullable, e.g. "web", "mobile", "design" |
+| default_status | enum(planning, in_progress) | default: planning |
+| created_by | bigint FK | users.id |
+| created_at | timestamp | |
+| updated_at | timestamp | |
+
+### project_template_columns
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | bigint | PK |
+| template_id | bigint FK | project_templates.id, cascadeOnDelete |
+| name | string | |
+| color | string | nullable, hex color |
+| position | integer | |
+
+### project_template_tasks
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | bigint | PK |
+| template_id | bigint FK | project_templates.id, cascadeOnDelete |
+| column_slug | string | referencia a columna por slug |
+| title | string | |
+| description | text | nullable |
+| type | enum(feature, bug, improvement, task) | default: task |
+| priority | enum(critical, high, medium, low) | default: medium |
+| estimated_hours | decimal(6,2) | nullable |
+| position | integer | |
+
+### project_template_documents
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | bigint | PK |
+| template_id | bigint FK | project_templates.id, cascadeOnDelete |
+| title | string | |
+| content | longtext | markdown |
+| visibility | enum(private, public) | default: private |
+| position | integer | |
+
+### activity_log
+
+| Columna | Tipo | Notas |
+|---|---|---|
+| id | bigint | PK |
+| project_id | bigint FK | projects.id, cascadeOnDelete, nullable |
+| organization_id | bigint FK | organizations.id, nullable |
+| user_id | bigint FK | users.id, nullable (eventos de sistema) |
+| description | string | texto legible: "Se creo la tarea X" |
+| type | string | task_created, task_completed, document_created, status_changed, etc. |
+| properties | json | nullable, datos adicionales del evento |
+| created_at | timestamp | |
+
 ### agent_templates
 
 | Columna | Tipo | Notas |
@@ -264,31 +389,39 @@ Los mensajes de tipo `system` se generan automaticamente (tarea creada, estado c
 
 ```php
 // User
-User::roles()              → belongsToMany(Organization::class, 'organization_user')
-User::projects()           → belongsToMany(Project::class, 'project_user')
-User::assignedTasks()      → hasMany(Task::class, 'assignee_id')
-User::aiChatSessions()     → hasMany(AiChatSession::class)
+User::organizations()        → belongsToMany(Organization::class, 'organization_user')
+User::projects()             → belongsToMany(Project::class, 'project_user')
+User::assignedTasks()        → hasMany(Task::class, 'assignee_id')
+User::aiChatSessions()       → hasMany(AiChatSession::class)
+User::timeEntries()          → hasMany(TimeEntry::class)
+User::taskAttachments()      → hasMany(TaskAttachment::class)
+User::messageAttachments()   → hasMany(MessageAttachment::class)
+User::messageReads()         → hasMany(MessageRead::class)
+User::activityLogs()         → hasMany(ActivityLog::class)
 
 // Organization
-Organization::members()    → belongsToMany(User::class, 'organization_user')
-Organization::projects()   → hasMany(Project::class)
-Organization::owner()     → belongsTo(User::class, 'owner_id')
+Organization::members()      → belongsToMany(User::class, 'organization_user')
+Organization::projects()     → hasMany(Project::class)
+Organization::owner()        → belongsTo(User::class, 'owner_id')
+Organization::activityLogs() → hasMany(ActivityLog::class)
 
 // Project
-Project::organization()       → belongsTo(Organization::class)
-Project::members()            → belongsToMany(User::class, 'project_user')
-Project::columns()            → hasMany(BoardColumn::class)
-Project::tasks()              → hasMany(Task::class)
-Project::documents()          → hasMany(ProjectDocument::class)
-Project::messages()           → hasMany(ProjectMessage::class)
-Project::calendarEvents()     → hasMany(CalendarEvent::class)
-Project::agents()             → belongsToMany(AgentTemplate::class, 'project_agents')
-Project::aiConfig()           → hasOne(AiConfig::class)
-Project::aiChatSessions()     → hasMany(AiChatSession::class)
+Project::organization()          → belongsTo(Organization::class)
+Project::members()               → belongsToMany(User::class, 'project_user')
+Project::columns()               → hasMany(BoardColumn::class)
+Project::tasks()                 → hasMany(Task::class)
+Project::documents()             → hasMany(ProjectDocument::class)
+Project::messages()              → hasMany(ProjectMessage::class)
+Project::calendarEvents()        → hasMany(CalendarEvent::class)
+Project::agents()                → belongsToMany(AgentTemplate::class, 'project_agents')
+Project::aiConfig()              → hasOne(AiConfig::class)
+Project::aiChatSessions()        → hasMany(AiChatSession::class)
+Project::timeEntries()           → hasMany(TimeEntry::class)
+Project::activityLogs()          → hasMany(ActivityLog::class)
 
 // BoardColumn
 BoardColumn::project()    → belongsTo(Project::class)
-BoardColumn::tasks()       → hasMany(Task::class)
+BoardColumn::tasks()      → hasMany(Task::class)
 
 // Task
 Task::project()           → belongsTo(Project::class)
@@ -297,6 +430,8 @@ Task::parent()            → belongsTo(Task::class, 'parent_id')
 Task::subtasks()          → hasMany(Task::class, 'parent_id')
 Task::assignee()          → belongsTo(User::class, 'assignee_id')
 Task::creator()           → belongsTo(User::class, 'created_by')
+Task::attachments()       → hasMany(TaskAttachment::class)
+Task::timeEntries()       → hasMany(TimeEntry::class)
 
 // ProjectDocument
 ProjectDocument::project()   → belongsTo(Project::class)
@@ -305,6 +440,36 @@ ProjectDocument::creator()   → belongsTo(User::class, 'created_by')
 // ProjectMessage
 ProjectMessage::project()    → belongsTo(Project::class)
 ProjectMessage::user()       → belongsTo(User::class)
+ProjectMessage::attachments() → hasMany(MessageAttachment::class)
+ProjectMessage::reads()      → hasMany(MessageRead::class)
+
+// TaskAttachment
+TaskAttachment::task()       → belongsTo(Task::class)
+TaskAttachment::user()       → belongsTo(User::class)
+
+// MessageAttachment
+MessageAttachment::message() → belongsTo(ProjectMessage::class)
+MessageAttachment::user()    → belongsTo(User::class)
+
+// MessageRead
+MessageRead::message()       → belongsTo(ProjectMessage::class)
+MessageRead::user()          → belongsTo(User::class)
+
+// TimeEntry
+TimeEntry::task()            → belongsTo(Task::class)
+TimeEntry::user()            → belongsTo(User::class)
+TimeEntry::project()         → belongsTo(Project::class)
+
+// ActivityLog
+ActivityLog::project()       → belongsTo(Project::class)
+ActivityLog::organization()  → belongsTo(Organization::class)
+ActivityLog::user()          → belongsTo(User::class)
+
+// ProjectTemplate
+ProjectTemplate::creator()   → belongsTo(User::class, 'created_by')
+ProjectTemplate::columns()   → hasMany(ProjectTemplateColumn::class)
+ProjectTemplate::tasks()     → hasMany(ProjectTemplateTask::class)
+ProjectTemplate::documents() → hasMany(ProjectTemplateDocument::class)
 
 // AgentTemplate
 AgentTemplate::projects()    → belongsToMany(Project::class, 'project_agents')
@@ -316,7 +481,7 @@ AiConfig::project()          → belongsTo(Project::class)
 // AiChatSession
 AiChatSession::project()     → belongsTo(Project::class)
 AiChatSession::user()        → belongsTo(User::class)
-AiChatSession::messages()   → hasMany(AiChatMessage::class)
+AiChatSession::messages()    → hasMany(AiChatMessage::class)
 ```
 
 ## Enums
@@ -333,4 +498,5 @@ MessageType: text, system, file
 CalendarEventType: meeting, deadline, milestone
 AiProvider: openai, anthropic
 AiChatRole: user, assistant, system
+TimeEntryType: manual, timer
 ```

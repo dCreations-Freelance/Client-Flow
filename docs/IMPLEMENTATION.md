@@ -27,18 +27,26 @@ app/
 │   │   ├── Kanban/
 │   │   ├── Chat/
 │   │   ├── Calendar/
-│   │   └── AgentTemplate/
+│   │   ├── TimeTracking/       # Registro de tiempo
+│   │   ├── ActivityFeed/       # Feed de actividad
+│   │   ├── Attachments/        # Subida de adjuntos
+│   │   ├── AgentTemplate/
+│   │   └── ProjectTemplate/    # Plantillas de proyecto
 │   ├── Portal/                 # Componentes Livewire portal
 │   │   ├── Project/
 │   │   ├── Chat/
 │   │   ├── Calendar/
-│   │   └── AiChat/
+│   │   ├── AiChat/
+│   │   ├── TimeTracking/       # Resumen de horas (solo lectura)
+│   │   └── ActivityFeed/       # Feed actividad cliente
 │   └── Shared/                 # Componentes compartidos
 │       ├── NotificationBadge.php
 │       └── SearchInput.php
 ├── Models/                     # Modelos Eloquent
 ├── Policies/                   # Policies de autorizacion
 ├── Services/                   # Logica de negocio reutilizable
+│   ├── Activity/               # Feed de actividad
+│   │   └── ActivityLogger.php
 │   ├── Ai/                     # Servicio de IA
 │   │   ├── AiService.php
 │   │   ├── Providers/
@@ -51,8 +59,10 @@ app/
 │   │       ├── ListProjectsTool.php
 │   │       ├── GetProjectTool.php
 │   │       └── ...
-│   └── Notification/           # Servicio de notificaciones
-│       └── NotificationService.php
+│   ├── Notification/           # Servicio de notificaciones
+│   │   └── NotificationService.php
+│   └── TimeTracking/           # Registro de tiempo
+│       └── TimeTrackingService.php
 ├── Notifications/              # Notificaciones Laravel
 │   ├── ProjectMessageSent.php
 │   ├── TaskAssigned.php
@@ -92,8 +102,14 @@ resources/views/
 │   ├── projects/
 │   │   ├── index.blade.php
 │   │   ├── create.blade.php
-│   │   └── show.blade.php
+│   │   ├── show.blade.php
+│   │   ├── time.blade.php        # Registro de tiempo
+│   │   └── activity.blade.php    # Feed de actividad
 │   ├── agent-templates/
+│   │   ├── index.blade.php
+│   │   ├── create.blade.php
+│   │   └── show.blade.php
+│   ├── project-templates/
 │   │   ├── index.blade.php
 │   │   ├── create.blade.php
 │   │   └── show.blade.php
@@ -110,7 +126,9 @@ resources/views/
 │       ├── documents.blade.php
 │       ├── chat.blade.php
 │       ├── ai.blade.php
-│       └── calendar.blade.php
+│       ├── calendar.blade.php
+│       ├── activity.blade.php    # Feed actividad (solo eventos publicos)
+│       └── time.blade.php        # Resumen de horas (solo lectura)
 ├── auth/
 │   ├── login.blade.php
 │   ├── register.blade.php
@@ -135,22 +153,33 @@ tests/
 │   │   ├── TaskManagementTest.php
 │   │   ├── DocumentManagementTest.php
 │   │   ├── AgentTemplateTest.php
-│   │   └── AiSettingsTest.php
+│   │   ├── AiSettingsTest.php
+│   │   ├── AttachmentTest.php
+│   │   ├── TimeTrackingTest.php
+│   │   ├── ProjectTemplateTest.php
+│   │   └── ActivityFeedTest.php
 │   ├── Portal/
 │   │   ├── DashboardTest.php
 │   │   ├── ProjectViewTest.php
 │   │   ├── DocumentViewTest.php
-│   │   └── ChatTest.php
+│   │   ├── ChatTest.php
+│   │   ├── TimeTrackingTest.php
+│   │   └── ActivityFeedTest.php
 │   └── Mcp/
 │       └── McpServerTest.php
 ├── Unit/
 │   ├── Models/
 │   │   ├── OrganizationTest.php
 │   │   ├── ProjectTest.php
-│   │   └── TaskTest.php
+│   │   ├── TaskTest.php
+│   │   ├── TaskAttachmentTest.php
+│   │   ├── TimeEntryTest.php
+│   │   └── ActivityLogTest.php
 │   └── Services/
 │       ├── AiServiceTest.php
-│       └── McpServerTest.php
+│       ├── McpServerTest.php
+│       ├── ActivityLoggerTest.php
+│       └── TimeTrackingServiceTest.php
 └── TestCase.php
 ```
 
@@ -249,6 +278,11 @@ Reglas por Policy:
 - **ProjectPolicy**: solo admin y miembros del proyecto pueden ver. Client solo sus organizaciones.
 - **TaskPolicy**: solo admin puede crear/editar. Client puede ver las de sus proyectos.
 - **ProjectDocumentPolicy**: admin ve todo. Client solo documentos public.
+- **TaskAttachmentPolicy**: solo miembros del proyecto pueden ver/descargar adjuntos de tareas.
+- **MessageAttachmentPolicy**: solo miembros del proyecto pueden ver/descargar adjuntos de mensajes.
+- **TimeEntryPolicy**: admin puede crear/editar/ver todo. Client solo ver resumen de horas.
+- **ActivityLogPolicy**: admin ve todo el feed. Client solo eventos publicos.
+- **ProjectTemplatePolicy**: solo admin puede gestionar plantillas.
 
 ### Validacion
 

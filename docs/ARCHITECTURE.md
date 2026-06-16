@@ -34,7 +34,9 @@ app/
 │   ├── TaskPriority.php
 │   ├── TaskType.php
 │   ├── DocumentVisibility.php
-│   └── MessageType.php
+│   ├── MessageType.php
+│   ├── TimeEntryType.php
+│   └── ActivityType.php
 ├── Http/
 │   ├── Controllers/
 │   │   ├── Admin/      # Panel administrador
@@ -51,9 +53,11 @@ app/
 ├── Models/             # Modelos Eloquent
 ├── Policies/           # Policies de autorizacion
 ├── Services/           # Logica de negocio reutilizable
+│   ├── Activity/       # Feed de actividad
 │   ├── Ai/             # Servicio de IA configurable
 │   ├── Mcp/            # MCP server logic
-│   └── Notifications/  # Servicios de notificacion
+│   ├── Notifications/  # Servicios de notificacion
+│   └── TimeTracking/   # Registro de tiempo
 └── ViewModels/         # ViewModels para vistas complejas
 ```
 
@@ -78,7 +82,11 @@ app/
 /admin/projects/{project}/documents → Documentos
 /admin/projects/{project}/chat  → Chat admin
 /admin/projects/{project}/calendar → Calendario
+/admin/projects/{project}/time  → Registro de tiempo
+/admin/projects/{project}/activity → Feed de actividad
+/admin/projects/{project}/attachments/{file} → Descargar adjunto
 /admin/agent-templates           → Templates agentes IA
+/admin/project-templates         → Plantillas de proyecto
 /admin/settings/ai              → Config IA
 
 # Portal (/portal/*)
@@ -89,6 +97,8 @@ app/
 /portal/projects/{project}/documents → Docs publicas
 /portal/projects/{project}/chat → Chat cliente
 /portal/projects/{project}/ai   → Chat IA
+/portal/projects/{project}/activity → Feed actividad cliente
+/portal/projects/{project}/time → Resumen de horas
 /portal/calendar                 → Calendario cliente
 
 # MCP (/api/mcp/*)
@@ -99,8 +109,12 @@ app/
 ## Permisos
 
 - **Admin**: acceso total a todo.
-- **Client**: solo puede ver organizaciones donde es miembro, proyectos de esas organizaciones, documentos publicos, tareas asignadas, mensajes de sus proyectos.
+- **Client**: solo puede ver organizaciones donde es miembro, proyectos de esas organizaciones, documentos publicos, tareas asignadas, mensajes de sus proyectos, feed de actividad publico, resumen de horas.
 - Los documentos privados solo son visibles por admin.
+- Los adjuntos solo son descargables por miembros del proyecto.
+- El feed de actividad del cliente solo muestra eventos publicos (task_created, task_completed, document_created, status_changed, message_sent).
+- El registro de tiempo del cliente es solo lectura.
+- Las plantillas de proyecto solo son gestionables por admin.
 - El MCP solo lee, nunca escribe.
 - Toda autorizacion se verifica con Policies de Laravel.
 
@@ -112,7 +126,10 @@ storage/app/clientflow/
 │   └── avatars/
 ├── projects/{project_id}/
 │   ├── documents/
-│   └── media/
+│   ├── media/
+│   └── attachments/
+│       ├── tasks/
+│       └── messages/
 └── avatars/
 ```
 
@@ -155,6 +172,26 @@ Servicios: PHP-FPM 8.4, Nginx 1.27, MySQL 8.4, Node 22.
   - `search_documents` → Buscar en documentos
   - `get_project_status` → Resumen de estado del proyecto
 - Sin capacidad de escritura en MVP.
+
+## Nuevos servicios
+
+### ActivityLogger
+
+Servicio que registra automaticamente eventos del proyecto. Se inyecta en controladores y Livewire components para logging sin acoplamiento:
+
+```php
+app/Services/Activity/ActivityLogger.php
+```
+
+Eventos registrados: task_created, task_completed, task_moved, document_created, document_updated, status_changed, project_created, message_sent.
+
+### TimeTrackingService
+
+Gestiona entradas de tiempo: start/stop timer, entrada manual, calculo de totales por tarea/proyecto/miembro.
+
+```php
+app/Services/TimeTracking/TimeTrackingService.php
+```
 
 ## Codigo
 

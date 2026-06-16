@@ -88,3 +88,6 @@ composer run dev
 ## Licencia
 
 MIT.
+
+## PROMPT comienzo siempre
+Tienes estos agents disponibles @.agents/ y esta es la información del proyecto @docs/ necesito que hagas la primera fase de @TODOs.md"

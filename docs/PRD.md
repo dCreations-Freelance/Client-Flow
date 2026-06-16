@@ -120,11 +120,46 @@ Una Organization agrupa empleados y proyectos. Un cliente puede pertenecer a var
 - Asignar templates a proyectos (copia del config).
 - Exportar config de agente para uso en IDEs.
 
+### Fase 10: Adjuntos en tareas y mensajes
+
+- Archivos adjuntos en tareas (task_attachments) y mensajes del chat (message_attachments).
+- Subida drag & drop o boton en creacion de tarea y en el chat.
+- Archivos servidos mediante controlador con autorizacion (nunca desde public/).
+- Tipos MIME y tamano maximo configurables por el admin.
+
+### Fase 11: Registro de tiempo
+
+- Entradas de tiempo por tarea (time_entries): descripcion, minutos, tipo (manual/timer).
+- Temporizador start/stop en el detalle de la tarea.
+- Dashboard de horas por proyecto, miembro y tarea.
+- Flag `billed` para marcar entradas como facturables.
+- Cliente puede ver resumen de horas en el portal (solo lectura).
+
+### Fase 12: Plantillas de proyecto
+
+- Biblioteca de plantillas reutilizables (project_templates).
+- Cada plantilla contiene: columnas predefinidas, tareas tipo y documentos esqueleto.
+- Al crear un proyecto, opcion "Desde plantilla" que copia todo.
+- Categorias para organizar las plantillas.
+
+### Fase 13: Feed de actividad
+
+- Log cronologico de toda la actividad del proyecto: tareas creadas/completadas, documentos subidos, cambios de estado, mensajes.
+- Visible por proyecto tanto en admin como en portal (eventos publicos).
+- Implementado como servicio `ActivityLogger` que se llama desde controladores y Livewire.
+- Carga infinita o paginada.
+
 ### Transversal: Notificaciones
 
 - In-app: badge en sidebar, lista de notificaciones.
 - Email: resumen diario, mensajes nuevos, deadline cercano.
 - Database notifications de Laravel.
+
+### Transversal: Visto/leido en chat
+
+- Pivot `message_reads` que registra que usuarios han leido cada mensaje.
+- Doble check visual en burbujas propias: icono de check solitario (enviado) y doble check (leido).
+- Marcar como leidos automaticamente al abrir el chat via polling.
 
 ## 5. Lo que NO entra en el MVP
 
@@ -158,11 +193,15 @@ El MVP estara listo cuando:
 3. Admin puede gestionar tareas en un kanban vitaminado.
 4. Admin puede crear documentacion privada y publica por proyecto.
 5. Cliente puede ver sus proyectos, tareas, documentos publicos.
-6. Chat por proyecto funciona entre admin y clientes.
+6. Chat por proyecto funciona entre admin y clientes, con envio de adjuntos e indicador de leido.
 7. MCP server permite consultar proyectos, tareas y docs privadas desde un IDE.
 8. Cliente puede usar el asistente IA para consultar estado de su proyecto.
 9. Calendario muestra eventos y deadlines.
 10. PWA permita instalar la app en movil.
+11. Admin puede adjuntar archivos a tareas y mensajes del chat.
+12. Admin puede registrar tiempo en tareas (temporizador y manual) y ver dashboard de horas.
+13. Admin puede crear y reutilizar plantillas de proyecto con columnas, tareas y documentos.
+14. Cada proyecto muestra un feed de actividad con todos los eventos cronologicamente.
 
 ## 8. Filosofia
 

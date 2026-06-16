@@ -393,6 +393,101 @@ Variantes:
     Se creo la tarea "Implementar login"
   </div>
 </div>
+
+<!-- Mensaje con adjunto -->
+<div class="flex justify-start">
+  <div class="max-w-[70%] bg-white border border-[#E7E2D8] rounded-2xl rounded-bl-sm px-4 py-2.5">
+    <p class="text-sm text-[#111827]">Te envio el diseno actualizado</p>
+    <div class="flex items-center gap-2 mt-2 px-3 py-2 bg-[#FAFAF7] rounded-lg border border-[#E7E2D8]">
+      <span class="text-sm text-[#6B7280]">📎</span>
+      <div class="min-w-0 flex-1">
+        <span class="block text-xs font-medium text-[#111827] truncate">diseno-final-v2.pdf</span>
+        <span class="block text-[10px] text-[#9CA3AF]">2.4 MB</span>
+      </div>
+      <button class="shrink-0 text-[#2563EB] hover:text-[#1D4ED8]">
+        <span class="text-xs font-medium">Descargar</span>
+      </button>
+    </div>
+    <div class="flex items-center justify-between mt-1">
+      <span class="text-[10px] text-[#9CA3AF]">10:28</span>
+      <!-- Check de leido -->
+      <span class="text-[10px] text-[#2563EB]">✓✓</span>
+    </div>
+  </div>
+</div>
+```
+
+### Chat bubble - indicador de leido
+
+```html
+<!-- Check solitario (enviado, no leido) -->
+<span class="text-[10px] text-[#9CA3AF]">✓</span>
+
+<!-- Doble check (leido) -->
+<span class="text-[10px] text-[#2563EB]">✓✓</span>
+```
+
+### Adjunto en tarea (detalle)
+
+```html
+<div class="flex items-center gap-3 px-4 py-3 bg-white rounded-lg border border-[#E7E2D8] hover:border-[#D8D0C3] transition-colors">
+  <div class="w-10 h-10 rounded-lg bg-[#F4F1EA] flex items-center justify-center text-sm text-[#6B7280]">
+    📄
+  </div>
+  <div class="min-w-0 flex-1">
+    <span class="block text-sm font-medium text-[#111827] truncate">documento-tecnico.pdf</span>
+    <span class="block text-xs text-[#6B7280]">Subido por Daniel · 2.4 MB · hace 2h</span>
+  </div>
+  <div class="flex items-center gap-2 shrink-0">
+    <button class="text-[#6B7280] hover:text-[#111827] transition-colors">
+      <!-- Icono descargar -->
+    </button>
+    <button class="text-[#DC2626] hover:text-[#B91C1C] transition-colors">
+      <!-- Icono eliminar -->
+    </button>
+  </div>
+</div>
+```
+
+### Temporizador (registro de tiempo)
+
+```html
+<div class="flex items-center gap-3 px-4 py-3 bg-white rounded-lg border border-[#E7E2D8]">
+  <div class="flex items-center gap-1.5">
+    <span class="w-2 h-2 rounded-full bg-[#DC2626] animate-pulse"></span>
+    <span class="text-lg font-semibold text-[#111827] tabular-nums">01:23:45</span>
+  </div>
+  <span class="text-xs text-[#6B7280]">Trabajando en: Implementar login</span>
+  <button class="ml-auto px-3 py-1.5 text-xs font-medium text-white bg-[#DC2626] rounded-lg hover:bg-[#B91C1C] transition-colors">
+    Detener
+  </button>
+</div>
+```
+
+### Feed de actividad
+
+```html
+<div class="flow-root">
+  <ul class="-mb-8">
+    <li>
+      <div class="relative pb-8">
+        <span class="absolute top-5 left-5 -ml-px h-full w-0.5 bg-[#E7E2D8]"></span>
+        <div class="relative flex items-start gap-4">
+          <div class="w-10 h-10 rounded-full bg-[#EFF6FF] flex items-center justify-center shrink-0">
+            <span class="text-sm text-[#2563EB]">✓</span>
+          </div>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm text-[#111827]">
+              <span class="font-medium">Daniel</span> completo la tarea
+              <span class="font-medium">"Implementar login"</span>
+            </p>
+            <span class="text-xs text-[#9CA3AF]">hace 2 horas</span>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
 ```
 
 ### Markdown editor con preview

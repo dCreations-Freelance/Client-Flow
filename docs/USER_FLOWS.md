@@ -237,10 +237,12 @@ Mismos campos que crear.
 
 Muestra:
 - Lista de mensajes (scroll, loading infinito).
-- Input de mensaje en la parte inferior.
+- Input de mensaje en la parte inferior, con boton de adjuntar archivo.
 - Mensajes propios alineados a la derecha (azul), del cliente a la izquierda (blanco).
 - Mensajes de sistema centrados (fondo gris).
 - Indicador de "escribiendo..." del otro lado (polling).
+- Doble check en burbujas propias: un check al enviar, dos checks cuando el destinatario lo ha leido.
+- Mensajes con adjuntos: icono + nombre del archivo + tamano, click para descargar.
 - Auto-scroll al BOTTOM on load y on new message.
 
 #### Enviar mensaje
@@ -249,8 +251,15 @@ Muestra:
 
 Campos:
 - Contenido (required, textarea con enviar en Enter).
+- Adjunto (optional, file upload con drag & drop).
 
 Se genera mensaje de sistema automatico si es la primera vez que el admin escribe en el chat del proyecto.
+
+#### Visto/leido
+
+Los mensajes se marcan como leidos automaticamente via polling cuando el destinatario tiene el chat abierto. La tabla `message_reads` registra que usuario leyo cada mensaje y cuando. En la UI:
+- Check solitario (enviado): el mensaje se entrego al servidor.
+- Doble check (leido): al menos un miembro del proyecto distinto del autor ha leido el mensaje.
 
 ### Calendario
 
@@ -323,6 +332,80 @@ Campos:
 
 Se puede sobrescribir por proyecto en la configuracion del proyecto.
 
+### Registro de tiempo
+
+**Ruta**: `GET /admin/projects/{project}/time`
+
+Muestra:
+- Dashboard con total de horas registradas por proyecto, desglosado por miembro y por tarea.
+- Lista de entradas de tiempo recientes (usuario, tarea, descripcion, minutos, facturado).
+- Boton "Nueva entrada manual".
+
+#### Crear entrada manual
+
+**Modal**: desde la vista de tiempo o desde el detalle de tarea.
+
+Campos:
+- Tarea (select, required).
+- Descripcion (optional).
+- Minutos (required, integer).
+- Facturable (checkbox, default: false).
+
+#### Temporizador
+
+Desde el detalle de la tarea:
+- Boton "Iniciar timer": crea una entrada de tipo `timer` con `started_at`.
+- Boton "Detener timer": calcula los minutos transcurridos y cierra la entrada.
+- Se muestra un contador en vivo mientras el timer esta activo.
+
+### Plantillas de proyecto
+
+**Ruta**: `GET /admin/project-templates`
+
+Muestra:
+- Grid de plantillas disponibles: nombre, categoria, descripcion.
+- Boton "Nueva plantilla".
+- Filtro por categoria.
+
+#### Crear plantilla
+
+**Ruta**: `GET /admin/project-templates/create` → vista, `POST /admin/project-templates` → crea
+
+Campos:
+- Nombre (required).
+- Descripcion (optional).
+- Categoria (optional, text): e.g. "web", "mobile", "design".
+- Estado por defecto (planning/in_progress).
+
+Despues de crear, se configuran:
+- **Columnas**: anadir/editar/eliminar columnas con nombre, color y orden.
+- **Tareas**: anadir tareas predefinidas asignadas a una columna (por slug).
+- **Documentos**: anadir documentos esqueleto con titulo, contenido markdown y visibilidad.
+
+#### Crear proyecto desde plantilla
+
+En la pagina de crear proyecto, un selector de plantilla:
+1. Seleccionar plantilla del dropdown.
+2. Los campos se auto-rellenan (nombre, descripcion).
+3. Al guardar, se crea el proyecto con las columnas, tareas y documentos de la plantilla.
+
+### Feed de actividad
+
+**Ruta**: `GET /admin/projects/{project}/activity`
+
+Muestra:
+- Timeline cronologico descendente con todas las acciones del proyecto.
+- Cada entrada muestra: icono por tipo, descripcion legible ("Juan creo la tarea Login"), usuario, hace cuanto tiempo.
+- Tipos de evento: task_created, task_completed, task_moved, task_reopened, document_created, document_updated, status_changed, project_created, message_sent.
+- Los eventos del admin son visibles para el cliente solo si son de tipo publico (no cambios internos de configuracion).
+- Carga infinita al scrollear hacia arriba.
+
+### Chat
+
+**Ruta**: `GET /portal/projects/{project}/chat`
+
+Igual que admin. El cliente puede enviar mensajes de texto. Los mensajes de sistema son informativos.
+
 ---
 
 ## Portal (Cliente)
@@ -380,7 +463,11 @@ Solo muestra documentos con `visibility = public`. No hay seccion de privados.
 
 **Ruta**: `GET /portal/projects/{project}/chat`
 
-Igual que admin. El cliente puede enviar mensajes de texto. Los mensajes de sistema son informativos.
+Igual que admin. El cliente puede enviar mensajes de texto y adjuntar archivos. Los mensajes de sistema son informativos. El doble check de leido tambien aplica (el cliente ve cuando el admin ha leido sus mensajes).
+
+### Adjuntos
+
+**Descarga**: los archivos adjuntos se sirven mediante controlador con autorizacion en la ruta `/admin/projects/{project}/attachments/{attachment}` o `/portal/projects/{project}/attachments/{attachment}`. Solo miembros del proyecto pueden descargar adjuntos.
 
 ### IA Asistente
 
@@ -398,6 +485,18 @@ Muestra:
 **Ruta**: `GET /portal/calendar`
 
 Vista consolidada de todos los eventos del cliente (de todos sus proyectos). Igual UI que admin pero sin boton crear.
+
+### Registro de tiempo
+
+**Ruta**: `GET /portal/projects/{project}/time`
+
+Vista de solo lectura con el resumen de horas del proyecto: total horas, horas por miembro, horas facturadas. El cliente no puede crear ni modificar entradas.
+
+### Feed de actividad
+
+**Ruta**: `GET /portal/projects/{project}/activity`
+
+Misma vista timeline que admin pero filtrando solo eventos publicos: tareas creadas/completadas, documentos publicados, cambios de estado. Oculta eventos internos como cambios de configuracion.
 
 ---
 

@@ -2,10 +2,10 @@
 
 ## Pre-requisito: Reset del proyecto
 
-- [ ] Ejecutar cleanup segun `docs/CLEANUP.md` para dejar Laravel vacio
-- [ ] Verificar que `php artisan serve` arranca sin errores
-- [ ] Verificar que Docker arranca con `docker compose up -d --build`
-- [ ] Verificar que solo existen las rutas默认 (`/`, `/up`)
+- [x] Ejecutar cleanup segun `docs/CLEANUP.md` para dejar Laravel vacio
+- [x] Verificar que `php artisan serve` arranca sin errores
+- [x] Verificar que Docker arranca con `docker compose up -d --build`
+- [x] Verificar que solo existen las rutas por defecto (`/`, `/up`)
 
 ---
 
@@ -13,60 +13,60 @@
 
 ### Auth y roles
 
-- [ ] Crear enum `UserRole` con `admin` y `client`
-- [ ] Anadir campo `role` a migracion `users` (default `client`, indexed)
-- [ ] Crear middleware `EnsureUserIsAdmin`
-- [ ] Crear middleware `EnsureUserIsClient`
-- [ ] Registrar middleware aliases en `bootstrap/app.php`
-- [ ] Implementar login con redireccion por rol
-- [ ] Implementar registro (solo role `client`)
-- [ ] Implementar recuperacion de password
-- [ ] Crear layout `auth` (centrado, limpio)
-- [ ] Crear layout `admin` (sidebar + header)
-- [ ] Crear layout `portal` (sidebar + header, estilo cliente)
-- [ ] Crear vista `login`
-- [ ] Crear vista `register`
-- [ ] Crear vista `password.request`
-- [ ] Crear vista `password.reset`
-- [ ] Proteger rutas `/admin/*` con middleware `admin`
-- [ ] Proteger rutas `/portal/*` con middleware `client`
+- [x] Crear enum `UserRole` con `admin` y `client`
+- [x] Anadir campo `role` a migracion `users` (default `client`, indexed)
+- [x] Crear middleware `EnsureUserIsAdmin`
+- [x] Crear middleware `EnsureUserIsClient`
+- [x] Registrar middleware aliases en `bootstrap/app.php`
+- [x] Implementar login con redireccion por rol
+- [x] Implementar registro (solo role `client`)
+- [x] Implementar recuperacion de password
+- [x] Crear layout `auth` (centrado, limpio)
+- [x] Crear layout `admin` (sidebar + header)
+- [x] Crear layout `portal` (sidebar + header, estilo cliente)
+- [x] Crear vista `login`
+- [x] Crear vista `register`
+- [x] Crear vista `password.request`
+- [x] Crear vista `password.reset`
+- [x] Proteger rutas `/admin/*` con middleware `admin`
+- [x] Proteger rutas `/portal/*` con middleware `client`
 
 ### Organizations
 
-- [ ] Crear migracion `organizations`
-- [ ] Crear migracion `organization_user` (pivot con role)
-- [ ] Crear migracion `organization_invitations`
-- [ ] Crear modelo `Organization` con relaciones
-- [ ] Crear modelo `OrganizationInvitation` con relaciones
-- [ ] Crear CRUD organizaciones (admin)
-- [ ] Crear vista listado de organizaciones (admin)
-- [ ] Crear vista detalle de organizacion (admin)
-- [ ] Implementar invitacion de miembros por email
-- [ ] Crear vista aceptar invitacion
-- [ ] Crear vista miembros de organizacion (admin)
+- [x] Crear migracion `organizations`
+- [x] Crear migracion `organization_user` (pivot con role)
+- [x] Crear migracion `organization_invitations`
+- [x] Crear modelo `Organization` con relaciones
+- [x] Crear modelo `OrganizationInvitation` con relaciones
+- [x] Crear CRUD organizaciones (admin)
+- [x] Crear vista listado de organizaciones (admin)
+- [x] Crear vista detalle de organizacion (admin)
+- [x] Implementar invitacion de miembros por email
+- [x] Crear vista aceptar invitacion
+- [x] Crear vista miembros de organizacion (admin)
 
 ### Dashboards
 
-- [ ] Crear `/admin/dashboard` con organizaciones y proyectos recientes
-- [ ] Crear `/portal/dashboard` con proyectos del cliente
-- [ ] Crear welcome page para usuarios no autenticados
+- [x] Crear `/admin/dashboard` con organizaciones y proyectos recientes
+- [x] Crear `/portal/dashboard` con proyectos del cliente
+- [x] Crear welcome page para usuarios no autenticados
 
 ---
 
 ## Fase 2: Projects
 
-- [ ] Crear migracion `projects`
-- [ ] Crear migracion `project_user` (pivot)
-- [ ] Crear enum `ProjectStatus` (planning, in_progress, on_hold, waiting_client, completed, archived)
-- [ ] Crear modelo `Project` con relaciones
-- [ ] Crear CRUD proyectos (admin, asociados a organizacion)
-- [ ] Crear vista listado de proyectos (admin)
-- [ ] Crear vista detalle de proyecto (admin)
-- [ ] Crear vista listado de proyectos (portal, solo proyectos de sus organizaciones)
-- [ ] Crear vista detalle de proyecto (portal)
-- [ ] Implementar asignacion de miembros a proyecto
-- [ ] Implementar barra de progreso manual
-- [ ] Implementar archivar proyecto
+- [x] Crear migracion `projects`
+- [x] Crear migracion `project_user` (pivot)
+- [x] Crear enum `ProjectStatus` (planning, in_progress, on_hold, waiting_client, completed, archived)
+- [x] Crear modelo `Project` con relaciones
+- [x] Crear CRUD proyectos (admin, asociados a organizacion)
+- [x] Crear vista listado de proyectos (admin)
+- [x] Crear vista detalle de proyecto (admin)
+- [x] Crear vista listado de proyectos (portal, solo proyectos de sus organizaciones)
+- [x] Crear vista detalle de proyecto (portal)
+- [x] Implementar asignacion de miembros a proyecto
+- [x] ~~Implementar barra de progreso manual~~ Implementar barra de progreso (calculada desde tareas completadas vs tareas raiz) — ver `docs/tasks/fase-3.5-ajustes.md`
+- [x] Implementar archivar proyecto
 
 ---
 
@@ -74,42 +74,42 @@
 
 ### Board columns
 
-- [ ] Crear migracion `board_columns`
-- [ ] Crear modelo `BoardColumn` con relaciones
-- [ ] Crear columnas default al crear proyecto (To Do, In Progress, Review, Done)
-- [ ] Permitir personalizar columnas (nombre, color, orden)
-- [ ] Crear vista de gestion de columnas
+- [x] Crear migracion `board_columns`
+- [x] Crear modelo `BoardColumn` con relaciones
+- [x] Crear columnas default al crear proyecto (Por hacer, En curso, En revision, Hecho)
+- [x] Permitir personalizar columnas (nombre, color, orden)
+- [x] Crear vista de gestion de columnas
 
 ### Tasks
 
-- [ ] Crear migracion `tasks`
-- [ ] Crear enum `TaskPriority` (critical, high, medium, low)
-- [ ] Crear enum `TaskType` (feature, bug, improvement, task)
-- [ ] Crear modelo `Task` con relaciones (incluyendo `parent_id` para subtareas)
-- [ ] Crear vista kanban por proyecto (drag & drop con Livewire)
+- [x] Crear migracion `tasks`
+- [x] Crear enum `TaskPriority` (critical, high, medium, low)
+- [x] Crear enum `TaskType` (feature, bug, improvement, task)
+- [x] Crear modelo `Task` con relaciones (incluyendo `parent_id` para subtareas)
+- [x] Crear vista kanban por proyecto (drag & drop con Livewire)
 - [ ] Crear vista lista alternativa por proyecto
-- [ ] Crear/eliminar tareas
-- [ ] Editar tarea (titulo, descripcion, prioridad, tipo, estimacion, fecha limite, asignado)
-- [ ] Mover tareas entre columnas (drag & drop)
-- [ ] Implementar subtareas (parent_id)
-- [ ] Filtros: prioridad, asignado, fecha limite
-- [ ] Vista kanban para portal cliente (solo lectura)
-- [ ] Crear componente Livewire para kanban board
+- [x] Crear/eliminar tareas
+- [x] Editar tarea (titulo, descripcion, prioridad, tipo, estimacion, fecha limite, asignado)
+- [x] Mover tareas entre columnas (drag & drop)
+- [x] Implementar subtareas (parent_id)
+- [x] Filtros: prioridad, asignado, fecha limite
+- [x] Vista kanban para portal cliente (solo lectura)
+- [x] Crear componente Livewire para kanban board
 
 ---
 
 ## Fase 4: Documentation
 
-- [ ] Crear migracion `project_documents`
-- [ ] Crear enum `DocumentVisibility` (private, public)
-- [ ] Crear modelo `ProjectDocument` con relaciones
-- [ ] Crear editor markdown con preview (Livewire)
-- [ ] Crear CRUD documentos (admin: private y public)
-- [ ] Crear listado de documentos por proyecto (admin)
-- [ ] Crear vista documentos publicos por proyecto (portal)
-- [ ] Implementar busqueda de documentos
-- [ ] Documentos `private` solo visibles por admin
-- [ ] Documentos `public` visibles por clientes del proyecto
+- [x] Crear migracion `project_documents`
+- [x] Crear enum `DocumentVisibility` (private, public)
+- [x] Crear modelo `ProjectDocument` con relaciones
+- [x] Crear editor markdown con preview (Livewire)
+- [x] Crear CRUD documentos (admin: private y public)
+- [x] Crear listado de documentos por proyecto (admin)
+- [x] Crear vista documentos publicos por proyecto (portal)
+- [x] Implementar busqueda de documentos
+- [x] Documentos `private` solo visibles por admin
+- [x] Documentos `public` visibles por clientes del proyecto
 
 ---
 
@@ -125,6 +125,10 @@
 - [ ] Implementar notificaciones in-app por mensajes nuevos
 - [ ] Implementar notificaciones email por mensajes nuevos
 - [ ] Indicador de mensajes no leidos por proyecto en sidebar
+- [ ] Implementar doble check de leido (visto) en mensajes
+- [ ] Crear migracion `message_reads` (pivot message_id, user_id, read_at)
+- [ ] Mostrar indicador "Visto" en burbujas propias al ser leido
+- [ ] Marcar mensajes como leidos al abrir el chat (polling)
 
 ---
 
@@ -212,13 +216,76 @@
 
 ---
 
+## Fase 10: Adjuntos en tareas y mensajes
+
+- [ ] Crear migracion `task_attachments`
+- [ ] Crear migracion `message_attachments`
+- [ ] Crear modelo `TaskAttachment` con relaciones
+- [ ] Crear modelo `MessageAttachment` con relaciones
+- [ ] Implementar subida de archivos en creacion/edicion de tarea
+- [ ] Implementar subida de archivos en chat (arrastrar y soltar / boton)
+- [ ] Mostrar lista de adjuntos en detalle de tarea
+- [ ] Mostrar adjuntos en burbujas de chat (icono + nombre + tamano)
+- [ ] Servir archivos mediante controlador con autorizacion
+- [ ] Validar tipos MIME y tamano maximo (configurable)
+- [ ] Implementar eliminacion de adjuntos
+
+---
+
+## Fase 11: Registro de tiempo
+
+- [ ] Crear migracion `time_entries`
+- [ ] Crear modelo `TimeEntry` con relaciones (task, user, project)
+- [ ] Crear enum `TimeEntryType` (manual, timer)
+- [ ] Implementar temporizador start/stop en vista detalle de tarea
+- [ ] Implementar entrada manual de tiempo (descripcion, minutos, fecha)
+- [ ] Crear vista de registro de tiempo por proyecto (admin)
+- [ ] Crear dashboard de horas: total por proyecto, por miembro, por tarea
+- [ ] Marcar entradas como facturables (billed flag)
+- [ ] Vista de resumen de tiempo en portal cliente (solo lectura)
+- [ ] Anadir columna `total_logged_minutes` a `tasks` como cache
+
+---
+
+## Fase 12: Plantillas de proyecto
+
+- [ ] Crear migracion `project_templates`
+- [ ] Crear migracion `project_template_columns`
+- [ ] Crear migracion `project_template_tasks`
+- [ ] Crear migracion `project_template_documents`
+- [ ] Crear modelo `ProjectTemplate` con relaciones
+- [ ] Crear CRUD plantillas (admin)
+- [ ] Crear vista listado de plantillas con filtro por categoria
+- [ ] Implementar asociacion de columnas default a plantilla
+- [ ] Implementar asociacion de tareas predefinidas a plantilla
+- [ ] Implementar asociacion de documentos esqueleto a plantilla
+- [ ] Boton "Crear proyecto desde plantilla" en listado de proyectos
+- [ ] Al crear desde plantilla, copiar columnas, tareas y documentos
+
+---
+
+## Fase 13: Feed de actividad
+
+- [ ] Crear migracion `activity_log`
+- [ ] Crear modelo `ActivityLog` con relaciones polimorficas
+- [ ] Crear enum `ActivityType` (task_created, task_completed, document_updated, status_changed, etc.)
+- [ ] Implementar `ActivityLogger` service para registrar acciones
+- [ ] Registrar actividad automatica: tareas creadas/completadas, docs creadas, estado cambiado, mensajes
+- [ ] Crear componente Livewire `ActivityFeed` por proyecto
+- [ ] Crear vista feed de actividad en detalle de proyecto (admin)
+- [ ] Crear vista feed de actividad en detalle de proyecto (portal, solo eventos visibles)
+- [ ] Paginacion o carga infinita en el feed
+- [ ] Anadir enlace "Ver actividad" en sidebar del proyecto
+
+---
+
 ## Criterios generales
 
-- [ ] Mantener compatibilidad con hosting compartido
-- [ ] No introducir Redis obligatorio
-- [ ] No introducir workers permanentes
-- [ ] No publicar contenido IA automaticamente
-- [ ] Proteger todos los archivos privados mediante autorizacion
-- [ ] Todos los endpoints protegidos con Policies
-- [ ] Tests para cada modulo critico
-- [ ] Docker local funcionando en todo momento
+- [x] Mantener compatibilidad con hosting compartido
+- [x] No introducir Redis obligatorio
+- [x] No introducir workers permanentes
+- [ ] No publicar contenido IA automaticamente (aplica desde fase 7)
+- [x] Proteger todos los archivos privados mediante autorizacion (sin archivos privados aun, aplica desde fase 4)
+- [x] Todos los endpoints protegidos con Policies
+- [x] Tests para cada modulo critico
+- [x] Docker local funcionando en todo momento

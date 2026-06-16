@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\OrganizationController as AdminOrganizationContro
 use App\Http\Controllers\Admin\OrganizationMemberController as AdminOrganizationMemberController;
 use App\Http\Controllers\Admin\ProjectArchiveController as AdminProjectArchiveController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
+use App\Http\Controllers\Admin\ProjectDocumentController as AdminProjectDocumentController;
 use App\Http\Controllers\Admin\ProjectMemberController as AdminProjectMemberController;
 use App\Http\Controllers\Admin\TaskController as AdminTaskController;
 use App\Http\Controllers\Admin\TaskMoveController as AdminTaskMoveController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Portal\DashboardController as PortalDashboardController;
 use App\Http\Controllers\Portal\KanbanController as PortalKanbanController;
 use App\Http\Controllers\Portal\ProjectController as PortalProjectController;
+use App\Http\Controllers\Portal\ProjectDocumentController as PortalProjectDocumentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -126,6 +128,24 @@ Route::middleware(['auth', 'admin'])
             ->name('projects.tasks.complete');
         Route::post('projects/{project}/tasks/{task}/reopen', [AdminTaskController::class, 'reopen'])
             ->name('projects.tasks.reopen');
+
+        // Documentacion: CRUD de documentos del proyecto.
+        // Las acciones del editor se hacen via componente Livewire
+        // (POST PUT a los mismos endpoints).
+        Route::get('projects/{project}/documents', [AdminProjectDocumentController::class, 'index'])
+            ->name('projects.documents.index');
+        Route::get('projects/{project}/documents/create', [AdminProjectDocumentController::class, 'create'])
+            ->name('projects.documents.create');
+        Route::post('projects/{project}/documents', [AdminProjectDocumentController::class, 'store'])
+            ->name('projects.documents.store');
+        Route::get('projects/{project}/documents/{document}', [AdminProjectDocumentController::class, 'show'])
+            ->name('projects.documents.show');
+        Route::get('projects/{project}/documents/{document}/edit', [AdminProjectDocumentController::class, 'edit'])
+            ->name('projects.documents.edit');
+        Route::put('projects/{project}/documents/{document}', [AdminProjectDocumentController::class, 'update'])
+            ->name('projects.documents.update');
+        Route::delete('projects/{project}/documents/{document}', [AdminProjectDocumentController::class, 'destroy'])
+            ->name('projects.documents.destroy');
     });
 
 // ---------------------------------------------------------------------
@@ -148,4 +168,11 @@ Route::middleware(['auth', 'client'])
             ->name('projects.board');
         Route::get('projects/{project}/tasks/{task}', [PortalKanbanController::class, 'showTask'])
             ->name('projects.tasks.show');
+
+        // Documentacion publica del proyecto: solo documentos con
+        // `visibility = public` y proyectos visibles al cliente.
+        Route::get('projects/{project}/documents', [PortalProjectDocumentController::class, 'index'])
+            ->name('projects.documents.index');
+        Route::get('projects/{project}/documents/{document}', [PortalProjectDocumentController::class, 'show'])
+            ->name('projects.documents.show');
     });
