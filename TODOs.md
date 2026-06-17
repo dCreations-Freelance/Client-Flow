@@ -134,18 +134,18 @@
 
 ## Fase 6: MCP Server (solo lectura)
 
-- [ ] Crear ruta `/api/mcp/sse` para endpoint SSE
-- [ ] Crear ruta `/api/mcp/messages` para JSON-RPC
-- [ ] Implementar autenticacion via API tokens (Laravel Sanctum o custom)
-- [ ] Implementar tool `list_projects`
-- [ ] Implementar tool `get_project`
-- [ ] Implementar tool `list_tasks`
-- [ ] Implementar tool `get_task`
-- [ ] Implementar tool `get_documents` (incluye privados)
-- [ ] Implementar tool `search_documents`
-- [ ] Implementar tool `get_project_status`
-- [ ] Crear documentacion de uso del MCP server
-- [ ] Testear conexion desde un IDE con MCP client
+- [x] Crear ruta `/api/mcp/sse` para endpoint SSE
+- [x] Crear ruta `/api/mcp/messages` para JSON-RPC
+- [x] Implementar autenticacion via API tokens (Laravel Sanctum o custom)
+- [x] Implementar tool `list_projects`
+- [x] Implementar tool `get_project`
+- [x] Implementar tool `list_tasks`
+- [x] Implementar tool `get_task`
+- [x] Implementar tool `get_documents` (incluye privados)
+- [x] Implementar tool `search_documents`
+- [x] Implementar tool `get_project_status`
+- [x] Crear documentacion de uso del MCP server
+- [x] Testear conexion desde un IDE con MCP client
 
 ---
 
