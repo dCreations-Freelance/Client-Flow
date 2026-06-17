@@ -118,4 +118,67 @@ class ChatWindowTest extends TestCase
         // Ahora ve los 60.
         $this->assertCount(60, $component->viewData('messages'));
     }
+
+    /**
+     * Al montar el componente se marcan como leidos los mensajes
+     * existentes para el usuario actual.
+     */
+    public function test_marcar_como_leidos_al_montar_componente(): void
+    {
+        [$client, $project] = $this->clientAndProject();
+        ProjectMessage::factory()->count(3)->create(['project_id' => $project->id]);
+
+        Livewire::actingAs($client)
+            ->test(ChatWindow::class, ['project' => $project]);
+
+        $this->assertDatabaseCount('message_reads', 3);
+    }
+
+    /**
+     * El emisor no genera un registro de lectura de si mismo al
+     * enviar un mensaje; el doble check depende de que otros lo
+     * lean.
+     */
+    public function test_enviar_mensaje_no_marca_lectura_del_emisor(): void
+    {
+        [$client, $project] = $this->clientAndProject();
+
+        Livewire::actingAs($client)
+            ->test(ChatWindow::class, ['project' => $project])
+            ->set('newMessage', 'Hola')
+            ->call('sendMessage')
+            ->assertHasNoErrors();
+
+        $this->assertDatabaseCount('message_reads', 0);
+    }
+
+    /**
+     * La propiedad computada indica que un mensaje propio ha sido
+     * leido por otro usuario.
+     */
+    public function test_indicador_visto_activo_cuando_otro_usuario_lee(): void
+    {
+        [$client, $project] = $this->clientAndProject();
+        $other = User::factory()->client()->create();
+        $project->organization->members()->attach($other->id, ['role' => 'member']);
+
+        $message = ProjectMessage::factory()->create([
+            'project_id' => $project->id,
+            'user_id' => $client->id,
+        ]);
+
+        // Antes de que otro usuario lea, el mensaje no esta visto.
+        $component = Livewire::actingAs($client)
+            ->test(ChatWindow::class, ['project' => $project]);
+
+        $this->assertFalse($component->viewData('readMessageIds')[$message->id] ?? false);
+
+        // Simulamos que otro usuario abre el chat y lee el mensaje.
+        Livewire::actingAs($other)
+            ->test(ChatWindow::class, ['project' => $project]);
+
+        // Al re-renderizar como emisor, el mapa refleja la lectura.
+        $component->call('refresh');
+        $this->assertTrue($component->viewData('readMessageIds')[$message->id] ?? false);
+    }
 }

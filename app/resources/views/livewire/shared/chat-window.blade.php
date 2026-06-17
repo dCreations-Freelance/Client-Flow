@@ -82,7 +82,7 @@
             </div>
         @else
             @foreach ($messages as $message)
-                <x-partials.chat-message :message="$message" :currentUserId="$user->id" />
+                <x-partials.chat-message :message="$message" :currentUserId="$user->id" :isReadByOther="(bool) ($readMessageIds[$message->id] ?? false)" />
             @endforeach
         @endif
     </div>

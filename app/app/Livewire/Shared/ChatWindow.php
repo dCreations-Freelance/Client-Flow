@@ -3,6 +3,7 @@
 namespace App\Livewire\Shared;
 
 use App\Enums\MessageType;
+use App\Models\MessageRead;
 use App\Models\Project;
 use App\Models\ProjectChatRead;
 use App\Models\ProjectMessage;
@@ -12,7 +13,6 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
-use Livewire\Attributes\On;
 use Livewire\Component;
 
 /**
@@ -27,6 +27,8 @@ use Livewire\Component;
  * - Polling cada 5s (configurable en la vista con `wire:poll.5s`).
  * - Auto-marca como leidos los mensajes hasta el id mas alto
  *   conocido al recibir el primer poll o al mount.
+ * - Registra lectura individual de cada mensaje en `message_reads`
+ *   para poder mostrar el doble check de "visto".
  * - Al enviar, el mensaje aparece inmediatamente y la vista se
  *   autoscrolla al fondo.
  * - El sistema de notificaciones (in-app + email) se dispara al
@@ -133,6 +135,34 @@ class ChatWindow extends Component
     }
 
     /**
+     * Ids de los mensajes cargados que han sido leidos por alguien
+     * distinto al usuario actual.
+     *
+     * Se calcula con una unica query para evitar N+1 en la vista:
+     * en lugar de preguntar por cada burbuja, pasamos un mapa de
+     * ids y la vista consulta ese mapa en tiempo constante.
+     *
+     * @return array<int, bool>
+     */
+    public function getReadMessageIdsProperty(): array
+    {
+        $messageIds = $this->messages->pluck('id')->all();
+
+        if ($messageIds === []) {
+            return [];
+        }
+
+        $readIds = MessageRead::query()
+            ->whereIn('message_id', $messageIds)
+            ->where('user_id', '!=', $this->user->id)
+            ->distinct()
+            ->pluck('message_id')
+            ->all();
+
+        return array_fill_keys($readIds, true);
+    }
+
+    /**
      * Hook de Livewire: se ejecuta al final del primer render.
      * Lo usamos para marcar como leidos los mensajes existentes
      * en cuanto el usuario ve el chat. Si el chat esta vacio no
@@ -226,6 +256,11 @@ class ChatWindow extends Component
      * Marca los mensajes hasta el mas reciente como leidos para
      * el usuario actual. Es idempotente: si no hay mensajes no
      * crea fila vacia.
+     *
+     * Actualiza dos mecanismos complementarios:
+     * 1. `project_chat_reads`: el contador eficiente de no leidos.
+     * 2. `message_reads`: el pivot individual que permite saber
+     *    quien ha visto cada mensaje (doble check).
      */
     private function markAsRead(): void
     {
@@ -235,6 +270,7 @@ class ChatWindow extends Component
         }
 
         ProjectChatRead::markAsRead($this->project, $this->user, $lastId);
+        MessageRead::markMessagesAsRead($this->project, $this->user, $lastId);
     }
 
     /**
@@ -258,7 +294,7 @@ class ChatWindow extends Component
 
     /**
      * Renderiza la vista del chat pasando los datos que la vista
-     * necesita para pintar mensajes y mensajes cargados.
+     * necesita para pintar mensajes, contadores y estado de lectura.
      */
     public function render(): View
     {
@@ -266,6 +302,7 @@ class ChatWindow extends Component
             'messages' => $this->messages,
             'totalMessages' => $this->totalMessages,
             'unreadCount' => $this->unreadCount,
+            'readMessageIds' => $this->readMessageIds,
         ]);
     }
 }

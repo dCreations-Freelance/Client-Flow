@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Mensaje del chat de un proyecto.
@@ -70,6 +71,17 @@ class ProjectMessage extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Registros de lectura de este mensaje por parte de los
+     * usuarios del proyecto.
+     *
+     * @return HasMany<MessageRead>
+     */
+    public function reads(): HasMany
+    {
+        return $this->hasMany(MessageRead::class, 'message_id');
+    }
+
     // -----------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------
@@ -115,6 +127,36 @@ class ProjectMessage extends Model
     public function isFromUserId(?int $userId): bool
     {
         return $userId !== null && $this->user_id === $userId;
+    }
+
+    /**
+     * Determina si el mensaje ha sido leido por un usuario concreto.
+     *
+     * @param  User  $user
+     * @return bool
+     */
+    public function isReadBy(User $user): bool
+    {
+        return $this->reads()
+            ->where('user_id', $user->id)
+            ->exists();
+    }
+
+    /**
+     * Determina si alguien distinto al emisor ha leido el mensaje.
+     *
+     * Es la condicion que activa el doble check de "visto" en las
+     * burbujas propias. El emisor ya ve su propio mensaje al
+     * enviarlo, asi que no cuenta como lectura de "otro".
+     *
+     * @param  User  $currentUser
+     * @return bool
+     */
+    public function readByAnyoneElse(User $currentUser): bool
+    {
+        return $this->reads()
+            ->where('user_id', '!=', $currentUser->id)
+            ->exists();
     }
 
     // -----------------------------------------------------------------

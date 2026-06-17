@@ -125,10 +125,10 @@
 - [x] Implementar notificaciones in-app por mensajes nuevos
 - [x] Implementar notificaciones email por mensajes nuevos
 - [x] Indicador de mensajes no leidos por proyecto en sidebar
-- [ ] Implementar doble check de leido (visto) en mensajes
-- [ ] Crear migracion `message_reads` (pivot message_id, user_id, read_at)
-- [ ] Mostrar indicador "Visto" en burbujas propias al ser leido
-- [ ] Marcar mensajes como leidos al abrir el chat (polling)
+- [x] Implementar doble check de leido (visto) en mensajes
+- [x] Crear migracion `message_reads` (pivot message_id, user_id, read_at)
+- [x] Mostrar indicador "Visto" en burbujas propias al ser leido
+- [x] Marcar mensajes como leidos al abrir el chat (polling)
 
 ---
 

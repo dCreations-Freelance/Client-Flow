@@ -138,4 +138,30 @@ class ChatViewTest extends TestCase
         $this->assertNotNull($read);
         $this->assertSame($message->id, (int) $read->last_read_message_id);
     }
+
+    /**
+     * Cuando el admin lee un mensaje enviado por el cliente, el
+     * mensaje se marca como visto para el cliente.
+     */
+    public function test_mensaje_cliente_muestra_doble_check_al_ser_leido_por_admin(): void
+    {
+        [$client, $project] = $this->clientAndProject();
+        $admin = User::factory()->admin()->create();
+        $project->organization->members()->attach($admin->id, ['role' => 'owner']);
+
+        $message = ProjectMessage::factory()->create([
+            'project_id' => $project->id,
+            'user_id' => $client->id,
+        ]);
+
+        $this->assertFalse($message->readByAnyoneElse($client));
+
+        // El admin abre el chat y lee el mensaje del cliente.
+        $this->actingAs($admin)
+            ->get(route('admin.projects.chat', $project))
+            ->assertOk();
+
+        $message->refresh();
+        $this->assertTrue($message->readByAnyoneElse($client));
+    }
 }

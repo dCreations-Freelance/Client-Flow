@@ -9,13 +9,15 @@
     Variables esperadas:
         $message: App\\Models\\ProjectMessage
         $currentUserId: int|null  (id del usuario que ve el chat)
+        $isReadByOther: bool     (true si alguien mas ha leido el mensaje)
 
     Uso:
-        <x-partials.chat-message :message="$message" :currentUserId="$user->id" />
+        <x-partials.chat-message :message="$message" :currentUserId="$user->id" :isReadByOther="true" />
 --}}
 @props([
     'message',
     'currentUserId' => null,
+    'isReadByOther' => false,
 ])
 
 @if ($message->isSystem())
@@ -40,8 +42,17 @@
                 @endif
                 <p class="whitespace-pre-line break-words">{{ $message->content }}</p>
             </div>
-            <span class="mt-1 text-[10px] text-[#9CA3AF]">
+            <span class="mt-1 flex items-center gap-1 text-[10px] text-[#9CA3AF]">
                 {{ $message->created_at?->format('d/m H:i') }}
+                @if ($isMine)
+                    @if ($isReadByOther)
+                        {{-- Doble check: alguien mas ha leido el mensaje. --}}
+                        <span title="Visto" class="text-[#2563EB]">✓✓</span>
+                    @else
+                        {{-- Check simple: mensaje enviado pero aun no visto por nadie mas. --}}
+                        <span title="Enviado">✓</span>
+                    @endif
+                @endif
             </span>
         </div>
     </div>

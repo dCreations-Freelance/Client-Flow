@@ -223,4 +223,30 @@ class ChatManagementTest extends TestCase
             ->get(route('admin.projects.chat', $project))
             ->assertRedirect(route('portal.dashboard'));
     }
+
+    /**
+     * Cuando un cliente lee un mensaje enviado por un admin, el
+     * mensaje se marca como visto para el admin.
+     */
+    public function test_mensaje_propio_muestra_doble_check_al_ser_leido(): void
+    {
+        [$admin, $project] = $this->adminAndProject();
+        $client = User::factory()->client()->create();
+        $project->organization->members()->attach($client->id, ['role' => 'member']);
+
+        $message = ProjectMessage::factory()->create([
+            'project_id' => $project->id,
+            'user_id' => $admin->id,
+        ]);
+
+        $this->assertFalse($message->readByAnyoneElse($admin));
+
+        // El cliente abre el chat y lee el mensaje.
+        $this->actingAs($client)
+            ->get(route('portal.projects.chat', $project))
+            ->assertOk();
+
+        $message->refresh();
+        $this->assertTrue($message->readByAnyoneElse($admin));
+    }
 }
