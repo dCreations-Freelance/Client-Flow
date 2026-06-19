@@ -56,8 +56,8 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::get('invitation/{token}', [InvitationAcceptanceController::class, 'show'])->name('invitation.accept');
-Route::post('invitation/{token}', [InvitationAcceptanceController::class, 'store']);
+Route::get('invitacion/{token}', [InvitationAcceptanceController::class, 'show'])->name('invitation.accept');
+Route::post('invitacion/{token}', [InvitationAcceptanceController::class, 'store']);
 
 // ---------------------------------------------------------------------
 // PWA: manifest y service worker
@@ -89,20 +89,20 @@ Route::middleware('auth')
 // ---------------------------------------------------------------------
 
 Route::middleware('guest')->group(function (): void {
-    Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('login', [AuthenticatedSessionController::class, 'store']);
+    Route::get('iniciar-sesion', [AuthenticatedSessionController::class, 'create'])->name('login');
+    Route::post('iniciar-sesion', [AuthenticatedSessionController::class, 'store']);
 
-    Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::get('registro', [RegisteredUserController::class, 'create'])->name('register');
+    Route::post('registro', [RegisteredUserController::class, 'store']);
 
-    Route::get('password/reset', [PasswordResetLinkController::class, 'create'])->name('password.request');
-    Route::post('password/email', [PasswordResetLinkController::class, 'store'])->name('password.email');
+    Route::get('recuperar-contrasena', [PasswordResetLinkController::class, 'create'])->name('password.request');
+    Route::post('recuperar-contrasena', [PasswordResetLinkController::class, 'store'])->name('password.email');
 
-    Route::get('password/reset/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
-    Route::post('password/reset', [NewPasswordController::class, 'store'])->name('password.update');
+    Route::get('recuperar-contrasena/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
+    Route::post('recuperar-contrasena', [NewPasswordController::class, 'store'])->name('password.update');
 });
 
-Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
+Route::post('cerrar-sesion', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 

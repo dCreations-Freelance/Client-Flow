@@ -1,0 +1,12 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "instructions": [
+    ".agents/README.md"
+  ],
+  "references": {
+    "docs": {
+      "path": "docs",
+      "description": "Documentación de producto, arquitectura y modelo de datos de ClientFlow"
+    }
+  }
+}

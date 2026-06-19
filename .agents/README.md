@@ -1,6 +1,7 @@
-# Agentes IA de ClientFlow
+# ClientFlow - Agentes opencode Go
 
-Esta carpeta define agentes de apoyo para desarrollar ClientFlow de forma ordenada. Cada agente tiene un foco concreto, debe leer primero `docs/README.md` y los documentos relevantes dentro de `docs/`, y debe trabajar por modulo, no intentando construir todo el producto de una vez.
+Este directorio contiene las instrucciones compartidas de los agentes.
+Las definiciones formales de cada agente (con frontmatter YAML para opencode Go) están en `.opencode/agents/`.
 
 ## Reglas comunes
 
@@ -12,24 +13,31 @@ Esta carpeta define agentes de apoyo para desarrollar ClientFlow de forma ordena
 - No introducir Redis, workers permanentes ni servicios obligatorios fuera de Docker local.
 - Usar Livewire 4 para toda la UI interactiva. No usar Alpine.js para logica de negocio.
 - Consultar `TODOs.md` para saber que falta por implementar.
-- Escribir el codigo y los comentarios en castellano.
-- Anadir PHPDoc en todo metodo publico: descripcion breve, parametros `@param` y retorno `@return`.
-- Los comentarios deben explicar el "por que", no el "que" (el codigo ya dice el que).
+- Escribir el codigo y los comentarios en castellano. Los comentarios deben ser legibles y explicar el "por que", no el "que" (el codigo ya dice el que).
+- Anadir PHPDoc en todo metodo publico: descripcion breve, `@param` y `@return`.
+- Documentar en `docs/tasks/<fase>.md` todo cambio implementado (nuevas migraciones, modelos, rutas, vistas, componentes), siguiendo el formato existente.
 
-## Agentes disponibles
+## Agentes disponibles (en `.opencode/agents/`)
 
-- `product-architect.md`: convierte documentos de producto en decisiones tecnicas y tareas accionables.
-- `laravel-backend.md`: implementa dominio, modelos, migraciones, policies, servicios y rutas Laravel.
-- `livewire-frontend.md`: implementa pantallas Blade/Livewire manteniendo la experiencia premium del portal.
-- `mcp-server.md`: implementa el MCP server para conexion desde IDEs.
-- `qa-reviewer.md`: revisa riesgos, permisos, pruebas faltantes y regresiones.
-- `devops-docker.md`: mantiene Docker local, variables de entorno y comandos de arranque.
+| Agente | Modo | Descripcion |
+|---|---|---|
+| `product-architect` | subagent | Convierte documentos de producto en decisiones tecnicas y tareas accionables |
+| `laravel-backend` | subagent | Implementa dominio, modelos, migraciones, policies, servicios y rutas Laravel |
+| `livewire-frontend` | subagent | Implementa pantallas Blade/Livewire manteniendo la experiencia premium del portal |
+| `mcp-server` | subagent | Implementa el MCP server para conexion desde IDEs |
+| `qa-reviewer` | subagent | Revisa riesgos, permisos, pruebas faltantes y regresiones |
+| `devops-docker` | subagent | Mantiene Docker local, variables de entorno y comandos de arranque |
 
 ## Flujo recomendado
 
-1. Pedir a `product-architect` que refine el modulo a implementar.
-2. Pedir a `laravel-backend` la base de datos, modelos y permisos.
-3. Pedir a `livewire-frontend` la interfaz.
-4. Pedir a `mcp-server` cuando se llegue a la fase 6.
-5. Pedir a `qa-reviewer` revision antes de cerrar la tarea.
-6. Pedir a `devops-docker` ayuda si falla el entorno local.
+1. `@product-architect` - refina el modulo a implementar.
+2. `@laravel-backend` - implementa base de datos, modelos y permisos.
+3. `@livewire-frontend` - construye la interfaz.
+4. `@mcp-server` - cuando se llegue a la fase 6 del PRD.
+5. `@qa-reviewer` - revision antes de cerrar la tarea.
+6. `@devops-docker` - ayuda si falla el entorno local.
+
+## Uso en opencode Go
+
+Los agentes se invocan con `@<nombre>` en el chat de opencode.
+Ejemplo: `@product-architect analiza la fase 2 y generame las tareas`.
