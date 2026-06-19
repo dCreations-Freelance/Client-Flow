@@ -6,6 +6,7 @@ use App\Enums\DocumentVisibility;
 use App\Enums\TaskPriority;
 use App\Enums\TaskType;
 use App\Models\BoardColumn;
+use App\Models\CalendarEvent;
 use App\Models\Project;
 use App\Models\ProjectDocument;
 use App\Models\ProjectMessage;
@@ -185,5 +186,72 @@ class ProjectActivityLogger
             'content' => $content,
             'type' => \App\Enums\MessageType::System,
         ]);
+    }
+
+    /**
+     * Registra la creacion de un evento en el calendario del
+     * proyecto. El mensaje resultante es legible para humanos y
+     * usa el nombre del actor (admin) que creo el evento.
+     *
+     * @param  \App\Models\Project  $project
+     * @param  \App\Models\CalendarEvent  $event
+     * @param  \App\Models\User  $actor
+     * @return \App\Models\ProjectMessage
+     */
+    public function eventCreated(Project $project, CalendarEvent $event, User $actor): ProjectMessage
+    {
+        return $this->log(
+            $project,
+            sprintf(
+                '%s creo el evento "%s" (%s) en el calendario.',
+                $actor->name,
+                $event->title,
+                $event->type?->label() ?? 'evento',
+            ),
+        );
+    }
+
+    /**
+     * Registra la actualizacion de un evento existente. Se
+     * incluye el titulo para que el chat refleje inmediatamente
+     * que evento cambio, incluso si el titulo se renombro.
+     *
+     * @param  \App\Models\Project  $project
+     * @param  \App\Models\CalendarEvent  $event
+     * @param  \App\Models\User  $actor
+     * @return \App\Models\ProjectMessage
+     */
+    public function eventUpdated(Project $project, CalendarEvent $event, User $actor): ProjectMessage
+    {
+        return $this->log(
+            $project,
+            sprintf(
+                '%s actualizo el evento "%s" del calendario.',
+                $actor->name,
+                $event->title,
+            ),
+        );
+    }
+
+    /**
+     * Registra la eliminacion de un evento. Se recibe el titulo
+     * como string (no el modelo) porque el evento ya no existe
+     * cuando se genera el mensaje.
+     *
+     * @param  \App\Models\Project  $project
+     * @param  string  $eventTitle
+     * @param  \App\Models\User  $actor
+     * @return \App\Models\ProjectMessage
+     */
+    public function eventDeleted(Project $project, string $eventTitle, User $actor): ProjectMessage
+    {
+        return $this->log(
+            $project,
+            sprintf(
+                '%s elimino el evento "%s" del calendario.',
+                $actor->name,
+                $eventTitle,
+            ),
+        );
     }
 }

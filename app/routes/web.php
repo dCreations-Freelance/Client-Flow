@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\Admin\AiChatController as AdminAiChatController;
+use App\Http\Controllers\Admin\AiConfigController as AdminAiConfigController;
 use App\Http\Controllers\Admin\BoardColumnController as AdminBoardColumnController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\KanbanController as AdminKanbanController;
 use App\Http\Controllers\Admin\OrganizationController as AdminOrganizationController;
 use App\Http\Controllers\Admin\OrganizationMemberController as AdminOrganizationMemberController;
 use App\Http\Controllers\Admin\ProjectArchiveController as AdminProjectArchiveController;
+use App\Http\Controllers\Admin\ProjectCalendarController as AdminProjectCalendarController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\ProjectDocumentController as AdminProjectDocumentController;
 use App\Http\Controllers\Admin\ProjectMemberController as AdminProjectMemberController;
@@ -17,11 +20,15 @@ use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Portal\AiChatController as PortalAiChatController;
 use App\Http\Controllers\Portal\DashboardController as PortalDashboardController;
 use App\Http\Controllers\Portal\KanbanController as PortalKanbanController;
+use App\Http\Controllers\Portal\ProjectCalendarController as PortalProjectCalendarController;
 use App\Http\Controllers\Portal\ProjectController as PortalProjectController;
 use App\Http\Controllers\Portal\ProjectDocumentController as PortalProjectDocumentController;
 use App\Http\Controllers\Portal\ProjectMessageController as PortalProjectMessageController;
+use App\Http\Controllers\PwaController;
+use App\Http\Controllers\NotificationsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,6 +58,31 @@ Route::get('/', function () {
 
 Route::get('invitation/{token}', [InvitationAcceptanceController::class, 'show'])->name('invitation.accept');
 Route::post('invitation/{token}', [InvitationAcceptanceController::class, 'store']);
+
+// ---------------------------------------------------------------------
+// PWA: manifest y service worker
+// ---------------------------------------------------------------------
+// Las dos rutas son publicas (sin middleware auth) porque el
+// navegador necesita poder pedir el manifest y registrar el SW
+// incluso antes de que el usuario haya iniciado sesion. Asi se
+// puede "anadir a pantalla de inicio" desde la landing.
+
+Route::get('/manifest.webmanifest', [PwaController::class, 'manifest'])
+    ->name('pwa.manifest');
+Route::get('/sw.js', [PwaController::class, 'serviceWorker'])
+    ->name('pwa.sw');
+
+// ---------------------------------------------------------------------
+// API interna: contadores para el polling de la PWA
+// ---------------------------------------------------------------------
+// Vive en `web.php` (no en `api.php`) para poder usar el
+// middleware `auth` de sesion, que es el que aplica al resto de
+// la app. El cliente lo invoca con `credentials: 'same-origin'`
+// para que la cookie de sesion viaje automaticamente.
+
+Route::middleware('auth')
+    ->get('/api/notifications/unread-count', [NotificationsController::class, 'unreadCount'])
+    ->name('api.notifications.unread-count');
 
 // ---------------------------------------------------------------------
 // Autenticacion: solo accesibles por visitantes (`guest`)
@@ -156,6 +188,29 @@ Route::middleware(['auth', 'admin'])
             ->name('projects.chat');
         Route::post('projects/{project}/messages', [AdminProjectMessageController::class, 'store'])
             ->name('projects.chat.store');
+
+        // Asistente IA por proyecto (admin usa su propio chat
+        // de prueba en cada proyecto).
+        Route::get('projects/{project}/ai', [AdminAiChatController::class, 'index'])
+            ->name('projects.ai');
+        Route::get('projects/{project}/ai/sessions/{session}', [AdminAiChatController::class, 'show'])
+            ->name('projects.ai.show');
+        Route::delete('projects/{project}/ai/sessions/{session}', [AdminAiChatController::class, 'destroy'])
+            ->name('projects.ai.destroy');
+
+        // Configuracion global de IA.
+        Route::get('settings/ai', [AdminAiConfigController::class, 'edit'])
+            ->name('ai.config.edit');
+        Route::put('settings/ai', [AdminAiConfigController::class, 'update'])
+            ->name('ai.config.update');
+        Route::post('settings/ai/test', [AdminAiConfigController::class, 'test'])
+            ->name('ai.config.test');
+
+        // Calendario del proyecto. Toda la interaccion (navegacion,
+        // modal, crear/editar/eliminar) se hace via componente
+        // Livewire; este endpoint solo renderiza la vista.
+        Route::get('projects/{project}/calendar', [AdminProjectCalendarController::class, 'index'])
+            ->name('projects.calendar');
     });
 
 // ---------------------------------------------------------------------
@@ -191,4 +246,19 @@ Route::middleware(['auth', 'client'])
             ->name('projects.chat');
         Route::post('projects/{project}/messages', [PortalProjectMessageController::class, 'store'])
             ->name('projects.chat.store');
+
+        // Asistente IA por proyecto (portal cliente).
+        Route::get('projects/{project}/ai', [PortalAiChatController::class, 'index'])
+            ->name('projects.ai');
+        Route::post('projects/{project}/ai/sessions', [PortalAiChatController::class, 'store'])
+            ->name('projects.ai.sessions.store');
+        Route::get('projects/{project}/ai/sessions/{session}', [PortalAiChatController::class, 'show'])
+            ->name('projects.ai.show');
+        Route::delete('projects/{project}/ai/sessions/{session}', [PortalAiChatController::class, 'destroy'])
+            ->name('projects.ai.destroy');
+
+        // Calendario del proyecto (cliente, solo lectura).
+        // El mismo componente Livewire se monta con readOnly=true.
+        Route::get('projects/{project}/calendar', [PortalProjectCalendarController::class, 'index'])
+            ->name('projects.calendar');
     });

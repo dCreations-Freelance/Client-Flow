@@ -131,4 +131,42 @@ class User extends Authenticatable
     {
         return $this->hasMany(OrganizationInvitation::class, 'created_by');
     }
+
+    /**
+     * Sesiones de chat con el asistente IA iniciadas por este
+     * usuario. Se materializa en fase 7 para resolver el
+     * sidebar de sesiones y limpiar el historial al borrar
+     * un usuario.
+     *
+     * @return HasMany<AiChatSession>
+     */
+    public function aiChatSessions(): HasMany
+    {
+        return $this->hasMany(AiChatSession::class);
+    }
+
+    /**
+     * Eventos de calendario en los que el usuario esta invitado como
+     * asistente. La relacion se mantiene con timestamps para saber
+     * cuando se le anadio a cada evento.
+     *
+     * @return BelongsToMany<CalendarEvent>
+     */
+    public function attendedEvents(): BelongsToMany
+    {
+        return $this->belongsToMany(CalendarEvent::class, 'calendar_event_user')
+            ->withTimestamps();
+    }
+
+    /**
+     * Eventos de calendario creados por este usuario. Pensado para
+     * los administradores, que son los unicos que pueden crear
+     * eventos en MVP, pero la declaracion se mantiene generica.
+     *
+     * @return HasMany<CalendarEvent>
+     */
+    public function createdCalendarEvents(): HasMany
+    {
+        return $this->hasMany(CalendarEvent::class, 'created_by');
+    }
 }

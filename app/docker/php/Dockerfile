@@ -10,6 +10,7 @@ RUN apk add --no-cache \
     $PHPIZE_DEPS \
     && docker-php-ext-install \
     bcmath \
+    gd \
     intl \
     pdo_mysql \
     zip \

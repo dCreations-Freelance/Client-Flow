@@ -151,43 +151,43 @@
 
 ## Fase 7: IA para el cliente
 
-- [ ] Crear migracion `ai_configs`
-- [ ] Crear migracion `ai_chat_sessions`
-- [ ] Crear migracion `ai_chat_messages`
-- [ ] Crear modelo `AiConfig` con API key encriptada
-- [ ] Crear modelo `AiChatSession` y `AiChatMessage`
-- [ ] Crear enum `AiProvider` (openai, anthropic)
-- [ ] Crear enum `AiChatRole` (user, assistant, system)
-- [ ] Crear vista configuracion IA (admin: provider, API key)
-- [ ] Implementar servicio `AiService` con soporte multi-provider
-- [ ] Crear vista chat IA por proyecto (portal)
-- [ ] Inyecto contexto del proyecto en el system prompt (estado, tareas, docs)
-- [ ] Implementar sesiones de chat (crear, continuar, historial)
-- [ ] Rate limiting para evitar abuso
+- [x] Crear migracion `ai_configs`
+- [x] Crear migracion `ai_chat_sessions`
+- [x] Crear migracion `ai_chat_messages`
+- [x] Crear modelo `AiConfig` con API key encriptada
+- [x] Crear modelo `AiChatSession` y `AiChatMessage`
+- [x] Crear enum `AiProvider` (openai, anthropic, Opencode)
+- [x] Crear enum `AiChatRole` (user, assistant, system)
+- [x] Crear vista configuracion IA (admin: provider, API key)
+- [x] Implementar servicio `AiService` con soporte multi-provider
+- [x] Crear vista chat IA por proyecto (portal)
+- [x] Inyecto contexto del proyecto en el system prompt (estado, tareas, docs)
+- [x] Implementar sesiones de chat (crear, continuar, historial)
+- [x] Rate limiting para evitar abuso
 
 ---
 
 ## Fase 8: Calendario
 
-- [ ] Crear migracion `calendar_events`
-- [ ] Crear migracion `calendar_event_user` (asistentes)
-- [ ] Crear enum `CalendarEventType` (meeting, deadline, milestone)
-- [ ] Crear modelos `CalendarEvent` con relaciones
-- [ ] Crear vista calendario mensual/semanal (admin)
-- [ ] Crear vista calendario (portal)
-- [ ] Crear/editar eventos ligados a proyectos
-- [ ] Invitar asistentes a eventos
-- [ ] Implementar notificaciones antes de eventos
+- [x] Crear migracion `calendar_events`
+- [x] Crear migracion `calendar_event_user` (asistentes)
+- [x] Crear enum `CalendarEventType` (meeting, deadline, milestone)
+- [x] Crear modelos `CalendarEvent` con relaciones
+- [x] Crear vista calendario mensual/semanal (admin)
+- [x] Crear vista calendario (portal)
+- [x] Crear/editar eventos ligados a proyectos
+- [x] Invitar asistentes a eventos
+- [x] Implementar notificaciones antes de eventos
 
 ---
 
 ## Fase 9: PWA
 
-- [ ] Crear `manifest.json` con iconos
-- [ ] Crear service worker basico
-- [ ] Implementar cachear vistas estaticas y datos basicos
-- [ ] Implementar install prompt
-- [ ] Push notifications para mensajes y tareas
+- [x] Crear `manifest.json` con iconos
+- [x] Crear service worker basico
+- [x] Implementar cachear vistas estaticas y datos basicos
+- [x] Implementar install prompt
+- [x] Push notifications para mensajes y tareas
 
 ---
 
@@ -284,7 +284,7 @@
 - [x] Mantener compatibilidad con hosting compartido
 - [x] No introducir Redis obligatorio
 - [x] No introducir workers permanentes
-- [ ] No publicar contenido IA automaticamente (aplica desde fase 7)
+- [x] No publicar contenido IA automaticamente (aplica desde fase 7)
 - [x] Proteger todos los archivos privados mediante autorizacion (sin archivos privados aun, aplica desde fase 4)
 - [x] Todos los endpoints protegidos con Policies
 - [x] Tests para cada modulo critico

@@ -3,10 +3,12 @@
 namespace Tests\Unit\Services\Activity;
 
 use App\Enums\DocumentVisibility;
+use App\Enums\CalendarEventType;
 use App\Enums\MessageType;
 use App\Enums\TaskPriority;
 use App\Enums\TaskType;
 use App\Models\BoardColumn;
+use App\Models\CalendarEvent;
 use App\Models\Project;
 use App\Models\ProjectDocument;
 use App\Models\ProjectMessage;
@@ -136,5 +138,51 @@ class ProjectActivityLoggerTest extends TestCase
 
         $this->assertNull($message);
         $this->assertSame(0, ProjectMessage::where('project_id', $project->id)->count());
+    }
+
+    public function test_event_created_crea_mensaje_de_sistema_con_tipo_y_titulo(): void
+    {
+        $project = Project::factory()->create();
+        $event = CalendarEvent::factory()->forProject($project)->create([
+            'title' => 'Lanzamiento MVP',
+            'type' => CalendarEventType::Milestone,
+        ]);
+        $actor = User::factory()->create(['name' => 'Daniel']);
+
+        $message = $this->logger()->eventCreated($project, $event, $actor);
+
+        $this->assertInstanceOf(ProjectMessage::class, $message);
+        $this->assertSame(MessageType::System, $message->type);
+        $this->assertNull($message->user_id);
+        $this->assertStringContainsString('Lanzamiento MVP', $message->content);
+        $this->assertStringContainsString('Hito', $message->content);
+        $this->assertStringContainsString('Daniel', $message->content);
+    }
+
+    public function test_event_updated_incluye_titulo_y_nombre_del_actor(): void
+    {
+        $project = Project::factory()->create();
+        $event = CalendarEvent::factory()->forProject($project)->create([
+            'title' => 'Reunion',
+        ]);
+        $actor = User::factory()->create(['name' => 'Daniel']);
+
+        $message = $this->logger()->eventUpdated($project, $event, $actor);
+
+        $this->assertStringContainsString('actualizo', $message->content);
+        $this->assertStringContainsString('Reunion', $message->content);
+        $this->assertStringContainsString('Daniel', $message->content);
+    }
+
+    public function test_event_deleted_recibe_titulo_como_string(): void
+    {
+        $project = Project::factory()->create();
+        $actor = User::factory()->create(['name' => 'Daniel']);
+
+        $message = $this->logger()->eventDeleted($project, 'Reunion cancelada', $actor);
+
+        $this->assertStringContainsString('elimino', $message->content);
+        $this->assertStringContainsString('Reunion cancelada', $message->content);
+        $this->assertStringContainsString('Daniel', $message->content);
     }
 }
