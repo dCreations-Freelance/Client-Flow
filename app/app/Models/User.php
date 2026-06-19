@@ -169,4 +169,17 @@ class User extends Authenticatable
     {
         return $this->hasMany(CalendarEvent::class, 'created_by');
     }
+
+    /**
+     * Templates de agentes IA creados por este usuario. En MVP
+     * solo el admin los da de alta, pero la relacion se mantiene
+     * generica para que un cliente nunca pueda crear templates
+     * por error (la policy ya lo bloquea).
+     *
+     * @return HasMany<AgentTemplate>
+     */
+    public function agentTemplates(): HasMany
+    {
+        return $this->hasMany(AgentTemplate::class, 'created_by');
+    }
 }

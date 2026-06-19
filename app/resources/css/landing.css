@@ -1,0 +1,681 @@
+/*
+    Estilos especificos de la landing.
+
+    Toda la paleta viene de `docs/DESIGN.md`. Aqui solo se
+    declaran tokens locales para acortar clases, keyframes y
+    utilidades de animacion reutilizables (`.cf-reveal`,
+    `.cf-stagger`, etc.).
+
+    Notas de rendimiento:
+    - Solo se animan `transform` y `opacity` (60fps).
+    - `will-change` se aplica solo durante la animacion.
+    - `prefers-reduced-motion: reduce` desactiva todo lo que
+      pueda distraer.
+*/
+
+:root {
+    --cf-accent: #8B5CF6;
+    --cf-accent-soft: #F5F3FF;
+    --cf-accent-strong: #6D28D9;
+    --cf-ink: #111827;
+    --cf-ink-soft: #6B7280;
+    --cf-ink-muted: #9CA3AF;
+    --cf-line: #E7E2D8;
+    --cf-line-strong: #D8D0C3;
+    --cf-surface: #FFFFFF;
+    --cf-surface-hover: #F4F1EA;
+    --cf-bg: #FAFAF7;
+    --cf-primary: #2563EB;
+    --cf-primary-hover: #1D4ED8;
+    --cf-success: #16A34A;
+    --cf-warning: #D97706;
+    --cf-danger: #DC2626;
+    --cf-shadow-soft: 0 10px 30px rgba(17, 24, 39, 0.05);
+    --cf-shadow-lift: 0 20px 40px rgba(17, 24, 39, 0.08);
+    --cf-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --cf-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* ------------------------------------------------------------------
+   Reveal: entradas suaves en viewport.
+   La clase `.cf-reveal` arranca oculta; `.cf-reveal.is-in` la
+   muestra. El `data-cf-delay` (ms) escalona hermanos.
+------------------------------------------------------------------ */
+.cf-reveal {
+    opacity: 0;
+    transform: translate3d(0, 14px, 0);
+    transition:
+        opacity 0.8s var(--cf-ease-out),
+        transform 0.8s var(--cf-ease-out);
+    will-change: opacity, transform;
+}
+
+.cf-reveal.is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+    will-change: auto;
+}
+
+/* Stagger automatico para hijos directos: el JS solo necesita
+   marcar al padre con `.cf-stagger-in`. */
+.cf-stagger-in > .cf-reveal {
+    transition-delay: 0ms;
+}
+
+.cf-stagger-in > .cf-reveal:nth-child(1) { transition-delay: 0ms; }
+.cf-stagger-in > .cf-reveal:nth-child(2) { transition-delay: 80ms; }
+.cf-stagger-in > .cf-reveal:nth-child(3) { transition-delay: 160ms; }
+.cf-stagger-in > .cf-reveal:nth-child(4) { transition-delay: 240ms; }
+.cf-stagger-in > .cf-reveal:nth-child(5) { transition-delay: 320ms; }
+.cf-stagger-in > .cf-reveal:nth-child(6) { transition-delay: 400ms; }
+.cf-stagger-in > .cf-reveal:nth-child(7) { transition-delay: 480ms; }
+.cf-stagger-in > .cf-reveal:nth-child(8) { transition-delay: 560ms; }
+
+/* Reveal palabra-a-palabra: el JS marca cada palabra con
+   `cf-word` dentro de `.cf-word-reveal` y aplica un delay
+   incremental. */
+.cf-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+    transition:
+        opacity 0.7s var(--cf-ease-out),
+        transform 0.7s var(--cf-ease-out);
+}
+
+.cf-word.is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+/* Reveal lateral (para el split del dual view). */
+.cf-reveal-left {
+    opacity: 0;
+    transform: translate3d(-20px, 0, 0);
+    transition:
+        opacity 0.9s var(--cf-ease-out),
+        transform 0.9s var(--cf-ease-out);
+}
+
+.cf-reveal-right {
+    opacity: 0;
+    transform: translate3d(20px, 0, 0);
+    transition:
+        opacity 0.9s var(--cf-ease-out),
+        transform 0.9s var(--cf-ease-out);
+}
+
+.cf-reveal-left.is-in,
+.cf-reveal-right.is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+/* ------------------------------------------------------------------
+   Hero: cursor spotlight y animacion del kanban simulado.
+------------------------------------------------------------------ */
+.cf-hero-spotlight {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 540px;
+    height: 540px;
+    pointer-events: none;
+    z-index: 1;
+    background: radial-gradient(circle at center, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0) 60%);
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0);
+    transition: opacity 0.5s var(--cf-ease-out);
+}
+
+.cf-hero-spotlight.is-active {
+    opacity: 1;
+}
+
+/* Kanban simulado: una tarea "salta" entre columnas para sugerir
+   movimiento real sin tocar backend. */
+@keyframes cf-kanban-pop {
+    0%, 100% { transform: translate3d(0, 0, 0); }
+    50% { transform: translate3d(0, -3px, 0); }
+}
+
+.cf-kanban-card-live {
+    animation: cf-kanban-pop 3.5s var(--cf-ease-in-out) infinite;
+}
+
+/* Pulso del indicador "live" en el kanban. */
+@keyframes cf-live-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.6); }
+    70% { box-shadow: 0 0 0 6px rgba(22, 163, 74, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(22, 163, 74, 0); }
+}
+
+.cf-live-dot {
+    animation: cf-live-pulse 2s var(--cf-ease-out) infinite;
+}
+
+/* Blobs decorativos del hero: movimiento muy lento, organico.
+   Se desactiva con prefers-reduced-motion. */
+@keyframes cf-blob-drift-1 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    33% { transform: translate3d(40px, -30px, 0) scale(1.08); }
+    66% { transform: translate3d(-20px, 25px, 0) scale(0.96); }
+}
+
+@keyframes cf-blob-drift-2 {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(-50px, 30px, 0) scale(1.05); }
+}
+
+.cf-blob-a {
+    animation: cf-blob-drift-1 18s var(--cf-ease-in-out) infinite;
+}
+
+.cf-blob-b {
+    animation: cf-blob-drift-2 22s var(--cf-ease-in-out) infinite;
+}
+
+/* Contador del hero: cursor parpadeante al lado del numero. */
+@keyframes cf-cursor-blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+.cf-counter-cursor {
+    display: inline-block;
+    width: 3px;
+    height: 0.95em;
+    background: var(--cf-accent);
+    margin-left: 4px;
+    vertical-align: -0.05em;
+    animation: cf-cursor-blink 1s steps(1) infinite;
+}
+
+/* Flash al terminar el contador. El JS anade `is-done` justo
+   despues de pintar el valor final. */
+@keyframes cf-counter-flash {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+.cf-counter.is-done {
+    display: inline-block;
+    animation: cf-counter-flash 0.5s var(--cf-ease-out);
+    transform-origin: center;
+}
+
+/* ------------------------------------------------------------------
+   Header: scroll.
+------------------------------------------------------------------ */
+.cf-header {
+    transition:
+        background-color 0.3s var(--cf-ease-out),
+        border-color 0.3s var(--cf-ease-out),
+        backdrop-filter 0.3s var(--cf-ease-out);
+}
+
+.cf-header.is-scrolled {
+    background-color: rgba(250, 250, 247, 0.85);
+    backdrop-filter: saturate(180%) blur(10px);
+    -webkit-backdrop-filter: saturate(180%) blur(10px);
+    border-bottom: 1px solid var(--cf-line);
+}
+
+/* Link activo en el nav de desktop. El JS aplica `is-active`
+   al link cuya seccion esta en el centro del viewport. */
+.cf-nav-link {
+    position: relative;
+}
+
+.cf-nav-link.is-active {
+    color: var(--cf-ink);
+    background-color: var(--cf-surface-hover);
+}
+
+.cf-nav-link.is-active::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -1px;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--cf-accent);
+    animation: cf-underline-in 0.4s var(--cf-ease-out) forwards;
+}
+
+@keyframes cf-underline-in {
+    from { transform: translateX(-50%) scaleX(0); }
+    to { transform: translateX(-50%) scaleX(1); }
+}
+
+/* ------------------------------------------------------------------
+   Menu mobile: backdrop + panel deslizante + hamburger a X.
+------------------------------------------------------------------ */
+.cf-menu-backdrop {
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+}
+
+.cf-menu-backdrop.is-open {
+    pointer-events: auto;
+    opacity: 1;
+    visibility: visible;
+    background-color: rgba(17, 24, 39, 0.35);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
+.cf-menu-panel {
+    max-height: 0;
+    opacity: 0;
+    transition:
+        max-height 0.4s var(--cf-ease-out),
+        opacity 0.3s var(--cf-ease-out);
+}
+
+.cf-menu-panel.is-open {
+    max-height: 480px;
+    opacity: 1;
+}
+
+/* Stagger de los links al abrir el panel. El JS los prepara
+   con `opacity: 0` y `translate-y` antes de anadir `is-in`. */
+.cf-menu-link {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+    transition:
+        opacity 0.4s var(--cf-ease-out),
+        transform 0.4s var(--cf-ease-out),
+        background-color 0.2s var(--cf-ease-out);
+}
+
+.cf-menu-link.is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+/* Hamburguesa a X: tres barras que se animan. El JS solo
+   tiene que alternar la clase `is-open` del boton. */
+.cf-menu-bars {
+    position: relative;
+    width: 18px;
+    height: 14px;
+    display: block;
+}
+
+.cf-menu-bars > span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition:
+        transform 0.35s var(--cf-ease-out),
+        opacity 0.25s var(--cf-ease-out),
+        top 0.25s var(--cf-ease-out);
+}
+
+.cf-menu-bars > span:nth-child(1) { top: 0; }
+.cf-menu-bars > span:nth-child(2) { top: 6px; }
+.cf-menu-bars > span:nth-child(3) { top: 12px; }
+
+.cf-menu-toggle.is-open .cf-menu-bars > span:nth-child(1) {
+    top: 6px;
+    transform: rotate(45deg);
+}
+
+.cf-menu-toggle.is-open .cf-menu-bars > span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0.3);
+}
+
+.cf-menu-toggle.is-open .cf-menu-bars > span:nth-child(3) {
+    top: 6px;
+    transform: rotate(-45deg);
+}
+
+/* ------------------------------------------------------------------
+   Magnetic CTAs.
+------------------------------------------------------------------ */
+.cf-magnetic {
+    transition: transform 0.25s var(--cf-ease-out);
+    will-change: transform;
+}
+
+.cf-magnetic:hover {
+    transform: translate3d(0, -2px, 0);
+}
+
+/* ------------------------------------------------------------------
+   Bento grid + hover lift + shine effect.
+------------------------------------------------------------------ */
+.cf-bento-card {
+    position: relative;
+    overflow: hidden;
+    transition:
+        transform 0.4s var(--cf-ease-out),
+        box-shadow 0.4s var(--cf-ease-out),
+        border-color 0.4s var(--cf-ease-out);
+}
+
+.cf-bento-card:hover {
+    transform: translate3d(0, -4px, 0);
+    border-color: var(--cf-line-strong);
+    box-shadow: var(--cf-shadow-lift);
+}
+
+.cf-bento-card:active {
+    transform: translate3d(0, -1px, 0) scale(0.995);
+    transition-duration: 0.1s;
+}
+
+/* Shine: una capa con un gradiente lineal que cruza la card
+   en hover. Se aplica como `::after` para no afectar al
+   contenido. Se respeta `prefers-reduced-motion` mas abajo. */
+.cf-bento-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.7) 50%,
+        transparent 70%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.8s var(--cf-ease-out);
+    z-index: 1;
+}
+
+.cf-bento-card:hover::after {
+    transform: translateX(100%);
+}
+
+.cf-bento-card .cf-bento-detail {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+        max-height 0.4s var(--cf-ease-out),
+        opacity 0.4s var(--cf-ease-out);
+}
+
+.cf-bento-card:hover .cf-bento-detail,
+.cf-bento-card:focus-within .cf-bento-detail {
+    max-height: 120px;
+    opacity: 1;
+}
+
+/* Los hijos de la card deben quedar por encima del shine
+   para que el mockup siga siendo legible. */
+.cf-bento-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+/* Card destacada con borde animado: gradiente que rota. */
+.cf-glow-card {
+    position: relative;
+    background: var(--cf-surface);
+    border-radius: 1rem;
+    z-index: 0;
+}
+
+.cf-glow-card::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: conic-gradient(
+        from 0deg,
+        #8B5CF6 0%,
+        #2563EB 25%,
+        #16A34A 50%,
+        #D97706 75%,
+        #8B5CF6 100%
+    );
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.5s var(--cf-ease-out);
+    animation: cf-glow-spin 6s linear infinite;
+    z-index: -1;
+}
+
+.cf-glow-card:hover::before {
+    opacity: 1;
+}
+
+@keyframes cf-glow-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ------------------------------------------------------------------
+   Marquesina horizontal infinita.
+------------------------------------------------------------------ */
+.cf-marquee {
+    display: flex;
+    width: max-content;
+    animation: cf-marquee-scroll 60s linear infinite;
+}
+
+@keyframes cf-marquee-scroll {
+    from { transform: translate3d(0, 0, 0); }
+    to { transform: translate3d(-50%, 0, 0); }
+}
+
+.cf-marquee-pause:hover .cf-marquee {
+    animation-play-state: paused;
+}
+
+/* ------------------------------------------------------------------
+   Typing effect en el bloque MCP.
+------------------------------------------------------------------ */
+.cf-typing::after {
+    content: "▎";
+    color: var(--cf-accent);
+    margin-left: 2px;
+    animation: cf-cursor-blink 1s steps(1) infinite;
+}
+
+/* Cursor del snippet MCP cuando termina de "escribirse". */
+.cf-code-done::after {
+    content: "▎";
+    color: var(--cf-accent);
+    margin-left: 2px;
+    animation: cf-cursor-blink 1s steps(1) infinite;
+}
+
+/* Lineas de codigo aparecen escalonadas. */
+.cf-code-line {
+    opacity: 0;
+    transform: translate3d(-4px, 0, 0);
+    transition:
+        opacity 0.25s var(--cf-ease-out),
+        transform 0.25s var(--cf-ease-out);
+}
+
+.cf-code-line.is-in {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+/* ------------------------------------------------------------------
+   FAQ acordeon: usa el elemento nativo <details>. Solo necesitamos
+   rotar el chevron cuando el bloque esta abierto.
+------------------------------------------------------------------ */
+details.cf-faq summary .cf-faq-chevron {
+    transition: transform 0.3s var(--cf-ease-out);
+}
+
+details.cf-faq[open] summary .cf-faq-chevron {
+    transform: rotate(180deg);
+}
+
+/* ------------------------------------------------------------------
+   Scroll progress.
+------------------------------------------------------------------ */
+.cf-scroll-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(90deg, var(--cf-accent) 0%, var(--cf-primary) 100%);
+    z-index: 60;
+    transition: width 0.1s linear;
+    pointer-events: none;
+    box-shadow: 0 0 8px rgba(139, 92, 246, 0.5);
+}
+
+/* Punto brillante al final de la barra de scroll. */
+.cf-scroll-progress::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cf-accent);
+    transform: translate(50%, -50%);
+    box-shadow: 0 0 12px 2px rgba(139, 92, 246, 0.7);
+    opacity: 0;
+    transition: opacity 0.3s var(--cf-ease-out);
+}
+
+.cf-scroll-progress.is-active::after {
+    opacity: 1;
+}
+
+/* ------------------------------------------------------------------
+   Background: ruido sutil superpuesto. Se aplica al body como
+   capa fija con muy baja opacidad para que cualquier seccion
+   tenga la textura de fondo editorial.
+------------------------------------------------------------------ */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    background-size: 160px 160px;
+}
+
+/* Asegura que el contenido queda por encima de la capa de ruido.
+   Importante: no incluir aqui los elementos con `position: fixed`
+   (cf-scroll-progress, cf-hero-spotlight) porque este selector
+   sobrescribe su posicionamiento y los mete en el flujo del
+   documento, generando espacio vacio invisible al final de la
+   pagina. */
+main, header, footer {
+    position: relative;
+    z-index: 1;
+}
+
+/* ------------------------------------------------------------------
+   Decoraciones: divisor "magazine" entre secciones.
+------------------------------------------------------------------ */
+.cf-section-marker {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cf-ink-soft);
+}
+
+.cf-section-marker::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: var(--cf-ink-soft);
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 0.6s var(--cf-ease-out) 0.2s;
+}
+
+.cf-section-marker.is-in::before {
+    transform: scaleX(1);
+}
+
+/* El numero "01", "02" del marcador aparece con un pequeno
+   "pop" para reforzar la sensacion de "este es el capitulo N". */
+.cf-section-marker > span:first-child {
+    display: inline-block;
+    opacity: 0;
+    transform: translate3d(-4px, 0, 0);
+    transition:
+        opacity 0.5s var(--cf-ease-out) 0.35s,
+        transform 0.5s var(--cf-ease-out) 0.35s;
+}
+
+.cf-section-marker.is-in > span:first-child {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+.cf-section-marker.is-in > span:last-child {
+    opacity: 0;
+    transform: translate3d(-4px, 0, 0);
+    animation: cf-marker-eyebrow 0.5s var(--cf-ease-out) 0.5s forwards;
+}
+
+@keyframes cf-marker-eyebrow {
+    from { opacity: 0; transform: translate3d(-4px, 0, 0); }
+    to { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+/* ------------------------------------------------------------------
+   A11y y reduced motion.
+------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.001ms !important;
+    }
+
+    .cf-reveal,
+    .cf-reveal-left,
+    .cf-reveal-right {
+        opacity: 1;
+        transform: none;
+    }
+
+    .cf-marquee {
+        animation: none;
+    }
+
+    .cf-glow-card::before {
+        animation: none;
+    }
+}
+
+/* Focus visible consistente con DESIGN.md (2px primary ring). */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+    outline: 2px solid var(--cf-primary);
+    outline-offset: 2px;
+    border-radius: 0.5rem;
+}

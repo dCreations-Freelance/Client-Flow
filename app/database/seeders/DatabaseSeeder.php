@@ -196,5 +196,10 @@ class DatabaseSeeder extends Seeder
                 $task2->update(['position' => 1]);
             }
         }
+
+        // Biblioteca de templates de agentes IA. Se carga al
+        // final para que pueda usar el admin ya creado. El
+        // seeder es idempotente y no toca tablas existentes.
+        $this->call(AgentTemplateSeeder::class);
     }
 }

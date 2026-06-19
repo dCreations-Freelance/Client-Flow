@@ -10,6 +10,10 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/pwa.js',
+                // La landing se compila por separado para que su CSS
+                // y JS especificos no contaminen al resto de la app.
+                'resources/css/landing.css',
+                'resources/js/landing.js',
             ],
             refresh: true,
             fonts: [

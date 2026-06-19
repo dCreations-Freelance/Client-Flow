@@ -69,6 +69,13 @@
             </a>
         @endif
 
+        @if (Route::has('admin.agent-templates.index'))
+            <a href="{{ route('admin.agent-templates.index') }}"
+               class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium transition-colors {{ str_starts_with($current, 'admin.agent-templates') ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#6B7280] hover:bg-[#F4F1EA] hover:text-[#111827]' }}">
+                <span>Templates IA</span>
+            </a>
+        @endif
+
         @if (Route::has('admin.ai.config.edit'))
             <a href="{{ route('admin.ai.config.edit') }}"
                class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium transition-colors {{ str_starts_with($current, 'admin.ai') ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#6B7280] hover:bg-[#F4F1EA] hover:text-[#111827]' }}">
@@ -77,7 +84,5 @@
         @endif
 
         <span class="mt-4 px-3 text-xs font-medium uppercase tracking-wider text-[#9CA3AF]">Pronto</span>
-
-        <span class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium text-[#9CA3AF]">Plantillas IA</span>
     </nav>
 </aside>

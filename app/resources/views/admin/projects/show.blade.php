@@ -105,6 +105,12 @@
                         </a>
                     @endif
 
+                    @if (Route::has('admin.projects.agents.index'))
+                        <a href="{{ route('admin.projects.agents.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#F4F1EA]">
+                            Agentes
+                        </a>
+                    @endif
+
                     <a href="{{ route('admin.projects.edit', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#F4F1EA]">
                         Editar
                     </a>

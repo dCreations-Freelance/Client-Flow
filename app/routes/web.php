@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AiChatController as AdminAiChatController;
 use App\Http\Controllers\Admin\AiConfigController as AdminAiConfigController;
+use App\Http\Controllers\Admin\AgentTemplateController as AdminAgentTemplateController;
 use App\Http\Controllers\Admin\BoardColumnController as AdminBoardColumnController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\KanbanController as AdminKanbanController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Admin\OrganizationController as AdminOrganizationContro
 use App\Http\Controllers\Admin\OrganizationMemberController as AdminOrganizationMemberController;
 use App\Http\Controllers\Admin\ProjectArchiveController as AdminProjectArchiveController;
 use App\Http\Controllers\Admin\ProjectCalendarController as AdminProjectCalendarController;
+use App\Http\Controllers\Admin\ProjectAgentController as AdminProjectAgentController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\ProjectDocumentController as AdminProjectDocumentController;
 use App\Http\Controllers\Admin\ProjectMemberController as AdminProjectMemberController;
@@ -53,7 +55,7 @@ Route::get('/', function () {
             : redirect()->route('portal.dashboard');
     }
 
-    return view('welcome');
+    return view('landing');
 })->name('home');
 
 Route::get('invitacion/{token}', [InvitationAcceptanceController::class, 'show'])->name('invitation.accept');
@@ -205,6 +207,31 @@ Route::middleware(['auth', 'admin'])
             ->name('ai.config.update');
         Route::post('settings/ai/test', [AdminAiConfigController::class, 'test'])
             ->name('ai.config.test');
+
+        // Templates de agentes IA. La biblioteca de prompts y
+        // herramientas que el admin exporta a sus IDEs y asigna
+        // a proyectos. `resource` registra las 7 acciones
+        // canonicas (incluido `create` sin param y `edit` con
+        // el template) y `export` se anade a mano.
+        Route::resource('agent-templates', AdminAgentTemplateController::class)
+            ->names('agent-templates');
+        Route::get('agent-templates/{agent_template}/export', [AdminAgentTemplateController::class, 'export'])
+            ->name('agent-templates.export');
+
+        // Asignacion de agentes a proyectos. Cinco rutas planas
+        // en vez de un resource porque el conjunto de acciones
+        // no es el canonico de un CRUD (no hay show/edit propios,
+        // solo edicion inline del override via `?edit=ID`).
+        Route::get('projects/{project}/agents', [AdminProjectAgentController::class, 'index'])
+            ->name('projects.agents.index');
+        Route::post('projects/{project}/agents', [AdminProjectAgentController::class, 'store'])
+            ->name('projects.agents.store');
+        Route::put('projects/{project}/agents/{agent}', [AdminProjectAgentController::class, 'update'])
+            ->name('projects.agents.update');
+        Route::delete('projects/{project}/agents/{agent}', [AdminProjectAgentController::class, 'destroy'])
+            ->name('projects.agents.destroy');
+        Route::get('projects/{project}/agents/{agent}/export', [AdminProjectAgentController::class, 'export'])
+            ->name('projects.agents.export');
 
         // Calendario del proyecto. Toda la interaccion (navegacion,
         // modal, crear/editar/eliminar) se hace via componente
