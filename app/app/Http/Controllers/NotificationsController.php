@@ -42,13 +42,16 @@ class NotificationsController extends Controller
 
         $messages = $this->countUnreadMessages($user);
         $tasks = $this->countUnreadTasks($user);
+        $notifications = $this->countUnreadNotifications($user);
 
         return response()->json([
             'messages' => $messages,
             'tasks' => $tasks,
-            'total' => $messages + $tasks,
+            'notifications' => $notifications,
+            'total' => $messages + $tasks + $notifications,
             'messages_url' => $this->messagesUrl($user),
             'tasks_url' => $this->tasksUrl($user),
+            'notifications_url' => $this->notificationsUrl($user),
         ]);
     }
 
@@ -119,6 +122,34 @@ class NotificationsController extends Controller
      * asignada. Mismo patron que `messagesUrl`.
      */
     private function tasksUrl(User $user): string
+    {
+        if ($user->isAdmin()) {
+            return route('admin.dashboard');
+        }
+
+        return route('portal.dashboard');
+    }
+
+    /**
+     * Cuenta las notificaciones in-app (tabla `notifications`)
+     * no leidas del usuario. Se calcula con una sola query sobre
+     * la relacion `unreadNotifications` que ya viene preparada en
+     * el modelo `Notifiable`.
+     *
+     * @return int
+     */
+    private function countUnreadNotifications(User $user): int
+    {
+        return $user->unreadNotifications()->count();
+    }
+
+    /**
+     * URL de la campana in-app segun el rol del usuario. Apunta
+     * al dashboard; la campana es accesible desde cualquier
+     * pagina (es un componente del header), asi que la URL real
+     * de cada notificacion la lleva el `url` de su payload.
+     */
+    private function notificationsUrl(User $user): string
     {
         if ($user->isAdmin()) {
             return route('admin.dashboard');

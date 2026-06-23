@@ -9,6 +9,8 @@ use App\Models\Organization;
 use App\Notifications\OrganizationInvitationSent;
 use App\Services\OrganizationInvitationService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Notifications\AnonymousNotifiable;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 
 /**
@@ -72,7 +74,20 @@ class OrganizationMemberController extends Controller
             $request->user(),
         );
 
-        $invitation->notify(new OrganizationInvitationSent($invitation, $rawToken));
+        // La invitacion se envia por email al destinatario, que
+        // todavia no es usuario de ClientFlow, asi que usamos un
+        // `AnonymousNotifiable` con el canal `mail`. No podemos
+        // consultar `preferenceFor()` porque el destinatario no
+        // tiene fila en `users` todavia; el opt-out queda
+        // pendiente de aplicar a la primera vez que el usuario
+        // acepte la invitacion y se cree la cuenta.
+        $notifiable = (new AnonymousNotifiable)
+            ->route('mail', $email);
+
+        Notification::send(
+            $notifiable,
+            new OrganizationInvitationSent($invitation, $rawToken),
+        );
 
         return back()->with('status', 'Invitacion enviada a '.$email.'.');
     }

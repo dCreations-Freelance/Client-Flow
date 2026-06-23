@@ -21,7 +21,12 @@
         <div class="flex flex-1 flex-col">
             <header class="sticky top-0 z-10 flex items-center justify-between border-b border-[#E7E2D8] bg-white/80 px-6 py-4 backdrop-blur lg:px-8">
                 <h1 class="text-lg font-semibold">{{ $title }}</h1>
-                @include('partials.user-menu')
+                <div class="flex items-center gap-3">
+                    @auth
+                        <livewire:shared.notification-bell />
+                    @endauth
+                    @include('partials.user-menu')
+                </div>
             </header>
 
             <main class="flex-1 px-6 py-6 lg:px-8 lg:py-8">

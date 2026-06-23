@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\NotificationEvent;
 use App\Enums\UserRole;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -50,7 +51,9 @@ class User extends Authenticatable
 
     /**
      * Casts de atributos. `role` se castea al enum para que las comparaciones
-     * en policies y middleware sean type-safe.
+     * en policies y middleware sean type-safe. `last_digest_sent_at` se
+     * mantiene como datetime para que el comando `notifications:daily-digest`
+     * pueda comparar contra `now()` directamente.
      *
      * @return array<string, string>
      */
@@ -60,6 +63,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'role' => UserRole::class,
+            'last_digest_sent_at' => 'datetime',
         ];
     }
 
@@ -181,5 +185,60 @@ class User extends Authenticatable
     public function agentTemplates(): HasMany
     {
         return $this->hasMany(AgentTemplate::class, 'created_by');
+    }
+
+    /**
+     * Preferencias de notificacion del usuario. Una fila por evento.
+     * El listener `CreateDefaultNotificationPreferences` siembra las
+     * seis filas por defecto en el alta del usuario, asi que esta
+     * relacion siempre devuelve resultados para usuarios que ya
+     * existian antes de la fase transversal.
+     *
+     * @return HasMany<NotificationPreference>
+     */
+    public function notificationPreferences(): HasMany
+    {
+        return $this->hasMany(NotificationPreference::class);
+    }
+
+    /**
+     * Devuelve la preferencia del usuario para un evento concreto.
+     *
+     * Si el usuario aun no tiene una fila persistida (por ejemplo
+     * si se ha creado antes de la fase y no se ha ejecutado el
+     * seeder de "rellenar defaults"), construye una instancia
+     * transitoria con los defaults del enum. Asi el codigo que
+     * llama no tiene que tratar con nulos.
+     *
+     * La instancia devuelta NO se persiste; es un "valor por
+     * defecto" que se evalua en memoria. Esto es importante: si el
+     * dispatcher persiste esta instancia transitoria estariamos
+     * creando filas vacias en BD.
+     *
+     * @param  NotificationEvent  $event
+     * @return NotificationPreference
+     */
+    public function preferenceFor(NotificationEvent $event): NotificationPreference
+    {
+        $existing = $this->notificationPreferences
+            ->firstWhere('event', $event->value);
+
+        if ($existing !== null) {
+            return $existing;
+        }
+
+        // Construimos una preferencia virtual (no persistida) con
+        // los defaults del enum. Asignamos el user_id para que las
+        // policies que reciben la instancia la reconozcan como
+        // "del usuario actual".
+        $virtual = new NotificationPreference([
+            'user_id' => $this->id,
+            'event' => $event,
+            'in_app' => $event->defaultInApp(),
+            'email' => $event->defaultEmail(),
+        ]);
+        $virtual->exists = false;
+
+        return $virtual;
     }
 }

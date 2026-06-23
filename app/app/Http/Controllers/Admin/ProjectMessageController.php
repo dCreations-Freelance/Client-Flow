@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\NotificationEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Notifications\NewProjectMessage;
+use App\Services\Notifications\NotificationDispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 
 /**
@@ -68,12 +69,15 @@ class ProjectMessageController extends Controller
         \App\Models\ProjectChatRead::markAsRead($project, $user, $message->id);
 
         // Notificamos a los destinatarios (miembros del proyecto
-        // + miembros de la org, excluyendo al emisor).
+        // + miembros de la org, excluyendo al emisor). Pasamos
+        // por el dispatcher para respetar las preferencias por
+        // canal de cada destinatario.
         $recipients = $this->resolveRecipients($project, $user->id);
         if ($recipients->isNotEmpty()) {
-            Notification::send(
+            NotificationDispatcher::dispatchToMany(
                 $recipients,
                 new NewProjectMessage($message, $project, $user),
+                NotificationEvent::NewMessage,
             );
         }
 

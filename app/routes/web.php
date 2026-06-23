@@ -6,6 +6,8 @@ use App\Http\Controllers\Admin\AgentTemplateController as AdminAgentTemplateCont
 use App\Http\Controllers\Admin\BoardColumnController as AdminBoardColumnController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\KanbanController as AdminKanbanController;
+use App\Http\Controllers\Admin\NotificationController as AdminNotificationController;
+use App\Http\Controllers\Admin\NotificationPreferenceController as AdminNotificationPreferenceController;
 use App\Http\Controllers\Admin\OrganizationController as AdminOrganizationController;
 use App\Http\Controllers\Admin\OrganizationMemberController as AdminOrganizationMemberController;
 use App\Http\Controllers\Admin\ProjectArchiveController as AdminProjectArchiveController;
@@ -25,6 +27,8 @@ use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Portal\AiChatController as PortalAiChatController;
 use App\Http\Controllers\Portal\DashboardController as PortalDashboardController;
 use App\Http\Controllers\Portal\KanbanController as PortalKanbanController;
+use App\Http\Controllers\Portal\NotificationController as PortalNotificationController;
+use App\Http\Controllers\Portal\NotificationPreferenceController as PortalNotificationPreferenceController;
 use App\Http\Controllers\Portal\ProjectCalendarController as PortalProjectCalendarController;
 use App\Http\Controllers\Portal\ProjectController as PortalProjectController;
 use App\Http\Controllers\Portal\ProjectDocumentController as PortalProjectDocumentController;
@@ -238,6 +242,19 @@ Route::middleware(['auth', 'admin'])
         // Livewire; este endpoint solo renderiza la vista.
         Route::get('projects/{project}/calendar', [AdminProjectCalendarController::class, 'index'])
             ->name('projects.calendar');
+
+        // Preferencias de notificacion del admin (solo las suyas)
+        // y endpoints JSON para la campana in-app.
+        Route::get('notifications/preferences', [AdminNotificationPreferenceController::class, 'index'])
+            ->name('notifications.preferences');
+        Route::put('notifications/preferences', [AdminNotificationPreferenceController::class, 'update'])
+            ->name('notifications.preferences.update');
+        Route::get('notifications/inbox', [AdminNotificationController::class, 'index'])
+            ->name('notifications.inbox');
+        Route::post('notifications/{notification}/read', [AdminNotificationController::class, 'markAsRead'])
+            ->name('notifications.read');
+        Route::post('notifications/read-all', [AdminNotificationController::class, 'markAllAsRead'])
+            ->name('notifications.read-all');
     });
 
 // ---------------------------------------------------------------------
@@ -288,4 +305,18 @@ Route::middleware(['auth', 'client'])
         // El mismo componente Livewire se monta con readOnly=true.
         Route::get('projects/{project}/calendar', [PortalProjectCalendarController::class, 'index'])
             ->name('projects.calendar');
+
+        // Preferencias de notificacion del cliente y endpoints
+        // JSON para la campana in-app del portal. Mismas rutas
+        // que el admin, con prefijo `portal.`.
+        Route::get('notifications/preferences', [PortalNotificationPreferenceController::class, 'index'])
+            ->name('notifications.preferences');
+        Route::put('notifications/preferences', [PortalNotificationPreferenceController::class, 'update'])
+            ->name('notifications.preferences.update');
+        Route::get('notifications/inbox', [PortalNotificationController::class, 'index'])
+            ->name('notifications.inbox');
+        Route::post('notifications/{notification}/read', [PortalNotificationController::class, 'markAsRead'])
+            ->name('notifications.read');
+        Route::post('notifications/read-all', [PortalNotificationController::class, 'markAllAsRead'])
+            ->name('notifications.read-all');
     });

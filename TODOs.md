@@ -193,26 +193,30 @@
 
 ## Transversal: Agentes IA (templates)
 
-- [ ] Crear migracion `agent_templates`
-- [ ] Crear migracion `project_agents` (pivot)
-- [ ] Crear modelo `AgentTemplate` con relaciones
-- [ ] Crear modelo `ProjectAgent` (pivot con system_prompt_override)
-- [ ] Crear CRUD templates de agentes (admin)
-- [ ] Crear vista biblioteca de templates
-- [ ] Implementar asignar template a proyecto
-- [ ] Implementar exportar config de agente (JSON para uso en IDEs)
+- [x] Crear migracion `agent_templates`
+- [x] Crear migracion `project_agents` (pivot)
+- [x] Crear modelo `AgentTemplate` con relaciones
+- [x] Crear modelo `ProjectAgent` (pivot con system_prompt_override)
+- [x] Crear CRUD templates de agentes (admin)
+- [x] Crear vista biblioteca de templates
+- [x] Implementar asignar template a proyecto
+- [x] Implementar exportar config de agente (JSON para uso en IDEs)
+
+Detalles en `docs/tasks/fase-transversal-agentes-ia.md`.
 
 ---
 
 ## Transversal: Notificaciones
 
-- [ ] Configurar database notifications de Laravel
-- [ ] Implementar notificaciones in-app (badge en sidebar, lista)
-- [ ] Implementar notificaciones email (resumen diario, mensajes nuevos, deadlines)
-- [ ] Notificacion: nuevo mensaje en chat del proyecto
-- [ ] Notificacion: tarea asignada
-- [ ] Notificacion: tarea con deadline cercano
-- [ ] Notificacion: invitacion a organizacion
+- [x] Configurar database notifications de Laravel
+- [x] Implementar notificaciones in-app (badge en sidebar, lista)
+- [x] Implementar notificaciones email (resumen diario, mensajes nuevos, deadlines)
+- [x] Notificacion: nuevo mensaje en chat del proyecto
+- [x] Notificacion: tarea asignada
+- [x] Notificacion: tarea con deadline cercano
+- [x] Notificacion: invitacion a organizacion
+
+Detalles en `docs/tasks/fase-transversal-notificaciones.md`.
 
 ---
 

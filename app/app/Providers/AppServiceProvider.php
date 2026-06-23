@@ -2,12 +2,15 @@
 
 namespace App\Providers;
 
+use App\Listeners\CreateDefaultNotificationPreferences;
 use App\Services\Ai\AiRateLimiter;
 use App\Services\Ai\AiService;
 use App\Services\Ai\ProjectContextBuilder;
 use App\Services\Ai\Providers\AnthropicProvider;
 use App\Services\Ai\Providers\OpenAiProvider;
 use App\Services\Ai\Providers\OpencodeProvider;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -45,6 +48,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Siembra las preferencias de notificacion por defecto
+        // cuando un usuario se registra (alta publica, aceptacion
+        // de invitacion, creacion manual desde admin). Se registra
+        // aqui en lugar de en un EventServiceProvider dedicado
+        // porque Laravel 12 ya no genera ese provider por defecto
+        // y mantener todo el cableado de eventos en un solo sitio
+        // es mas facil de auditar.
+        Event::listen(Registered::class, CreateDefaultNotificationPreferences::class);
     }
 }

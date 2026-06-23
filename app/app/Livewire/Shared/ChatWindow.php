@@ -3,15 +3,16 @@
 namespace App\Livewire\Shared;
 
 use App\Enums\MessageType;
+use App\Enums\NotificationEvent;
 use App\Models\MessageRead;
 use App\Models\Project;
 use App\Models\ProjectChatRead;
 use App\Models\ProjectMessage;
 use App\Models\User;
 use App\Notifications\NewProjectMessage;
+use App\Services\Notifications\NotificationDispatcher;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 use Livewire\Component;
 
@@ -230,11 +231,14 @@ class ChatWindow extends Component
 
         // Notificamos a los destinatarios (todos los miembros del
         // proyecto + miembros de la org, excluyendo al emisor).
+        // Pasamos por el dispatcher para respetar las preferencias
+        // por canal (in-app y email) de cada destinatario.
         $recipients = $this->resolveRecipients($this->user->id);
         if ($recipients->isNotEmpty()) {
-            Notification::send(
+            NotificationDispatcher::dispatchToMany(
                 $recipients,
                 new NewProjectMessage($message, $this->project, $this->user),
+                NotificationEvent::NewMessage,
             );
         }
 

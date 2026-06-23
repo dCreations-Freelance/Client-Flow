@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\NotificationEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreTaskRequest;
 use App\Http\Requests\Admin\UpdateTaskRequest;
 use App\Models\Project;
 use App\Models\Task;
+use App\Notifications\TaskAssigned;
 use App\Services\Activity\ProjectActivityLogger;
+use App\Services\Notifications\NotificationDispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -65,6 +68,20 @@ class TaskController extends Controller
         // Mensaje automatico en el chat del proyecto.
         app(ProjectActivityLogger::class)->taskCreated($project, $task);
 
+        // Si la tarea se ha creado con un assignee, le enviamos
+        // la notificacion de "tarea asignada". Pasamos por el
+        // dispatcher para respetar el opt-out por canal.
+        if (! empty($data['assignee_id']) && (int) $data['assignee_id'] !== (int) $request->user()->id) {
+            $assignee = \App\Models\User::find($data['assignee_id']);
+            if ($assignee !== null) {
+                NotificationDispatcher::dispatch(
+                    $assignee,
+                    new TaskAssigned($task, $project, $request->user()),
+                    NotificationEvent::TaskAssigned,
+                );
+            }
+        }
+
         return back()->with('status', 'Tarea creada.');
     }
 
@@ -104,7 +121,28 @@ class TaskController extends Controller
             }
         }
 
+        // Detectamos el cambio de assignee para disparar la
+        // notificacion solo si el nuevo assignee es distinto al
+        // actual. Asi un update que no toca el assignee (por
+        // ejemplo, solo cambia la prioridad) no vuelve a notificar.
+        $previousAssigneeId = $task->assignee_id !== null ? (int) $task->assignee_id : null;
+        $newAssigneeId = array_key_exists('assignee_id', $data) && $data['assignee_id'] !== null
+            ? (int) $data['assignee_id']
+            : null;
+        $assigneeChanged = $previousAssigneeId !== $newAssigneeId;
+
         $task->update($data);
+
+        if ($assigneeChanged && $newAssigneeId !== null && $newAssigneeId !== (int) $request->user()->id) {
+            $assignee = \App\Models\User::find($newAssigneeId);
+            if ($assignee !== null) {
+                NotificationDispatcher::dispatch(
+                    $assignee,
+                    new TaskAssigned($task->fresh(), $project, $request->user()),
+                    NotificationEvent::TaskAssigned,
+                );
+            }
+        }
 
         return back()->with('status', 'Tarea actualizada.');
     }

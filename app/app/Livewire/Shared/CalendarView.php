@@ -3,6 +3,7 @@
 namespace App\Livewire\Shared;
 
 use App\Enums\CalendarEventType;
+use App\Enums\NotificationEvent;
 use App\Http\Requests\Admin\StoreCalendarEventRequest;
 use App\Models\CalendarEvent;
 use App\Models\Project;
@@ -10,11 +11,11 @@ use App\Models\User;
 use App\Notifications\CalendarEventInvitation;
 use App\Services\Activity\ProjectActivityLogger;
 use App\Services\Calendar\CalendarQueryService;
+use App\Services\Notifications\NotificationDispatcher;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
@@ -337,7 +338,8 @@ class CalendarView extends Component
         }
 
         // Notificamos solo a los attendees invitados que no son
-        // el emisor, para evitar auto-notificaciones.
+        // el emisor, para evitar auto-notificaciones. Pasamos por
+        // el dispatcher para respetar el opt-out por canal.
         $recipients = $this->project->organization?->members()
             ->whereIn('users.id', $attendees)
             ->where('users.id', '!=', $actor->id)
@@ -349,9 +351,10 @@ class CalendarView extends Component
         $recipients = $recipients->merge($projectRecipients)->unique('id');
 
         if ($recipients->isNotEmpty()) {
-            Notification::send(
+            NotificationDispatcher::dispatchToMany(
                 $recipients,
                 new CalendarEventInvitation($event, $this->project, $actor),
+                NotificationEvent::EventInvitation,
             );
         }
 
