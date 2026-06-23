@@ -83,7 +83,7 @@ class TaskDueSoon extends Notification
         $daysLeft = (int) now()->startOfDay()->diffInDays($this->task->due_date, false);
         $when = $daysLeft <= 0
             ? 'hoy'
-            : ($daysLeft === 1 ? 'manana' : sprintf('en %d dias', $daysLeft));
+            : ($daysLeft === 1 ? 'mañana' : sprintf('en %d dias', $daysLeft));
 
         return (new MailMessage)
             ->subject(sprintf('Recordatorio: "%s" vence %s', $this->task->title, $when))

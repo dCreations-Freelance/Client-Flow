@@ -1,125 +1,88 @@
-<x-layouts.portal :title="$project->name">
+<x-layouts.portal :title="$summary->project->name">
     <div class="space-y-6">
-        <a href="{{ route('portal.projects.index') }}" class="inline-flex items-center text-sm text-[#6B7280] hover:text-[#111827]">
-            &larr; Volver al listado
-        </a>
-
-        <x-ui.card>
-            <div class="flex flex-col gap-3">
-                <div class="flex items-center gap-3">
-                    <h1 class="text-2xl font-semibold">{{ $project->name }}</h1>
-                    <x-partials.status-badge :status="$project->status" />
-                </div>
-
-                @if ($project->organization)
-                    <p class="text-sm text-[#6B7280]">
-                        Organizacion: <span class="font-medium text-[#111827]">{{ $project->organization->name }}</span>
-                    </p>
-                @endif
-
-                <div class="mt-2 grid gap-4 sm:grid-cols-3">
-                    <div>
-                        <p class="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Inicio</p>
-                        <p class="mt-1 text-sm text-[#111827]">{{ $project->starts_at?->format('d/m/Y') ?? '—' }}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Fin estimado</p>
-                        <p class="mt-1 text-sm text-[#111827]">{{ $project->estimated_ends_at?->format('d/m/Y') ?? '—' }}</p>
-                    </div>
-                    <div>
-                        <p class="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Equipo</p>
-                        <p class="mt-1 text-sm text-[#111827]">{{ $project->members->count() }} personas</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-6">
-                <p class="mb-1 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Progreso</p>
-                <x-partials.progress-bar :value="$project->tasks_progress_percent" />
-                <p class="mt-2 text-xs text-[#6B7280]">
-                    @if ($project->total_tasks_count === 0)
-                        Sin tareas todavia.
-                    @else
-                        {{ $project->completed_tasks_count }} de {{ $project->total_tasks_count }} tareas completadas.
-                    @endif
-                </p>
-            </div>
-
-            @if (Route::has('portal.projects.board') || Route::has('portal.projects.documents.index') || Route::has('portal.projects.chat'))
-                <div class="mt-6 flex flex-wrap gap-2">
-                    @if (Route::has('portal.projects.board'))
-                        <a href="{{ route('portal.projects.board', $project) }}" class="inline-flex items-center justify-center rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]">
-                            Ver tablero kanban
-                        </a>
-                    @endif
-
-                    @if (Route::has('portal.projects.documents.index'))
-                        <a href="{{ route('portal.projects.documents.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                            Ver documentos
-                        </a>
-                    @endif
-
-                    @if (Route::has('portal.projects.chat'))
-                        <a href="{{ route('portal.projects.chat', $project) }}" class="relative inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                            Chat
-                            @php
-                                $chatUnread = \App\Models\ProjectChatRead::query()
-                                    ->where('project_id', $project->id)
-                                    ->where('user_id', auth()->id())
-                                    ->first();
-                                $unreadQuery = \App\Models\ProjectMessage::where('project_id', $project->id);
-                                if ($chatUnread !== null) {
-                                    $unreadQuery->where('id', '>', (int) $chatUnread->last_read_message_id);
-                                }
-                                $unreadCount = $unreadQuery->count();
-                            @endphp
-                            @if ($unreadCount > 0)
-                                <span class="ml-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#DC2626] px-1.5 text-[10px] font-semibold text-white">
-                                    {{ $unreadCount }}
-                                </span>
-                            @endif
-                        </a>
-                    @endif
-
-                    @if (Route::has('portal.projects.calendar'))
-                        <a href="{{ route('portal.projects.calendar', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                            Ver calendario
-                        </a>
-                    @endif
-
-                    @if (Route::has('portal.projects.ai'))
-                        <a href="{{ route('portal.projects.ai', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                            Asistente IA
-                        </a>
-                    @endif
-                </div>
-            @endif
-        </x-ui.card>
-
-        @if ($project->description)
-            <x-ui.card>
-                <h2 class="text-sm font-semibold">Descripcion</h2>
-                <p class="mt-2 whitespace-pre-line text-sm text-[#111827]">{{ $project->description }}</p>
-            </x-ui.card>
+        @if (session('status'))
+            <x-ui.alert variant="success">{{ session('status') }}</x-ui.alert>
         @endif
 
-        <x-ui.card>
-            <h2 class="text-sm font-semibold">Equipo</h2>
-            <ul class="mt-4 grid gap-3 sm:grid-cols-2">
-                @forelse ($project->members as $member)
-                    <li class="flex items-center gap-3 rounded-lg border border-[#E7E2D8] bg-white p-3">
-                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-[#2563EB] text-xs font-medium text-white">
-                            {{ strtoupper(mb_substr($member->name, 0, 2)) }}
-                        </div>
-                        <div>
-                            <p class="text-sm font-medium text-[#111827]">{{ $member->name }}</p>
-                            <p class="text-xs text-[#6B7280]">{{ $member->email }}</p>
-                        </div>
-                    </li>
-                @empty
-                    <li class="col-span-2 text-center text-sm text-[#6B7280]">Aun no hay miembros asignados al proyecto.</li>
-                @endforelse
-            </ul>
-        </x-ui.card>
+        @php
+            $project = $summary->project;
+            $crumbs = [
+                ['label' => 'Mis organizaciones', 'href' => route('portal.dashboard')],
+                ['label' => $project->organization->name, 'href' => route('portal.organizations.show', $project->organization)],
+                ['label' => $project->name],
+            ];
+        @endphp
+
+        <x-partials.project-hero :project="$project" :crumbs="$crumbs" :unreadMessages="$summary->unreadMessages" :showArchived="false">
+            <x-slot:actions>
+                @if (Route::has('portal.projects.board'))
+                    <a href="{{ route('portal.projects.board', $project) }}" class="inline-flex items-center justify-center rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]">
+                        Ver tablero kanban
+                    </a>
+                @endif
+
+                @if (Route::has('portal.projects.chat'))
+                    <a href="{{ route('portal.projects.chat', $project) }}" class="relative inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                        Chat
+                        @if ($summary->unreadMessages > 0)
+                            <span class="ml-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#DC2626] px-1.5 text-[10px] font-semibold text-white">
+                                {{ $summary->unreadMessages }}
+                            </span>
+                        @endif
+                    </a>
+                @endif
+
+                @if (Route::has('portal.projects.documents.index'))
+                    <a href="{{ route('portal.projects.documents.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                        Ver documentos
+                    </a>
+                @endif
+
+                @if (Route::has('portal.projects.calendar'))
+                    <a href="{{ route('portal.projects.calendar', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                        Ver calendario
+                    </a>
+                @endif
+
+                @if (Route::has('portal.projects.ai'))
+                    <a href="{{ route('portal.projects.ai', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                        Asistente IA
+                    </a>
+                @endif
+            </x-slot:actions>
+        </x-partials.project-hero>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <x-partials.project-stat-tile
+                title="Progreso"
+                :value="$project->tasks_progress_percent.'%'"
+                :sub="$project->completed_tasks_count.' de '.$project->total_tasks_count.' tareas completadas'"
+                :href="Route::has('portal.projects.board') ? route('portal.projects.board', $project) : null"
+                tone="primary"
+            />
+
+            <x-partials.project-stat-tile
+                title="Proxima entrega"
+                :value="$summary->nextDelivery?->format('d/m/Y') ?? '—'"
+                :sub="$summary->nextDeliveryLabel"
+                :tone="$summary->nextDeliveryTone"
+            />
+
+            <x-partials.project-stat-tile
+                title="Mensajes"
+                :value="$summary->unreadMessages"
+                :sub="$summary->unreadMessages > 0 ? 'Tienes mensajes sin leer' : 'Al dia con la conversacion'"
+                :href="Route::has('portal.projects.chat') ? route('portal.projects.chat', $project) : null"
+                :tone="$summary->unreadMessages > 0 ? 'danger' : 'neutral'"
+            />
+
+            <x-partials.project-stat-tile
+                title="Tu equipo"
+                :value="$summary->totalMembers"
+                :sub="$summary->totalMembers === 1 ? 'persona trabajando' : 'personas trabajando'"
+            />
+        </div>
+
+        <x-partials.project-previews :summary="$summary" area="portal" />
     </div>
 </x-layouts.portal>

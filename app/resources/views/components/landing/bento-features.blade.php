@@ -1,11 +1,11 @@
 {{--
-    Bento grid con las funciones principales (seccion 03).
+    Bento grid con las funciones principales (sección 03).
 
     Cada card tiene un mini-mockup representativo. El grid es
-    asimetrico: la card "Kanban vitaminado" ocupa el doble, y
+    asimétrico: la card "Kanban vitaminado" ocupa el doble, y
     "MCP server" tiene borde animado. La idea es que el usuario
     escanee y sienta la variedad del producto sin necesidad de
-    descripcion larga.
+    descripción larga.
 --}}
 <section id="features" class="border-b border-[#E7E2D8] bg-white py-24 sm:py-32" aria-labelledby="cf-features-title">
     <div class="mx-auto max-w-7xl px-6 lg:px-10">
@@ -16,11 +16,11 @@
             class="cf-reveal mt-6 max-w-3xl text-3xl font-semibold leading-[1.1] tracking-[-0.02em] text-[#111827] sm:text-4xl lg:text-5xl"
             data-cf-word-reveal
         >
-            Un unico espacio para todo lo que pasa en un proyecto.
+            Un único espacio para todo lo que pasa en un proyecto.
         </h2>
 
         <p class="cf-reveal mt-5 max-w-2xl text-base leading-7 text-[#6B7280] sm:text-lg">
-            Cada pieza del producto es pequena, honesta y resolutiva. Esto es lo que vive dentro de tu portal.
+            Cada pieza del producto es pequeña, honesta y resolutiva. Esto es lo que vive dentro de tu portal.
         </p>
 
         <div class="cf-stagger-in mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6 lg:auto-rows-[minmax(0,1fr)]">
@@ -31,8 +31,8 @@
                         <span class="inline-flex items-center gap-1.5 rounded-full bg-[#EFF6FF] px-2.5 py-0.5 text-xs font-medium text-[#2563EB]">
                             Kanban
                         </span>
-                        <h3 class="mt-3 text-2xl font-semibold tracking-[-0.01em] text-[#111827]">Vitaminado, no generico.</h3>
-                        <p class="mt-2 max-w-md text-sm leading-6 text-[#6B7280]">Columnas configurables, prioridades, tipo de tarea, estimacion, fechas limite, subtareas y filtros. Arrastrar y soltar, sin configuraciones ocultas.</p>
+                        <h3 class="mt-3 text-2xl font-semibold tracking-[-0.01em] text-[#111827]">Vitaminado, no genérico.</h3>
+                        <p class="mt-2 max-w-md text-sm leading-6 text-[#6B7280]">Columnas configurables, prioridades, tipo de tarea, estimación, fechas límite, subtareas y filtros. Arrastrar y soltar, sin configuraciones ocultas.</p>
                     </div>
                 </div>
 
@@ -43,12 +43,12 @@
                             <div class="rounded-md border border-[#E7E2D8] bg-white p-2 text-[11px]">
                                 <p class="font-medium text-[#111827]">Login con magic link</p>
                                 <div class="mt-1.5 flex items-center justify-between text-[10px]">
-                                    <span class="rounded bg-[#FEF2F2] px-1.5 py-0.5 font-medium text-[#DC2626]">Critica</span>
+                                    <span class="rounded bg-[#FEF2F2] px-1.5 py-0.5 font-medium text-[#DC2626]">Crítica</span>
                                     <span class="text-[#9CA3AF]">4h</span>
                                 </div>
                             </div>
                             <div class="rounded-md border border-[#E7E2D8] bg-white p-2 text-[11px]">
-                                <p class="font-medium text-[#111827]">Filtros de busqueda</p>
+                                <p class="font-medium text-[#111827]">Filtros de búsqueda</p>
                                 <div class="mt-1.5 flex items-center justify-between text-[10px]">
                                     <span class="rounded bg-[#FFFBEB] px-1.5 py-0.5 font-medium text-[#D97706]">Alta</span>
                                     <span class="rounded bg-[#F5F3FF] px-1.5 py-0.5 font-medium text-[#8B5CF6]">Feature</span>
@@ -88,7 +88,7 @@
             {{-- Card 2: Documentos --}}
             <article class="cf-reveal cf-bento-card col-span-1 overflow-hidden rounded-2xl border border-[#E7E2D8] bg-white p-6 lg:col-span-2">
                 <span class="inline-flex items-center gap-1.5 rounded-full bg-[#F5F3FF] px-2.5 py-0.5 text-xs font-medium text-[#8B5CF6]">Documentos</span>
-                <h3 class="mt-3 text-lg font-semibold text-[#111827]">Markdown, privados o publicos.</h3>
+                <h3 class="mt-3 text-lg font-semibold text-[#111827]">Markdown, privados o públicos.</h3>
                 <p class="mt-1.5 text-sm leading-6 text-[#6B7280]">Editor con preview. Lo que es para ti, queda para ti.</p>
 
                 <div class="mt-5 overflow-hidden rounded-lg border border-[#E7E2D8]">
@@ -99,8 +99,8 @@
                     <div class="bg-white p-3 font-mono text-[11px] leading-5 text-[#6B7280]">
                         <p><span class="text-[#8B5CF6]">#</span> Convenios del proyecto</p>
                         <p class="mt-1">- Horario: 9:00 - 18:00 CET</p>
-                        <p>- Canal unico: el portal</p>
-                        <p>- Status semanal automatico</p>
+                        <p>- Canal único: el portal</p>
+                        <p>- Status semanal automático</p>
                     </div>
                 </div>
             </article>
@@ -109,12 +109,12 @@
             <article class="cf-reveal cf-bento-card col-span-1 overflow-hidden rounded-2xl border border-[#E7E2D8] bg-white p-6 lg:col-span-2">
                 <span class="inline-flex items-center gap-1.5 rounded-full bg-[#EFF6FF] px-2.5 py-0.5 text-xs font-medium text-[#2563EB]">Chat</span>
                 <h3 class="mt-3 text-lg font-semibold text-[#111827]">Por proyecto, con visto.</h3>
-                <p class="mt-1.5 text-sm leading-6 text-[#6B7280]">Mensajes, adjuntos, indicador de leido. Polling cada 5s.</p>
+                <p class="mt-1.5 text-sm leading-6 text-[#6B7280]">Mensajes, adjuntos, indicador de leído. Polling cada 5s.</p>
 
                 <div class="mt-5 space-y-2">
                     <div class="flex justify-start">
                         <div class="max-w-[80%] rounded-2xl rounded-bl-sm border border-[#E7E2D8] bg-white px-3 py-2 text-xs text-[#111827]">
-                            Te paso el mockup de la home para revision.
+                            Te paso el mockup de la home para revisión.
                             <div class="mt-1 text-[10px] text-[#9CA3AF]">10:28</div>
                         </div>
                     </div>
@@ -128,7 +128,7 @@
                         </div>
                     </div>
                     <div class="mx-auto w-fit rounded-full bg-[#F4F1EA] px-3 py-0.5 text-[10px] text-[#6B7280]">
-                        Carlos completo "Setup analytics"
+                        Carlos completó "Setup analytics"
                     </div>
                 </div>
             </article>
@@ -170,17 +170,17 @@
             <article class="cf-reveal cf-bento-card col-span-1 overflow-hidden rounded-2xl border border-[#E7E2D8] bg-white p-6 lg:col-span-3">
                 <span class="inline-flex items-center gap-1.5 rounded-full bg-[#F5F3FF] px-2.5 py-0.5 text-xs font-medium text-[#8B5CF6]">Asistente IA</span>
                 <h3 class="mt-3 text-lg font-semibold text-[#111827]">Tu cliente pregunta, la IA responde con contexto.</h3>
-                <p class="mt-1.5 text-sm leading-6 text-[#6B7280]">El system prompt recibe el estado del proyecto, las tareas y los documentos publicos. OpenAI, Anthropic o el provider que prefieras.</p>
+                <p class="mt-1.5 text-sm leading-6 text-[#6B7280]">El system prompt recibe el estado del proyecto, las tareas y los documentos públicos. OpenAI, Anthropic o el provider que prefieras.</p>
 
                 <div class="mt-5 space-y-2">
                     <div class="flex justify-start">
                         <div class="max-w-[85%] rounded-2xl rounded-bl-sm border border-[#E7E2D8] bg-[#FAFAF7] px-3 py-2 text-xs text-[#111827]">
-                            ¿Como va el modulo de citas?
+                            ¿Cómo va el módulo de citas?
                         </div>
                     </div>
                     <div class="flex justify-end">
                         <div class="max-w-[85%] rounded-2xl rounded-br-sm bg-[#8B5CF6] px-3 py-2 text-xs text-white">
-                            Esta al 68%. La integracion con Google Maps la cierran manana y luego toca testing del flujo de confirmacion. Tienes 2 tareas criticas pendientes de tu lado: validar el formulario final y confirmar el copy del email de confirmacion.
+                            Está al 68%. La integración con Google Maps la cierran mañana y luego toca testing del flujo de confirmación. Tienes 2 tareas críticas pendientes de tu lado: validar el formulario final y confirmar el copy del email de confirmación.
                         </div>
                     </div>
                 </div>
@@ -195,7 +195,7 @@
                 <div class="mt-5 overflow-hidden rounded-lg bg-[#111827] p-4 font-mono text-[11px] leading-5 text-[#E7E2D8]">
                     <p><span class="text-[#9CA3AF]">// desde tu IDE</span></p>
                     <p class="mt-1"><span class="text-[#8B5CF6]">mcp</span>.<span class="text-[#2563EB]">get_project_status</span>(<span class="text-[#16A34A]">project_id</span>=42)</p>
-                    <p class="mt-2 text-[#9CA3AF]">→ progreso, tareas abiertas, proximo deadline</p>
+                    <p class="mt-2 text-[#9CA3AF]">→ progreso, tareas abiertas, próximo deadline</p>
                 </div>
             </article>
 
@@ -203,7 +203,7 @@
             <article class="cf-reveal cf-bento-card col-span-1 overflow-hidden rounded-2xl border border-[#E7E2D8] bg-white p-6 lg:col-span-3">
                 <span class="inline-flex items-center gap-1.5 rounded-full bg-[#F4F1EA] px-2.5 py-0.5 text-xs font-medium text-[#6B7280]">PWA</span>
                 <h3 class="mt-3 text-lg font-semibold text-[#111827]">Instalable, con push.</h3>
-                <p class="mt-1.5 text-sm leading-6 text-[#6B7280]">Tu cliente puede anadirla a la pantalla de inicio. Notificaciones push para mensajes y deadlines.</p>
+                <p class="mt-1.5 text-sm leading-6 text-[#6B7280]">Tu cliente puede añadirla a la pantalla de inicio. Notificaciones push para mensajes y deadlines.</p>
 
                 <div class="mt-5 flex items-center gap-3 rounded-xl border border-[#E7E2D8] bg-[#FAFAF7] p-3">
                     <div class="grid h-9 w-9 place-items-center rounded-lg bg-[#111827] text-white">
@@ -213,7 +213,7 @@
                         </svg>
                     </div>
                     <div class="text-xs">
-                        <p class="font-semibold text-[#111827]">Anadir ClientFlow a tu pantalla</p>
+                        <p class="font-semibold text-[#111827]">Añadir ClientFlow a tu pantalla</p>
                         <p class="text-[#6B7280]">Acceso directo, sin abrir el navegador</p>
                     </div>
                 </div>

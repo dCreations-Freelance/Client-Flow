@@ -1,9 +1,9 @@
 {{--
-    Dual view (seccion 04).
+    Dual view (sección 04).
 
     Split-screen que muestra la diferencia entre lo que ve el
     admin y lo que ve el cliente para el MISMO proyecto. La
-    linea central se anima al entrar en viewport. Ambos lados
+    línea central se anima al entrar en viewport. Ambos lados
     aparecen desde direcciones opuestas.
 
     La idea es vender el pitch central: "tu cliente solo ve lo
@@ -18,11 +18,11 @@
             class="cf-reveal mt-6 max-w-3xl text-3xl font-semibold leading-[1.1] tracking-[-0.02em] text-[#111827] sm:text-4xl lg:text-5xl"
             data-cf-word-reveal
         >
-            Tu tienes el control. Tu cliente, la tranquilidad.
+            Tú tienes el control. Tu cliente, la tranquilidad.
         </h2>
 
         <p class="cf-reveal mt-5 max-w-2xl text-base leading-7 text-[#6B7280] sm:text-lg">
-            El portal detecta el rol y muestra solo lo que corresponde. Documentos privados, configuracion y metricas se quedan en tu panel.
+            El portal detecta el rol y muestra solo lo que corresponde. Documentos privados, configuración y métricas se quedan en tu panel.
         </p>
 
         <div class="relative mt-16 grid gap-10 lg:grid-cols-2 lg:gap-16">
@@ -74,7 +74,7 @@
                                 </div>
                                 <div class="rounded-md border border-[#E7E2D8] bg-[#FAFAF7] p-2.5 text-[11px]">
                                     <div class="flex items-center justify-between">
-                                        <span class="font-medium text-[#111827]">Documento publico</span>
+                                        <span class="font-medium text-[#111827]">Documento público</span>
                                         <span class="rounded bg-[#EFF6FF] px-1.5 py-0.5 text-[9px] font-medium text-[#2563EB]">PUBLICO</span>
                                     </div>
                                     <p class="mt-1 text-[#6B7280]">Convenios del proyecto</p>
@@ -97,9 +97,9 @@
                 </div>
 
                 <ul class="mt-6 space-y-2 text-sm text-[#6B7280]">
-                    <li class="flex items-start gap-2"><span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#8B5CF6]"></span> Documentos privados y metricas de tiempo.</li>
-                    <li class="flex items-start gap-2"><span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#8B5CF6]"></span> Drag &amp; drop entre columnas, edicion rapida.</li>
-                    <li class="flex items-start gap-2"><span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#8B5CF6]"></span> Configuracion de IA, agentes y miembros.</li>
+                    <li class="flex items-start gap-2"><span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#8B5CF6]"></span> Documentos privados y métricas de tiempo.</li>
+                    <li class="flex items-start gap-2"><span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#8B5CF6]"></span> Drag &amp; drop entre columnas, edición rápida.</li>
+                    <li class="flex items-start gap-2"><span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#8B5CF6]"></span> Configuración de IA, agentes y miembros.</li>
                 </ul>
             </div>
 
@@ -144,15 +144,15 @@
 
                         <div class="mt-3 flex items-center gap-2 rounded-lg border border-[#E7E2D8] bg-[#FAFAF7] p-2 text-[10px]">
                             <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-[#2563EB] text-[8px] font-semibold text-white">DR</span>
-                            <span class="text-[#6B7280]">Daniel respondio: "Listo, lo reviso manana"</span>
+                            <span class="text-[#6B7280]">Daniel respondio: "Listo, lo reviso mañana"</span>
                         </div>
                     </div>
                 </div>
 
                 <ul class="mt-6 space-y-2 text-sm text-[#6B7280]">
-                    <li class="flex items-start gap-2"><span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#2563EB]"></span> Kanban en solo lectura, documentos publicos.</li>
+                    <li class="flex items-start gap-2"><span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#2563EB]"></span> Kanban en solo lectura, documentos públicos.</li>
                     <li class="flex items-start gap-2"><span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#2563EB]"></span> Chat directo, adjuntos y asistente IA.</li>
-                    <li class="flex items-start gap-2"><span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#2563EB]"></span> Cero configuracion tecnica, instalable como PWA.</li>
+                    <li class="flex items-start gap-2"><span class="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-[#2563EB]"></span> Cero configuración técnica, instalable como PWA.</li>
                 </ul>
             </div>
         </div>

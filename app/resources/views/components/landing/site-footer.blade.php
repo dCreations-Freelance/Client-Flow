@@ -1,6 +1,6 @@
 {{--
     Pie de pagina. Minimal, no compite con el CTA final que ya
-    esta justo encima. Se divide en tres columnas: marca,
+    está justo encima. Se divide en tres columnas: marca,
     producto y legal.
 --}}
 <footer class="border-t border-[#E7E2D8] bg-[#FAFAF7]">
@@ -30,7 +30,7 @@
         <div>
             <h3 class="text-xs font-semibold uppercase tracking-wider text-[#111827]">Recursos</h3>
             <ul class="mt-4 space-y-2.5 text-sm text-[#6B7280]">
-                <li><a href="https://github.com/anomalyco/opencode" rel="noopener" class="transition-colors hover:text-[#111827]">Codigo en GitHub</a></li>
+                <li><a href="https://github.com/anomalyco/opencode" rel="noopener" class="transition-colors hover:text-[#111827]">Código en GitHub</a></li>
                 <li><a href="#faq" class="transition-colors hover:text-[#111827]">Preguntas frecuentes</a></li>
                 <li><a href="{{ route('register') }}" class="transition-colors hover:text-[#111827]">Crear cuenta</a></li>
             </ul>
@@ -38,7 +38,7 @@
 
         <div>
             <h3 class="text-xs font-semibold uppercase tracking-wider text-[#111827]">Licencia</h3>
-            <p class="mt-4 text-sm leading-6 text-[#6B7280]">MIT. Instalalo en tu servidor, modificalo, hostealo donde quieras. Sin dependencias obligatorias fuera de PHP, MySQL y Node.</p>
+            <p class="mt-4 text-sm leading-6 text-[#6B7280]">MIT. Instálalo en tu servidor, modificalo, hostealo donde quieras. Sin dependencias obligatorias fuera de PHP, MySQL y Node.</p>
         </div>
     </div>
 

@@ -1,19 +1,19 @@
 {{--
     Hero editorial.
 
-    Composicion:
-    - A la izquierda: titulo display con reveal palabra a palabra,
+    Composición:
+    - A la izquierda: título display con reveal palabra a palabra,
       contador animado "0 -> 10 segundos" y CTAs con magnetic
       hover. El claim va en `#8B5CF6` (Info en DESIGN.md) para
       reforzar la promesa clave.
     - A la derecha: mockup de un proyecto real con kanban
       simulado (3 columnas, una tarea "salta" entre ellas para
       sugerir movimiento real). El mockup tambien muestra el
-      estado del proyecto y el ultimo avance.
+      estado del proyecto y el último avance.
     - Debajo: marquesina con badges de estado y un microcopy
       "Open source - Self-hostable - MIT".
 
-    Sin imagenes externas, sin stock. Todo HTML + Tailwind.
+    Sin imágenes externas, sin stock. Todo HTML + Tailwind.
     El spotlight del cursor lo gestiona `landing.js`.
 --}}
 <section
@@ -24,7 +24,7 @@
     {{-- Decoracion de fondo: blobs suaves muy tenues para dar
          profundidad sin distraer. Las clases `cf-blob-a` y
          `cf-blob-b` les aplican una animacion de movimiento
-         lento organico (definida en `landing.css`). --}}
+         lento orgánico (definida en `landing.css`). --}}
     <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
         <div class="cf-blob-a absolute -left-32 top-20 h-72 w-72 rounded-full bg-[#8B5CF6] opacity-[0.06] blur-3xl"></div>
         <div class="cf-blob-b absolute right-0 top-40 h-96 w-96 rounded-full bg-[#2563EB] opacity-[0.05] blur-3xl"></div>
@@ -43,7 +43,7 @@
                     </span>
                     <span class="inline-flex items-center gap-2 text-xs font-medium text-[#6B7280]">
                         <span class="inline-flex h-1.5 w-1.5 rounded-full bg-[#16A34A]"></span>
-                        v0.9 lista para produccion
+                        v0.9 lista para producción
                     </span>
                 </div>
 
@@ -60,7 +60,7 @@
                 </h1>
 
                 <p class="cf-reveal max-w-xl text-lg leading-8 text-[#6B7280] sm:text-xl">
-                    ClientFlow es el portal privado donde freelancers y agencias pequenas muestran a sus clientes el estado real del proyecto: tareas, documentos, chat y aprobaciones. <span class="text-[#111827]">Sin emails, sin WhatsApp, sin capturas de Trello.</span>
+                    ClientFlow es el portal privado donde freelancers y agencias pequeñas muestran a sus clientes el estado real del proyecto: tareas, documentos, chat y aprobaciones. <span class="text-[#111827]">Sin emails, sin WhatsApp, sin capturas de Trello.</span>
                 </p>
 
                 <div class="cf-reveal mt-2 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -89,11 +89,11 @@
                 <div class="cf-reveal mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-[#6B7280]">
                     <span class="inline-flex items-center gap-1.5">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-3.5 w-3.5 text-[#16A34A]" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-                        Instalacion en menos de 5 minutos
+                        Instalación en menos de 5 minutos
                     </span>
                     <span class="inline-flex items-center gap-1.5">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-3.5 w-3.5 text-[#16A34A]" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
-                        Sin tarjeta de credito
+                        Sin tarjeta de crédito
                     </span>
                     <span class="inline-flex items-center gap-1.5">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-3.5 w-3.5 text-[#16A34A]" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>
@@ -116,7 +116,7 @@
                             <span class="cf-live-dot inline-flex h-1.5 w-1.5 rounded-full bg-[#16A34A]"></span>
                             Proyecto en vivo
                         </p>
-                        <h2 class="mt-1 text-lg font-semibold text-[#111827]">Web corporativa clinica dental</h2>
+                        <h2 class="mt-1 text-lg font-semibold text-[#111827]">Web corporativa clínica dental</h2>
                         <p class="mt-0.5 text-xs text-[#6B7280]">Cliente: Sonrisa Sana · actualizado hace 2 min</p>
                     </div>
                     <span class="inline-flex items-center gap-1 rounded-full bg-[#FFFBEB] px-2.5 py-0.5 text-xs font-medium text-[#D97706]">
@@ -142,26 +142,26 @@
                         <p class="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280]">Por hacer · 3</p>
                         <div class="mt-2 space-y-1.5">
                             <div class="rounded-md border border-[#E7E2D8] bg-white p-1.5 text-[10px] text-[#111827]">Hero animado</div>
-                            <div class="rounded-md border border-[#E7E2D8] bg-white p-1.5 text-[10px] text-[#111827]">Pagina de servicios</div>
+                            <div class="rounded-md border border-[#E7E2D8] bg-white p-1.5 text-[10px] text-[#111827]">Página de servicios</div>
                         </div>
                     </div>
                     <div class="rounded-lg border border-[#E7E2D8] bg-[#FAFAF7] p-2.5">
                         <p class="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280]">En curso · 2</p>
                         <div class="mt-2 space-y-1.5">
                             <div class="cf-kanban-card-live rounded-md border border-[#E7E2D8] bg-white p-1.5 text-[10px] text-[#111827] shadow-sm">Formulario de cita</div>
-                            <div class="rounded-md border border-[#E7E2D8] bg-white p-1.5 text-[10px] text-[#111827]">Integracion maps</div>
+                            <div class="rounded-md border border-[#E7E2D8] bg-white p-1.5 text-[10px] text-[#111827]">Integración maps</div>
                         </div>
                     </div>
                     <div class="rounded-lg border border-[#E7E2D8] bg-[#FAFAF7] p-2.5">
                         <p class="text-[10px] font-semibold uppercase tracking-wider text-[#6B7280]">Hecho · 5</p>
                         <div class="mt-2 space-y-1.5">
                             <div class="rounded-md border border-[#E7E2D8] bg-white p-1.5 text-[10px] text-[#111827]">Wireframes</div>
-                            <div class="rounded-md border border-[#E7E2D8] bg-white p-1.5 text-[10px] text-[#111827]">Diseno desktop</div>
+                            <div class="rounded-md border border-[#E7E2D8] bg-white p-1.5 text-[10px] text-[#111827]">Diseño desktop</div>
                         </div>
                     </div>
                 </div>
 
-                {{-- Ultimo avance --}}
+                {{-- Último avance --}}
                 <div class="mt-5 flex items-start gap-3 rounded-2xl bg-[#F4F1EA] p-4">
                     <div class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[#8B5CF6] text-white">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -169,8 +169,8 @@
                         </svg>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-xs font-semibold text-[#111827]">Ultimo avance del equipo</p>
-                        <p class="mt-0.5 text-xs leading-5 text-[#6B7280]">Subimos la version mobile del formulario de cita para tu revision. Avisanos por el chat del proyecto si quieres ajustes.</p>
+                        <p class="text-xs font-semibold text-[#111827]">Último avance del equipo</p>
+                        <p class="mt-0.5 text-xs leading-5 text-[#6B7280]">Subimos la versión mobile del formulario de cita para tu revisión. Avísanos por el chat del proyecto si quieres ajustes.</p>
                         <p class="mt-1.5 text-[10px] font-medium text-[#8B5CF6]">Maria · hace 12 min</p>
                     </div>
                 </div>
@@ -189,15 +189,15 @@
         <div class="cf-marquee gap-10 px-6">
             @php
                 $statusBadges = [
-                    ['label' => 'Planificacion', 'color' => 'bg-[#EFF6FF] text-[#2563EB]'],
+                    ['label' => 'Planificación', 'color' => 'bg-[#EFF6FF] text-[#2563EB]'],
                     ['label' => 'En progreso', 'color' => 'bg-[#FFFBEB] text-[#D97706]'],
                     ['label' => 'En pausa', 'color' => 'bg-[#F4F1EA] text-[#6B7280]'],
                     ['label' => 'Esperando cliente', 'color' => 'bg-[#FFFBEB] text-[#D97706]'],
                     ['label' => 'Completado', 'color' => 'bg-[#F0FDF4] text-[#16A34A]'],
-                    ['label' => 'Documento publico', 'color' => 'bg-[#EFF6FF] text-[#2563EB]'],
+                    ['label' => 'Documento público', 'color' => 'bg-[#EFF6FF] text-[#2563EB]'],
                     ['label' => 'Documento privado', 'color' => 'bg-[#F5F3FF] text-[#8B5CF6]'],
-                    ['label' => 'Mensaje no leido', 'color' => 'bg-[#FEF2F2] text-[#DC2626]'],
-                    ['label' => 'Tarea critica', 'color' => 'bg-[#FEF2F2] text-[#DC2626]'],
+                    ['label' => 'Mensaje no leído', 'color' => 'bg-[#FEF2F2] text-[#DC2626]'],
+                    ['label' => 'Tarea crítica', 'color' => 'bg-[#FEF2F2] text-[#DC2626]'],
                     ['label' => 'Bug', 'color' => 'bg-[#FEF2F2] text-[#DC2626]'],
                     ['label' => 'Feature', 'color' => 'bg-[#F5F3FF] text-[#8B5CF6]'],
                     ['label' => 'Deadline 24h', 'color' => 'bg-[#FFFBEB] text-[#D97706]'],

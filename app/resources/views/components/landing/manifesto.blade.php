@@ -1,8 +1,8 @@
 {{--
-    Manifiesto (seccion 02).
+    Manifiesto (sección 02).
 
-    Cuatro lineas que enumeran lo que ClientFlow elimina. Cada
-    linea aparece escalonada al hacer scroll. La promesa se
+    Cuatro líneas que enumeran lo que ClientFlow elimina. Cada
+    línea aparece escalonada al hacer scroll. La promesa se
     refuerza con el subtitulo que sigue al bloque.
 --}}
 <section class="border-b border-[#E7E2D8] bg-[#FAFAF7] py-24 sm:py-32" aria-labelledby="cf-manifesto-title">
@@ -23,9 +23,9 @@
         <ol class="cf-stagger-in mt-16 grid gap-3 sm:gap-4">
             @php
                 $lines = [
-                    ['tag' => 'Sin emails', 'desc' => 'Cero hilos cruzados con adjuntos, reenvios y "te lo mando otra vez".'],
-                    ['tag' => 'Sin WhatsApp', 'desc' => 'Tu telefono deja de ser el centro de soporte del proyecto.'],
-                    ['tag' => 'Sin documentos en repos', 'desc' => 'La documentacion del proyecto vive en su sitio, accesible via MCP desde tu IDE.'],
+                    ['tag' => 'Sin emails', 'desc' => 'Cero hilos cruzados con adjuntos, reenvíos y "te lo mando otra vez".'],
+                    ['tag' => 'Sin WhatsApp', 'desc' => 'Tu teléfono deja de ser el centro de soporte del proyecto.'],
+                    ['tag' => 'Sin documentos en repos', 'desc' => 'La documentación del proyecto vive en su sitio, accesible vía MCP desde tu IDE.'],
                     ['tag' => 'Sin recrear agentes IA', 'desc' => 'Tu biblioteca de agentes IA se reutiliza proyecto a proyecto, sin reescribir el system prompt.'],
                 ];
             @endphp
@@ -43,7 +43,7 @@
         </ol>
 
         <p class="cf-reveal mt-12 max-w-2xl text-base leading-7 text-[#6B7280]">
-            ClientFlow concentra todo eso en un unico espacio al que tu cliente accede con un link. Miras el proyecto una vez, lo entiendes, preguntas lo que necesites y vuelves a tu dia.
+            ClientFlow concentra todo eso en un único espacio al que tu cliente accede con un link. Miras el proyecto una vez, lo entiendes, preguntas lo que necesites y vuelves a tu día.
         </p>
     </div>
 </section>

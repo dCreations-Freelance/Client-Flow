@@ -1,8 +1,8 @@
 {{--
-    Encabezado editorial de seccion: numero + titulo + bajada.
+    Encabezado editorial de sección: número + título + bajada.
 
-    Refuerza la sensacion de "reportaje" y permite a los usuarios
-    que hacen scroll rapido ubicarse. Sin parpadeos: el contenido
+    Refuerza la sensación de "reportaje" y permite a los usuarios
+    que hacen scroll rápido ubicarse. Sin parpadeos: el contenido
     aparece cuando entra en viewport.
 --}}
 @props([

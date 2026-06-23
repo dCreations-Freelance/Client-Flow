@@ -1,13 +1,13 @@
 {{--
-    Numeros (seccion 07).
+    Números (sección 07).
 
     Tres (o cuatro) contadores que se animan al entrar en
     viewport. `landing.js` lee `data-cf-target`, `data-cf-suffix`
     y `data-cf-duration` para hacer el count-up con easeOutExpo.
 
-    Los numeros no son metricas de marketing vacias: describen
-    decisiones tecnicas reales (setup, polling, latencia de
-    generacion de IA).
+    Los números no son métricas de marketing vacías: describen
+    decisiones técnicas reales (setup, polling, latencia de
+    generación de IA).
 --}}
 <section class="border-b border-[#E7E2D8] bg-white py-24 sm:py-32" aria-labelledby="cf-numbers-title">
     <div class="mx-auto max-w-7xl px-6 lg:px-10">
@@ -18,7 +18,7 @@
             class="cf-reveal mt-6 max-w-3xl text-3xl font-semibold leading-[1.1] tracking-[-0.02em] text-[#111827] sm:text-4xl lg:text-5xl"
             data-cf-word-reveal
         >
-            Decisiones de diseno que se sienten, no que se anuncian.
+            Decisiones de diseño que se sienten, no que se anuncian.
         </h2>
 
         <div class="cf-stagger-in mt-14 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -27,7 +27,7 @@
                     <span class="cf-counter text-[#8B5CF6]" data-cf-target="10" data-cf-duration="1400">0</span>
                 </p>
                 <p class="mt-3 text-sm font-medium text-[#111827]">Segundos en entender el proyecto</p>
-                <p class="mt-1 text-xs leading-5 text-[#6B7280]">Tu cliente abre el portal, ve el estado, entiende donde esta.</p>
+                <p class="mt-1 text-xs leading-5 text-[#6B7280]">Tu cliente abre el portal, ve el estado, entiende dónde está.</p>
             </div>
 
             <div class="cf-reveal rounded-2xl border border-[#E7E2D8] bg-[#FAFAF7] p-7">

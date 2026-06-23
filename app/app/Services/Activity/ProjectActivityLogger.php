@@ -254,4 +254,33 @@ class ProjectActivityLogger
             ),
         );
     }
+
+    /**
+     * Registra la subida de uno o varios adjuntos a una tarea.
+     *
+     * El chat del proyecto es el sitio natural para enterarse de
+     * que hay archivos nuevos en una tarea, especialmente para
+     * los miembros que no la tienen abierta en el kanban. Se
+     * incluye el nombre del actor y el titulo de la tarea para
+     * que el mensaje sea localizable al hacer scroll.
+     *
+     * @param  \App\Models\Project  $project
+     * @param  \App\Models\Task  $task
+     * @param  int  $count  numero de adjuntos subidos en la operacion
+     * @param  \App\Models\User  $actor
+     * @return \App\Models\ProjectMessage
+     */
+    public function attachmentUploadedToTask(Project $project, Task $task, int $count, User $actor): ProjectMessage
+    {
+        return $this->log(
+            $project,
+            sprintf(
+                '%s subio %d adjunto%s a la tarea "%s".',
+                $actor->name,
+                $count,
+                $count === 1 ? '' : 's',
+                $task->title,
+            ),
+        );
+    }
 }

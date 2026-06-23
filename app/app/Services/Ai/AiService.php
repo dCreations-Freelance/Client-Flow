@@ -47,7 +47,8 @@ class AiService
         private readonly AiRateLimiter $rateLimiter,
         private readonly ProjectContextBuilder $contextBuilder,
         private readonly array $providers,
-    ) {}
+    ) {
+    }
 
     /**
      * Envia un mensaje del usuario a la IA dentro de la
@@ -68,7 +69,7 @@ class AiService
     ): AiChatMessage {
         $config = $this->resolveConfig($project);
 
-        if (! $this->rateLimiter->canSendMessage($config, $user->id, $project->id)) {
+        if (!$this->rateLimiter->canSendMessage($config, $user->id, $project->id)) {
             $seconds = $this->rateLimiter->secondsUntilMessageSlot($config, $user->id, $project->id);
             $minutes = max(1, (int) ceil($seconds / 60));
 
@@ -108,9 +109,9 @@ class AiService
     {
         $config = $this->resolveConfig($project);
 
-        if (! $this->rateLimiter->canCreateSession($config, $user->id, $project->id)) {
+        if (!$this->rateLimiter->canCreateSession($config, $user->id, $project->id)) {
             throw new RuntimeException(
-                'Has alcanzado el limite diario de sesiones nuevas. Vuelve manana o pide al admin que aumente el limite.'
+                'Has alcanzado el limite diario de sesiones nuevas. Vuelve mañana o pide al admin que aumente el limite.'
             );
         }
 
@@ -161,7 +162,7 @@ class AiService
 
         return [
             'ok' => true,
-            'message' => 'Conexion correcta. Modelo: '.$response->model,
+            'message' => 'Conexion correcta. Modelo: ' . $response->model,
         ];
     }
 
@@ -205,7 +206,7 @@ class AiService
     {
         $instance = $this->providers[$provider->value] ?? null;
 
-        if (! $instance instanceof AiProvider) {
+        if (!$instance instanceof AiProvider) {
             throw new RuntimeException(
                 sprintf('No hay provider registrado para "%s".', $provider->value)
             );

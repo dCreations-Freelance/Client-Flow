@@ -118,6 +118,17 @@ class Task extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
+    /**
+     * Archivos adjuntos a la tarea. Se cargan con `with('user')`
+     * en la vista para evitar N+1 al pintar la lista.
+     *
+     * @return HasMany<TaskAttachment>
+     */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(TaskAttachment::class)->latest('created_at');
+    }
+
     // -----------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------

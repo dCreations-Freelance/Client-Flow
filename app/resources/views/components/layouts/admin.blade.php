@@ -18,7 +18,7 @@
     <div class="flex min-h-screen">
         @include('partials.admin-sidebar')
 
-        <div class="flex flex-1 flex-col">
+        <div class="flex flex-1 flex-col min-w-0">
             <header class="sticky top-0 z-10 flex items-center justify-between border-b border-[#E7E2D8] bg-white/80 px-6 py-4 backdrop-blur lg:px-8">
                 <h1 class="text-lg font-semibold">{{ $title }}</h1>
                 <div class="flex items-center gap-3">

@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\ProjectDocumentController as AdminProjectDocumentController;
 use App\Http\Controllers\Admin\ProjectMemberController as AdminProjectMemberController;
 use App\Http\Controllers\Admin\ProjectMessageController as AdminProjectMessageController;
+use App\Http\Controllers\Admin\MessageAttachmentController as AdminMessageAttachmentController;
+use App\Http\Controllers\Admin\TaskAttachmentController as AdminTaskAttachmentController;
 use App\Http\Controllers\Admin\TaskController as AdminTaskController;
 use App\Http\Controllers\Admin\TaskMoveController as AdminTaskMoveController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
@@ -33,6 +35,8 @@ use App\Http\Controllers\Portal\ProjectCalendarController as PortalProjectCalend
 use App\Http\Controllers\Portal\ProjectController as PortalProjectController;
 use App\Http\Controllers\Portal\ProjectDocumentController as PortalProjectDocumentController;
 use App\Http\Controllers\Portal\ProjectMessageController as PortalProjectMessageController;
+use App\Http\Controllers\Portal\MessageAttachmentController as PortalMessageAttachmentController;
+use App\Http\Controllers\Portal\TaskAttachmentController as PortalTaskAttachmentController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\NotificationsController;
 use Illuminate\Support\Facades\Route;
@@ -162,12 +166,39 @@ Route::middleware(['auth', 'admin'])
             ->name('projects.tasks.update');
         Route::delete('projects/{project}/tasks/{task}', [AdminTaskController::class, 'destroy'])
             ->name('projects.tasks.destroy');
-        Route::patch('projects/{project}/tasks/{task}/move', [AdminTaskMoveController::class, 'update'])
-            ->name('projects.tasks.move');
         Route::post('projects/{project}/tasks/{task}/complete', [AdminTaskController::class, 'complete'])
             ->name('projects.tasks.complete');
         Route::post('projects/{project}/tasks/{task}/reopen', [AdminTaskController::class, 'reopen'])
             ->name('projects.tasks.reopen');
+
+        // Vista de detalle de tarea (usada para gestionar adjuntos).
+        Route::get('projects/{project}/tasks/{task}', [AdminTaskController::class, 'show'])
+            ->name('projects.tasks.show');
+
+        // Mover tarea entre columnas (drag & drop del kanban).
+        Route::patch('projects/{project}/tasks/{task}/move', [AdminTaskMoveController::class, 'update'])
+            ->name('projects.tasks.move');
+
+        // Adjuntos de tareas: subir, descargar y eliminar.
+        // Solo admin puede crear/eliminar; descargar sigue la
+        // policy `download` que delega en la policy de la tarea.
+        Route::post('projects/{project}/tasks/{task}/attachments', [AdminTaskAttachmentController::class, 'store'])
+            ->name('projects.tasks.attachments.store');
+        Route::get('projects/{project}/tasks/{task}/attachments/{attachment}', [AdminTaskAttachmentController::class, 'download'])
+            ->name('projects.tasks.attachments.download');
+        Route::delete('projects/{project}/tasks/{task}/attachments/{attachment}', [AdminTaskAttachmentController::class, 'destroy'])
+            ->name('projects.tasks.attachments.destroy');
+
+        // Adjuntos de mensajes del chat: descargar y eliminar.
+        // La subida se hace desde el componente Livewire del
+        // chat, pero mantenemos una ruta HTTP equivalente en
+        // tests y como fallback.
+        Route::post('projects/{project}/messages/{message}/attachments', [AdminMessageAttachmentController::class, 'store'])
+            ->name('projects.messages.attachments.store');
+        Route::get('projects/{project}/messages/{message}/attachments/{attachment}', [AdminMessageAttachmentController::class, 'download'])
+            ->name('projects.messages.attachments.download');
+        Route::delete('projects/{project}/messages/{message}/attachments/{attachment}', [AdminMessageAttachmentController::class, 'destroy'])
+            ->name('projects.messages.attachments.destroy');
 
         // Documentacion: CRUD de documentos del proyecto.
         // Las acciones del editor se hacen via componente Livewire
@@ -277,6 +308,18 @@ Route::middleware(['auth', 'client'])
             ->name('projects.board');
         Route::get('projects/{project}/tasks/{task}', [PortalKanbanController::class, 'showTask'])
             ->name('projects.tasks.show');
+
+        // Adjuntos de tareas: el portal solo descarga.
+        Route::get('projects/{project}/tasks/{task}/attachments/{attachment}', [PortalTaskAttachmentController::class, 'download'])
+            ->name('projects.tasks.attachments.download');
+
+        // Adjuntos de mensajes del chat: el cliente puede subir
+        // (consistente con su permiso para enviar mensajes) y
+        // descargar. Eliminar es exclusivo del admin.
+        Route::post('projects/{project}/messages/{message}/attachments', [PortalMessageAttachmentController::class, 'store'])
+            ->name('projects.messages.attachments.store');
+        Route::get('projects/{project}/messages/{message}/attachments/{attachment}', [PortalMessageAttachmentController::class, 'download'])
+            ->name('projects.messages.attachments.download');
 
         // Documentacion publica del proyecto: solo documentos con
         // `visibility = public` y proyectos visibles al cliente.

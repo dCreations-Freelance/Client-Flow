@@ -2,20 +2,20 @@
     Landing page de ClientFlow para usuarios no autenticados.
 
     Se ha construido desde cero para presentar el producto como un
-    "reportaje editorial" en lugar de la tipica landing SaaS. Las
+    "reportaje editorial" en lugar de la típica landing SaaS. Las
     10 secciones viven en `components/landing/*` y la interactividad
     (reveal, contadores, typing, magnetic hover, etc.) se delega
     a `resources/js/landing.js`.
 
-    Decisiones de diseno:
-    - Header transparente que se vuelve solido al hacer scroll.
-    - Numeracion explicita (01, 02, ...) para reforzar el tono
+    Decisiones de diseño:
+    - Header transparente que se vuelve sólido al hacer scroll.
+    - Numeración explícita (01, 02, ...) para reforzar el tono
       editorial.
     - Sin parallax agresivo: solo fade + translate-y al entrar
       en viewport.
-    - Toda la paleta sale de `docs/DESIGN.md`. El unico color
+    - Toda la paleta sale de `docs/DESIGN.md`. El único color
       "editorial" es `#8B5CF6` (Info) que DESIGN.md define
-      explicitamente como color para "elementos especiales".
+      explícitamente como color para "elementos especiales".
 --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
@@ -36,8 +36,8 @@
 </head>
 <body class="min-h-screen overflow-x-hidden bg-[#FAFAF7] font-sans text-[#111827] antialiased">
 
-    {{-- Cabecera transparente que se vuelve solida al hacer scroll. La clase
-         `cf-header` la controla `landing.js` para anadir `is-scrolled`. --}}
+    {{-- Cabecera transparente que se vuelve sólida al hacer scroll. La clase
+         `cf-header` la controla `landing.js` para añadir `is-scrolled`. --}}
     <x-landing.header />
 
     <main>

@@ -1,23 +1,23 @@
 {{--
     Cabecera de la landing.
 
-    Empieza transparente sobre el hero y se vuelve solida con
+    Empieza transparente sobre el hero y se vuelve sólida con
     blur al hacer scroll (clase `.is-scrolled` que gestiona
     `resources/js/landing.js`).
 
-    En mobile los enlaces de navegacion se ocultan y aparece un
+    En mobile los enlaces de navegación se ocultan y aparece un
     boton hamburguesa. Al pulsarlo:
-    - Aparece un backdrop con blur detras de la cabecera.
+    - Aparece un backdrop con blur detrás de la cabecera.
     - El panel desliza hacia abajo con un stagger de los links.
     - El icono hamburguesa se transforma en una X.
     El JS vive en `resources/js/landing.js` (`initMobileMenu`).
 
     Los links de la nav de desktop reciben la clase `is-active`
-    via JS cuando la seccion correspondiente entra en viewport
+    vía JS cuando la sección correspondiente entra en viewport
     (smooth scroll spy).
 
     El logo es la palabra "ClientFlow" con un cuadrado al lado
-    que sirve de marca grafica. Sin imagen externa: todo SVG.
+    que sirve de marca gráfica. Sin imagen externa: todo SVG.
 --}}
 <header class="cf-header fixed inset-x-0 top-0 z-40" data-cf-header>
     <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 lg:px-10">
@@ -30,7 +30,7 @@
             <span>ClientFlow</span>
         </a>
 
-        <nav class="hidden items-center gap-1 text-sm md:flex" aria-label="Navegacion principal">
+        <nav class="hidden items-center gap-1 text-sm md:flex" aria-label="Navegación principal">
             <a href="#features" data-cf-spy="features" class="cf-nav-link rounded-lg px-3 py-2 font-medium text-[#6B7280] transition-colors hover:bg-[#F4F1EA] hover:text-[#111827]">Funciones</a>
             <a href="#dual-view" data-cf-spy="dual-view" class="cf-nav-link rounded-lg px-3 py-2 font-medium text-[#6B7280] transition-colors hover:bg-[#F4F1EA] hover:text-[#111827]">Portal</a>
             <a href="#mcp" data-cf-spy="mcp" class="cf-nav-link rounded-lg px-3 py-2 font-medium text-[#6B7280] transition-colors hover:bg-[#F4F1EA] hover:text-[#111827]">MCP</a>
@@ -62,8 +62,8 @@
         </div>
     </div>
 
-    {{-- Backdrop del menu mobile. Cubre toda la pantalla con
-         blur, debajo del header. La opacidad se anima via CSS
+    {{-- Backdrop del menú mobile. Cubre toda la pantalla con
+         blur, debajo del header. La opacidad se anima vía CSS
          con la clase `is-open` que pone el JS. --}}
     <div
         data-cf-menu-backdrop
@@ -73,13 +73,13 @@
 
     {{-- Panel mobile. Empieza con altura colapsada (max-height: 0)
          y la opacidad en 0. La clase `is-open` la pone el JS al
-         pulsar el toggle y dispara la transicion suave. --}}
+         pulsar el toggle y dispara la transición suave. --}}
     <div
         id="cf-mobile-menu"
         data-cf-menu
         class="cf-menu-panel md:hidden relative z-40 overflow-hidden border-t border-[#E7E2D8] bg-white/95 backdrop-blur"
     >
-        <nav class="mx-auto flex max-w-7xl flex-col gap-1 px-6 py-4 text-sm" aria-label="Navegacion movil" data-cf-menu-list>
+        <nav class="mx-auto flex max-w-7xl flex-col gap-1 px-6 py-4 text-sm" aria-label="Navegación móvil" data-cf-menu-list>
             <a href="#features" data-cf-menu-link data-cf-spy="features" class="cf-menu-link cf-nav-link rounded-lg px-3 py-2 font-medium text-[#111827] transition-colors hover:bg-[#F4F1EA]">Funciones</a>
             <a href="#dual-view" data-cf-menu-link data-cf-spy="dual-view" class="cf-menu-link cf-nav-link rounded-lg px-3 py-2 font-medium text-[#111827] transition-colors hover:bg-[#F4F1EA]">Portal</a>
             <a href="#mcp" data-cf-menu-link data-cf-spy="mcp" class="cf-menu-link cf-nav-link rounded-lg px-3 py-2 font-medium text-[#111827] transition-colors hover:bg-[#F4F1EA]">MCP</a>

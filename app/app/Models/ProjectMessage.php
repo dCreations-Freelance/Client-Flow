@@ -82,6 +82,18 @@ class ProjectMessage extends Model
         return $this->hasMany(MessageRead::class, 'message_id');
     }
 
+    /**
+     * Archivos adjuntos al mensaje. Se pintan dentro de la
+     * burbuja del chat; el accesor `isEmpty` indica si la burbuja
+     * debe mostrar solo el bloque de adjuntos (sin texto).
+     *
+     * @return HasMany<MessageAttachment>
+     */
+    public function attachments(): HasMany
+    {
+        return $this->hasMany(MessageAttachment::class, 'message_id')->latest('created_at');
+    }
+
     // -----------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------
@@ -157,6 +169,19 @@ class ProjectMessage extends Model
         return $this->reads()
             ->where('user_id', '!=', $currentUser->id)
             ->exists();
+    }
+
+    /**
+     * Indica si el mensaje no tiene contenido textual. Se usa en
+     * la vista del chat para que un mensaje con solo adjuntos no
+     * pinte una burbuja vacia: se muestra unicamente el bloque
+     * con los archivos.
+     *
+     * @return bool
+     */
+    public function isEmpty(): bool
+    {
+        return trim((string) $this->content) === '';
     }
 
     // -----------------------------------------------------------------

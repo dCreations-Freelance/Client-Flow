@@ -1,9 +1,5 @@
-<x-layouts.admin :title="$project->name">
+<x-layouts.admin :title="$summary->project->name">
     <div class="space-y-6">
-        <a href="{{ route('admin.projects.index') }}" class="inline-flex items-center text-sm text-[#6B7280] hover:text-[#111827]">
-            &larr; Volver al listado
-        </a>
-
         @if (session('status'))
             <x-ui.alert variant="success">{{ session('status') }}</x-ui.alert>
         @endif
@@ -17,130 +13,103 @@
             </x-ui.alert>
         @endif
 
-        {{-- Header del proyecto --}}
-        <x-ui.card>
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                <div class="flex-1">
-                    <div class="flex items-center gap-3">
-                        <h1 class="text-2xl font-semibold">{{ $project->name }}</h1>
-                        <x-partials.status-badge :status="$project->status" />
-                        @if ($project->isArchived())
-                            <span class="inline-flex items-center rounded-full bg-[#F4F1EA] px-2.5 py-0.5 text-xs font-medium text-[#6B7280]">
-                                Archivado
-                            </span>
-                        @endif
-                    </div>
+        @php
+            $project = $summary->project;
+            $crumbs = [
+                ['label' => 'Organizaciones', 'href' => route('admin.organizations.index')],
+                ['label' => $project->organization->name, 'href' => route('admin.organizations.show', $project->organization)],
+                ['label' => $project->name],
+            ];
+        @endphp
 
-                    <p class="mt-1 text-sm text-[#6B7280]">
-                        Organizacion:
-                        <a href="{{ route('admin.organizations.show', $project->organization) }}" class="font-medium text-[#2563EB] hover:text-[#1D4ED8]">
-                            {{ $project->organization->name }}
-                        </a>
-                    </p>
-
-                    <div class="mt-4 grid gap-4 sm:grid-cols-3">
-                        <div>
-                            <p class="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Inicio</p>
-                            <p class="mt-1 text-sm text-[#111827]">
-                                {{ $project->starts_at?->format('d/m/Y') ?? '—' }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Fin estimado</p>
-                            <p class="mt-1 text-sm text-[#111827]">
-                                {{ $project->estimated_ends_at?->format('d/m/Y') ?? '—' }}
-                            </p>
-                        </div>
-                        <div>
-                            <p class="text-xs font-medium uppercase tracking-wider text-[#6B7280]">Visibilidad</p>
-                            <p class="mt-1 text-sm text-[#111827]">
-                                {{ $project->is_visible_to_client ? 'Visible para clientes' : 'Solo admin' }}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex flex-wrap gap-2">
+        <x-partials.project-hero :project="$project" :crumbs="$crumbs" :unreadMessages="$summary->unreadMessages">
+            <x-slot:actions>
+                @if (Route::has('admin.projects.board'))
                     <a href="{{ route('admin.projects.board', $project) }}" class="inline-flex items-center justify-center rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]">
                         Abrir tablero
                     </a>
+                @endif
 
-                    @if (Route::has('admin.projects.documents.index'))
-                        <a href="{{ route('admin.projects.documents.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#F4F1EA]">
-                            Documentos
-                        </a>
-                    @endif
-
-                    @if (Route::has('admin.projects.chat'))
-                        <a href="{{ route('admin.projects.chat', $project) }}" class="relative inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#F4F1EA]">
-                            Chat
-                            @php
-                                $chatUnread = \App\Models\ProjectChatRead::query()
-                                    ->where('project_id', $project->id)
-                                    ->where('user_id', auth()->id())
-                                    ->first();
-                                $unreadQuery = \App\Models\ProjectMessage::where('project_id', $project->id);
-                                if ($chatUnread !== null) {
-                                    $unreadQuery->where('id', '>', (int) $chatUnread->last_read_message_id);
-                                }
-                                $unreadCount = $unreadQuery->count();
-                            @endphp
-                            @if ($unreadCount > 0)
-                                <span class="ml-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#DC2626] px-1.5 text-[10px] font-semibold text-white">
-                                    {{ $unreadCount }}
-                                </span>
-                            @endif
-                        </a>
-                    @endif
-
-                    @if (Route::has('admin.projects.calendar'))
-                        <a href="{{ route('admin.projects.calendar', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#F4F1EA]">
-                            Calendario
-                        </a>
-                    @endif
-
-                    @if (Route::has('admin.projects.ai'))
-                        <a href="{{ route('admin.projects.ai', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#F4F1EA]">
-                            Asistente IA
-                        </a>
-                    @endif
-
-                    @if (Route::has('admin.projects.agents.index'))
-                        <a href="{{ route('admin.projects.agents.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#F4F1EA]">
-                            Agentes
-                        </a>
-                    @endif
-
-                    <a href="{{ route('admin.projects.edit', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium hover:bg-[#F4F1EA]">
-                        Editar
+                @if (Route::has('admin.projects.chat'))
+                    <a href="{{ route('admin.projects.chat', $project) }}" class="relative inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                        Chat
+                        @if ($summary->unreadMessages > 0)
+                            <span class="ml-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#DC2626] px-1.5 text-[10px] font-semibold text-white">
+                                {{ $summary->unreadMessages }}
+                            </span>
+                        @endif
                     </a>
+                @endif
 
-                    @include('admin.projects._archive_button', ['project' => $project])
-                </div>
-            </div>
+                @if (Route::has('admin.projects.documents.index'))
+                    <a href="{{ route('admin.projects.documents.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                        Documentos
+                    </a>
+                @endif
 
-            <div class="mt-6">
-                <p class="mb-1 text-xs font-medium uppercase tracking-wider text-[#6B7280]">Progreso</p>
-                <x-partials.progress-bar :value="$project->tasks_progress_percent" :showPercent="true" />
-                <p class="mt-2 text-xs text-[#6B7280]">
-                    @if ($project->total_tasks_count === 0)
-                        Sin tareas todavia. Crea tareas en el tablero para empezar a medir el progreso.
-                    @else
-                        {{ $project->completed_tasks_count }} de {{ $project->total_tasks_count }} tareas completadas.
-                    @endif
-                </p>
-            </div>
-        </x-ui.card>
+                @if (Route::has('admin.projects.calendar'))
+                    <a href="{{ route('admin.projects.calendar', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                        Calendario
+                    </a>
+                @endif
 
-        {{-- Descripcion --}}
-        @if ($project->description)
-            <x-ui.card>
-                <h2 class="text-sm font-semibold">Descripcion</h2>
-                <p class="mt-2 whitespace-pre-line text-sm text-[#111827]">{{ $project->description }}</p>
-            </x-ui.card>
-        @endif
+                @if (Route::has('admin.projects.ai'))
+                    <a href="{{ route('admin.projects.ai', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                        Asistente IA
+                    </a>
+                @endif
 
-        {{-- Miembros --}}
-        <livewire:admin.project.project-members :project="$project" :availableMembers="$availableMembers" />
+                @if (Route::has('admin.projects.agents.index'))
+                    <a href="{{ route('admin.projects.agents.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                        Agentes
+                    </a>
+                @endif
+
+                <a href="{{ route('admin.projects.edit', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                    Editar
+                </a>
+
+                @include('admin.projects._archive_button', ['project' => $project])
+            </x-slot:actions>
+        </x-partials.project-hero>
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <x-partials.project-stat-tile
+                title="Progreso"
+                :value="$project->tasks_progress_percent.'%'"
+                :sub="$project->completed_tasks_count.' de '.$project->total_tasks_count.' tareas'"
+                :href="Route::has('admin.projects.board') ? route('admin.projects.board', $project) : null"
+                tone="primary"
+            />
+
+            <x-partials.project-stat-tile
+                title="Proxima entrega"
+                :value="$summary->nextDelivery?->format('d/m/Y') ?? '—'"
+                :sub="$summary->nextDeliveryLabel"
+                :href="Route::has('admin.projects.edit') ? route('admin.projects.edit', $project) : null"
+                :tone="$summary->nextDeliveryTone"
+            />
+
+            <x-partials.project-stat-tile
+                title="Mensajes sin leer"
+                :value="$summary->unreadMessages"
+                :sub="$summary->totalMessages.' mensajes en total'"
+                :href="Route::has('admin.projects.chat') ? route('admin.projects.chat', $project) : null"
+                tone="danger"
+            />
+
+            <x-partials.project-stat-tile
+                title="Miembros"
+                :value="$summary->totalMembers"
+                :sub="$summary->totalMembers === 1 ? 'persona en el equipo' : 'personas en el equipo'"
+                :href="Route::has('admin.organizations.show') ? route('admin.organizations.show', $project->organization).'#members' : null"
+            />
+        </div>
+
+        <x-partials.project-previews :summary="$summary" area="admin" />
+
+        <div id="miembros">
+            <livewire:admin.project.project-members :project="$project" :availableMembers="$availableMembers" />
+        </div>
     </div>
 </x-layouts.admin>

@@ -1,5 +1,5 @@
 {{--
-    Stack (seccion 06).
+    Stack (sección 06).
 
     Lista de tecnologias con su rol, entrada secuencial al
     hacer scroll. El mensaje clave: "stack que tu hosting
@@ -15,11 +15,11 @@
             class="cf-reveal mt-6 max-w-3xl text-3xl font-semibold leading-[1.1] tracking-[-0.02em] text-[#111827] sm:text-4xl lg:text-5xl"
             data-cf-word-reveal
         >
-            Tecnologias que ya entiendes. Sin sorpresas.
+            Tecnologías que ya entiendes. Sin sorpresas.
         </h2>
 
         <p class="cf-reveal mt-5 max-w-2xl text-base leading-7 text-[#6B7280] sm:text-lg">
-            PHP, MySQL, Node. Nada de Redis obligatorio, nada de workers permanentes, nada de WebSockets. Lo puedes instalar en el hosting mas basico del mercado.
+            PHP, MySQL, Node. Nada de Redis obligatorio, nada de workers permanentes, nada de WebSockets. Lo puedes instalar en el hosting más básico del mercado.
         </p>
 
         <ul class="cf-stagger-in mt-14 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
@@ -53,7 +53,7 @@
             </div>
             <div class="rounded-2xl border border-[#E7E2D8] bg-white p-5">
                 <p class="text-xs font-semibold uppercase tracking-wider text-[#16A34A]">Hosting compartido OK</p>
-                <p class="mt-2 text-sm leading-6 text-[#6B7280]">PHP-FPM + Nginx + MySQL es lo que ofrece cualquier plan basico. Nada de Kubernetes, nada de Docker en produccion.</p>
+                <p class="mt-2 text-sm leading-6 text-[#6B7280]">PHP-FPM + Nginx + MySQL es lo que ofrece cualquier plan básico. Nada de Kubernetes, nada de Docker en producción.</p>
             </div>
         </div>
     </div>

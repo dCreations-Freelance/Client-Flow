@@ -1,7 +1,7 @@
 {{--
-    Cita editorial (seccion 08).
+    Cita editorial (sección 08).
 
-    Un solo testimonio grande, con tipografia display, en vez
+    Un solo testimonio grande, con tipografía display, en vez
     del clasico grid 3x de testimonios con foto y estrellas.
     La cita aparece palabra a palabra y se firma con un nombre
     y un proyecto ficticio pero realista.
@@ -16,13 +16,13 @@
 
         <blockquote class="cf-reveal mt-10">
             <p class="text-2xl font-medium leading-[1.3] tracking-[-0.01em] text-[#111827] sm:text-3xl lg:text-[2.5rem]">
-                <span class="text-[#8B5CF6]">"</span>Mi cliente dejo de mandarme whatsapps a las 23h. La web esta al 68%, lo ve sin que yo le cuente, y cuando me escribe es porque tiene una decision real que tomar, no para preguntar <span class="text-[#111827]">"como va eso"</span>.<span class="text-[#8B5CF6]">"</span>
+                <span class="text-[#8B5CF6]">"</span>Mi cliente dejó de mandarme whatsapps a las 23h. La web está al 68%, lo ve sin que yo le cuente, y cuando me escribe es porque tiene una decisión real que tomar, no para preguntar <span class="text-[#111827]">"cómo va eso"</span>.<span class="text-[#8B5CF6]">"</span>
             </p>
             <footer class="mt-10 flex items-center gap-4">
                 <div class="grid h-12 w-12 place-items-center rounded-full bg-[#2563EB] text-sm font-semibold text-white">MR</div>
                 <div>
                     <p class="text-sm font-semibold text-[#111827]">Marina R.</p>
-                    <p class="text-sm text-[#6B7280]">Disenadora web freelance · proyecto de clinica dental</p>
+                    <p class="text-sm text-[#6B7280]">Diseñadora web freelance · proyecto de clínica dental</p>
                 </div>
                 <div class="ml-auto hidden items-center gap-1 text-[#8B5CF6] sm:flex">
                     <span>★★★★★</span>

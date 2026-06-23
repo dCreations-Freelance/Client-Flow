@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
  * Resumen diario de actividad de un usuario.
  *
  * La dispara el comando `notifications:daily-digest` (programado
- * para correr cada manana) y solo se envia por email: el in-app
+ * para correr cada mañana) y solo se envia por email: el in-app
  * no aporta nada porque el usuario no tiene que "actuar" sobre
  * un resumen.
  *
@@ -91,7 +91,7 @@ class DailyDigest extends Notification
         if ($this->pendingTasks->isNotEmpty()) {
             $mail->line('Tareas pendientes asignadas a ti:');
             foreach ($this->pendingTasks->take(10) as $task) {
-                $due = $task->due_date ? ' (vence '.$task->due_date->format('d/m/Y').')' : '';
+                $due = $task->due_date ? ' (vence ' . $task->due_date->format('d/m/Y') . ')' : '';
                 $mail->line(sprintf('- %s%s', $task->title, $due));
             }
             if ($this->pendingTasks->count() > 10) {

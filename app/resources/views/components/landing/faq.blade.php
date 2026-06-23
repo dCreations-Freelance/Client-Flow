@@ -1,5 +1,5 @@
 {{--
-    FAQ (seccion 09).
+    FAQ (sección 09).
 
     Acordeon CSS-only usando `<details>` / `<summary>` para
     accesibilidad nativa (teclado, screen readers, sin
@@ -22,28 +22,28 @@
             @php
                 $faqs = [
                     [
-                        'q' => '¿Esto es para mi si soy freelance o agencia pequena?',
-                        'a' => 'Si. ClientFlow esta pensado para 1-10 personas que quieren dar un portal profesional a sus clientes sin contratar un SaaS externo ni montar una infraestructura compleja.',
+                        'q' => '¿Esto es para mí si soy freelance o agencia pequeña?',
+                        'a' => 'Sí. ClientFlow está pensado para 1-10 personas que quieren dar un portal profesional a sus clientes sin contratar un SaaS externo ni montar una infraestructura compleja.',
                     ],
                     [
-                        'q' => '¿Cuanto cuesta?',
-                        'a' => 'El producto es open source MIT: gratis para siempre. Tu unico coste es el hosting (un plan compartido basico de PHP+MySQL sobra) y, si activas el asistente IA, la API key del provider que elijas (OpenAI, Anthropic o compatible).',
+                        'q' => '¿Cuánto cuesta?',
+                        'a' => 'El producto es open source MIT: gratis para siempre. Tu único coste es el hosting (un plan compartido básico de PHP+MySQL sobra) y, si activas el asistente IA, la API key del provider que elijas (OpenAI, Anthropic o compatible).',
                     ],
                     [
-                        'q' => '¿Cuanto tarda en estar funcionando?',
-                        'a' => 'Con Docker local: 5-10 minutos. En un hosting compartido: clonar el repo, composer install, php artisan migrate, y listo. La guia de instalacion viene en el README.',
+                        'q' => '¿Cuánto tarda en estar funcionando?',
+                        'a' => 'Con Docker local: 5-10 minutos. En un hosting compartido: clonar el repo, composer install, php artisan migrate, y listo. La guía de instalación viene en el README.',
                     ],
                     [
-                        'q' => '¿Que pasa con mis datos?',
-                        'a' => 'Son tuyos. Todo vive en tu MySQL y en tu sistema de archivos. Nada se envia a servicios externos salvo lo que tu configures explicitamente (por ejemplo, el provider de IA para el asistente del cliente).',
+                        'q' => '¿Qué pasa con mis datos?',
+                        'a' => 'Son tuyos. Todo vive en tu MySQL y en tu sistema de archivos. Nada se envía a servicios externos salvo lo que tu configures explícitamente (por ejemplo, el provider de IA para el asistente del cliente).',
                     ],
                     [
                         'q' => '¿Mis clientes necesitan cuenta?',
-                        'a' => 'Si, pero no tienen que pasar por un formulario de registro publico. Tu les envias una invitacion por email, ellos eligen password y entran al portal. El proceso esta pensado para que no se sientan en una web tecnica.',
+                        'a' => 'Sí, pero no tienen que pasar por un formulario de registro público. Tú les envías una invitación por email, ellos eligen password y entran al portal. El proceso está pensado para que no se sientan en una web técnica.',
                     ],
                     [
                         'q' => '¿Puedo integrarlo con mi IDE?',
-                        'a' => 'Si. ClientFlow expone un MCP server con tools de solo lectura. Cursor, Claude Code, Continue, Cline y cualquier cliente MCP compatible pueden consultar tus proyectos sin tocar el repositorio.',
+                        'a' => 'Sí. ClientFlow expone un MCP server con tools de solo lectura. Cursor, Claude Code, Continue, Cline y cualquier cliente MCP compatible pueden consultar tus proyectos sin tocar el repositorio.',
                     ],
                 ];
             @endphp

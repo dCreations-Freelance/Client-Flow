@@ -102,7 +102,7 @@ enum NotificationEvent: string
             self::TaskDueSoon => 'Cuando una tarea tuya tiene su fecha limite en menos de 3 dias.',
             self::EventInvitation => 'Cuando un administrador te invita a un evento del calendario.',
             self::OrganizationInvitation => 'Cuando un administrador te invita a una organizacion.',
-            self::DailyDigest => 'Un email cada manana con el resumen de lo que ha pasado en tus proyectos.',
+            self::DailyDigest => 'Un email cada mañana con el resumen de lo que ha pasado en tus proyectos.',
         };
     }
 

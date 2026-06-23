@@ -239,6 +239,57 @@
                         </div>
                     </div>
 
+                    {{-- Adjuntos: solo en modo create. La subida desde
+                        el modal es opcional y admite hasta el limite
+                        configurado. La validacion se hace en el
+                        componente via `#[Validate]`. --}}
+                    @if ($taskForm['mode'] === 'create')
+                        <div>
+                            <label class="mb-1 block text-sm font-medium text-[#111827]">Adjuntos</label>
+
+                            @if (count($taskFormAttachments) > 0)
+                                <div class="mb-2 flex flex-wrap gap-2">
+                                    @foreach ($taskFormAttachments as $index => $file)
+                                        <div class="flex items-center gap-2 rounded-lg border border-[#E7E2D8] bg-[#FAFAF7] px-2.5 py-1.5 text-xs">
+                                            <svg class="h-4 w-4 text-[#6B7280]" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                                            </svg>
+                                            <span class="max-w-[180px] truncate text-[#111827]">{{ $file->getClientOriginalName() }}</span>
+                                            <span class="text-[#9CA3AF]">{{ \App\Models\TaskAttachment::formatBytes($file->getSize()) }}</span>
+                                            <button
+                                                type="button"
+                                                wire:click="removeTaskFormAttachment({{ $index }})"
+                                                class="ml-1 text-[#6B7280] hover:text-[#DC2626]"
+                                                title="Quitar"
+                                            >&times;</button>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                            <label class="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-[#E7E2D8] bg-[#FAFAF7] px-3 py-2 text-xs text-[#6B7280] hover:border-[#2563EB] hover:text-[#2563EB]">
+                                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+                                </svg>
+                                <span>Subir archivos (opcional)</span>
+                                <input type="file" wire:model="taskFormAttachments" multiple class="hidden">
+                            </label>
+
+                            <p class="mt-1 text-[10px] text-[#9CA3AF]">
+                                Maximo {{ (int) config('clientflow.attachments.max_files_per_upload', 5) }} archivos,
+                                {{ (int) config('clientflow.attachments.max_size_kb', 10240) / 1024 }} MB cada uno.
+                                Los adjuntos tambien pueden gestionarse despues desde el detalle de la tarea.
+                            </p>
+
+                            @error('taskFormAttachments')
+                                <p class="mt-1 text-xs text-[#DC2626]">{{ $message }}</p>
+                            @enderror
+                            @error('taskFormAttachments.*')
+                                <p class="mt-1 text-xs text-[#DC2626]">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    @endif
+
                     <div class="flex flex-col-reverse gap-2 pt-4 sm:flex-row sm:items-center sm:justify-end">
                         <button type="button" wire:click="closeForm" class="rounded-lg px-4 py-2 text-sm font-medium text-[#6B7280] hover:text-[#111827]">
                             Cancelar

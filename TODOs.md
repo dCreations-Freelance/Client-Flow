@@ -70,6 +70,25 @@
 
 ---
 
+## Fase 2.5: Hub del proyecto (UI/UX)
+
+Redisenyo de la pagina de detalle de proyecto (`/admin/projects/{id}` y
+`/portal/projects/{id}`) para que funcione como hub con hero sticky,
+tiles de resumen, preview del kanban, documentos recientes, proximo
+evento, ultimo mensaje y grid de equipo. No introduce logica de
+negocio nueva: reutiliza los datos y relaciones ya existentes.
+
+Detalles en `docs/tasks/fase-2.5-project-hub.md`.
+
+- [x] Crear DTO `App\DTOs\Project\ProjectSummary` + `BoardColumnPreview`
+- [x] Crear `App\Services\Project\ProjectSummaryService` con `loadForAdmin` y `loadForPortal`
+- [x] Crear partials `project-breadcrumbs`, `project-hero`, `project-stat-tile`, `project-previews`
+- [x] Reescribir `admin/projects/show.blade.php` y `portal/projects/show.blade.php`
+- [x] Refactorizar `Admin/ProjectController::show` y `Portal/ProjectController::show` para usar el servicio
+- [x] Validar 117 tests verdes en el scope de Project (`php artisan test --filter="Project"`)
+
+---
+
 ## Fase 3: Kanban (vitaminado)
 
 ### Board columns
@@ -222,17 +241,17 @@ Detalles en `docs/tasks/fase-transversal-notificaciones.md`.
 
 ## Fase 10: Adjuntos en tareas y mensajes
 
-- [ ] Crear migracion `task_attachments`
-- [ ] Crear migracion `message_attachments`
-- [ ] Crear modelo `TaskAttachment` con relaciones
-- [ ] Crear modelo `MessageAttachment` con relaciones
-- [ ] Implementar subida de archivos en creacion/edicion de tarea
-- [ ] Implementar subida de archivos en chat (arrastrar y soltar / boton)
-- [ ] Mostrar lista de adjuntos en detalle de tarea
-- [ ] Mostrar adjuntos en burbujas de chat (icono + nombre + tamano)
-- [ ] Servir archivos mediante controlador con autorizacion
-- [ ] Validar tipos MIME y tamano maximo (configurable)
-- [ ] Implementar eliminacion de adjuntos
+- [x] Crear migracion `task_attachments`
+- [x] Crear migracion `message_attachments`
+- [x] Crear modelo `TaskAttachment` con relaciones
+- [x] Crear modelo `MessageAttachment` con relaciones
+- [x] Implementar subida de archivos en creacion/edicion de tarea
+- [x] Implementar subida de archivos en chat (arrastrar y soltar / boton)
+- [x] Mostrar lista de adjuntos en detalle de tarea
+- [x] Mostrar adjuntos en burbujas de chat (icono + nombre + tamano)
+- [x] Servir archivos mediante controlador con autorizacion
+- [x] Validar tipos MIME y tamano maximo (configurable)
+- [x] Implementar eliminacion de adjuntos
 
 ---
 

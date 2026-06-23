@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Portal;
 use App\Http\Controllers\Controller;
 use App\Models\Organization;
 use App\Models\Project;
+use App\Services\Project\ProjectSummaryService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -76,20 +77,27 @@ class ProjectController extends Controller
     }
 
     /**
-     * Detalle de un proyecto. La policy ya valida que el cliente sea
-     * miembro de la organizacion y que el proyecto este visible.
+     * Detalle de un proyecto (hub del portal).
      *
+     * Carga el snapshot precalculado via `ProjectSummaryService`
+     * aplicando los filtros de visibilidad propios del cliente
+     * (documentos publicos, etc.). La policy ya valida que el
+     * cliente sea miembro de la organizacion y que el proyecto
+     * este visible.
+     *
+     * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Project  $project
      * @return \Illuminate\View\View
      */
-    public function show(Project $project): View
+    public function show(Request $request, Project $project): View
     {
         $this->authorize('view', $project);
 
-        $project->load(['organization', 'members']);
+        $summary = app(ProjectSummaryService::class)
+            ->loadForPortal($project, $request->user());
 
         return view('portal.projects.show', [
-            'project' => $project,
+            'summary' => $summary,
         ]);
     }
 

@@ -1,14 +1,14 @@
 {{--
     Seccion MCP server (05).
 
-    Es el diferenciador tecnico de ClientFlow. Mostramos una
+    Es el diferenciador técnico de ClientFlow. Mostramos una
     llamada realista (`mcp.get_project_status(...)`) con un
     typing effect que se dispara al entrar en viewport, seguido
-    de la respuesta JSON materializandose linea a linea.
+    de la respuesta JSON materializándose línea a línea.
 
     El `data-cf-typing` lo lee `resources/js/landing.js` y emite
     `cf:typed-done` al terminar; ese evento arranca la cascada
-    de las lineas de respuesta (`.cf-code-line`).
+    de las líneas de respuesta (`.cf-code-line`).
 --}}
 <section id="mcp" class="border-b border-[#E7E2D8] bg-white py-24 sm:py-32" aria-labelledby="cf-mcp-title">
     <div class="mx-auto max-w-7xl px-6 lg:px-10">
@@ -26,7 +26,7 @@
                 </h2>
 
                 <p class="cf-reveal mt-5 max-w-xl text-base leading-7 text-[#6B7280] sm:text-lg">
-                    ClientFlow expone un servidor MCP con tools de solo lectura. Cursor, Claude Code o cualquier cliente compatible pueden consultar el estado de un proyecto, sus tareas y la documentacion privada sin tener que subir nada al repositorio.
+                    ClientFlow expone un servidor MCP con tools de solo lectura. Cursor, Claude Code o cualquier cliente compatible pueden consultar el estado de un proyecto, sus tareas y la documentación privada sin tener que subir nada al repositorio.
                 </p>
 
                 <ul class="cf-stagger-in mt-8 space-y-3 text-sm text-[#111827]">
@@ -44,7 +44,7 @@
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                         </span>
                         <div>
-                            <p class="font-semibold">Autenticacion por API token</p>
+                            <p class="font-semibold">Autenticación por API token</p>
                             <p class="mt-0.5 text-[#6B7280]">Cada developer genera el suyo desde su perfil. Revocable, scope por proyecto.</p>
                         </div>
                     </li>
@@ -54,13 +54,13 @@
                         </span>
                         <div>
                             <p class="font-semibold">Documentos privados consultables</p>
-                            <p class="mt-0.5 text-[#6B7280]">El agente del IDE ve el detalle tecnico que tu cliente no necesita ver.</p>
+                            <p class="mt-0.5 text-[#6B7280]">El agente del IDE ve el detalle técnico que tu cliente no necesita ver.</p>
                         </div>
                     </li>
                 </ul>
             </div>
 
-            {{-- Editor de codigo simulado --}}
+            {{-- Editor de código simulado --}}
             <div class="cf-reveal">
                 <div class="overflow-hidden rounded-2xl border border-[#E7E2D8] bg-[#111827] shadow-[0_20px_60px_rgba(17,24,39,0.15)]">
                     {{-- Chrome del editor --}}
@@ -81,13 +81,13 @@
                             <span class="text-[#8B5CF6]">mcp</span><span class="text-[#E7E2D8]">.</span><span class="text-[#2563EB]">get_project_status</span><span class="text-[#E7E2D8]">(</span><span class="text-[#16A34A]">project_id</span><span class="text-[#E7E2D8]">=</span><span class="text-[#D97706]">42</span><span class="text-[#E7E2D8]">)</span><span
                                 class="cf-typing"
                                 data-cf-typing
-                                data-cf-text=" → progreso, tareas abiertas, proximo deadline"
+                                data-cf-text=" → progreso, tareas abiertas, próximo deadline"
                                 data-cf-speed="22"
                             ></span>
                         </p>
 
                         <p class="cf-code-line mt-4 text-[#6B7280]">{</p>
-                        <p class="cf-code-line">&nbsp;&nbsp;<span class="text-[#2563EB]">"name"</span>: <span class="text-[#16A34A]">"Web corporativa clinica dental"</span>,</p>
+                        <p class="cf-code-line">&nbsp;&nbsp;<span class="text-[#2563EB]">"name"</span>: <span class="text-[#16A34A]">"Web corporativa clínica dental"</span>,</p>
                         <p class="cf-code-line">&nbsp;&nbsp;<span class="text-[#2563EB]">"status"</span>: <span class="text-[#16A34A]">"in_progress"</span>,</p>
                         <p class="cf-code-line">&nbsp;&nbsp;<span class="text-[#2563EB]">"progress"</span>: <span class="text-[#D97706]">68</span>,</p>
                         <p class="cf-code-line">&nbsp;&nbsp;<span class="text-[#2563EB]">"open_tasks"</span>: <span class="text-[#D97706]">5</span>,</p>
@@ -99,7 +99,7 @@
                 </div>
 
                 <p class="mt-4 text-center text-xs text-[#6B7280] sm:text-left">
-                    Sin tocar el repo, sin subir documentacion a un servicio externo. Tu IDE pregunta, ClientFlow responde.
+                    Sin tocar el repo, sin subir documentación a un servicio externo. Tu IDE pregunta, ClientFlow responde.
                 </p>
             </div>
         </div>

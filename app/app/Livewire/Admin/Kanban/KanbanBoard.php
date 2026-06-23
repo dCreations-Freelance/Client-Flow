@@ -8,6 +8,8 @@ use App\Models\BoardColumn;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
+use App\Services\Activity\ProjectActivityLogger;
+use App\Services\Attachments\AttachmentService;
 use App\Services\TaskMoveService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
@@ -16,6 +18,7 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 /**
  * Componente principal del tablero kanban.
@@ -33,6 +36,7 @@ use Livewire\Component;
 class KanbanBoard extends Component
 {
     use AuthorizesRequests;
+    use WithFileUploads;
 
     public Project $project;
 
@@ -42,6 +46,17 @@ class KanbanBoard extends Component
      * @var Collection<int, Task>
      */
     public Collection $tasks;
+
+    /**
+     * Adjuntos pendientes para la tarea que se esta creando o
+     * editando. Solo se procesan en modo `create`; en `edit`
+     * los adjuntos se gestionan en la vista de detalle de la
+     * tarea para no romper el contrato "subida atomica" del
+     * modal.
+     *
+     * @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile[]
+     */
+    public array $taskFormAttachments = [];
 
     /**
      * Filtros: se mantienen en query string con `#[Url]` para que
@@ -228,12 +243,34 @@ class KanbanBoard extends Component
     public function closeForm(): void
     {
         $this->taskForm = null;
+        $this->taskFormAttachments = [];
         $this->resetErrorBag();
+    }
+
+    /**
+     * Quita un adjunto pendiente del array. Pensado para el
+     * boton "X" en la UI.
+     *
+     * @param  int  $index
+     * @return void
+     */
+    public function removeTaskFormAttachment(int $index): void
+    {
+        if (array_key_exists($index, $this->taskFormAttachments)) {
+            unset($this->taskFormAttachments[$index]);
+            $this->taskFormAttachments = array_values($this->taskFormAttachments);
+        }
     }
 
     /**
      * Persiste la tarea. Se llama tanto en crear como en editar; el
      * form lleva un flag `mode` para distinguirlos.
+     *
+     * En modo `create`, si hay adjuntos pendientes, se suben
+     * tras crear la fila. En modo `edit` no se procesan
+     * adjuntos del modal: la gestion de adjuntos se hace en
+     * la vista de detalle para no romper la consistencia del
+     * guardado.
      */
     public function saveTask(): void
     {
@@ -253,6 +290,8 @@ class KanbanBoard extends Component
             'taskForm.due_date' => ['nullable', 'date'],
             'taskForm.assignee_id' => ['nullable', 'integer', 'exists:users,id'],
             'taskForm.parent_id' => ['nullable', 'integer', 'exists:tasks,id'],
+            'taskFormAttachments' => ['nullable', 'array', 'max:'.(int) config('clientflow.attachments.max_files_per_upload', 5)],
+            'taskFormAttachments.*' => ['file', 'max:'.(int) config('clientflow.attachments.max_size_kb', 10240), 'mimes:'.implode(',', (array) config('clientflow.attachments.allowed_mimes', []))],
         ];
 
         $this->validate($rules);
@@ -267,7 +306,7 @@ class KanbanBoard extends Component
                 return;
             }
 
-            Task::create([
+            $task = Task::create([
                 'project_id' => $this->project->id,
                 'column_id' => $column->id,
                 'parent_id' => $form['parent_id'] ?? null,
@@ -284,6 +323,34 @@ class KanbanBoard extends Component
                     ->whereNull('parent_id')
                     ->max('position') + 1,
             ]);
+
+            // Subimos los adjuntos pendientes (si los hay).
+            // El orden de subida se mantiene tal cual el usuario
+            // los encolo. La validacion ya se ha hecho en el
+            // `#[Validate]` de la propiedad.
+            $attachmentCount = 0;
+            if ($this->taskFormAttachments !== []) {
+                $service = app(AttachmentService::class);
+                foreach ($this->taskFormAttachments as $file) {
+                    $service->store(
+                        $this->project,
+                        AttachmentService::CONTEXT_TASK,
+                        $task->id,
+                        $file,
+                        Auth::user(),
+                    );
+                    $attachmentCount++;
+                }
+            }
+
+            if ($attachmentCount > 0) {
+                app(ProjectActivityLogger::class)->attachmentUploadedToTask(
+                    $this->project,
+                    $task,
+                    $attachmentCount,
+                    Auth::user(),
+                );
+            }
         } else {
             $task = Task::find($form['task_id']);
             if ($task === null) {

@@ -4,11 +4,16 @@
             &larr; Volver al tablero
         </a>
 
+        @if (session('status'))
+            <div class="rounded-lg border border-[#16A34A] bg-[#F0FDF4] px-4 py-2 text-sm text-[#16A34A]">
+                {{ session('status') }}
+            </div>
+        @endif
+
         <x-ui.card>
             <div class="flex flex-col gap-3">
                 <div class="flex items-center gap-2">
                     <h1 class="text-2xl font-semibold">{{ $task->title }}</h1>
-                    <x-partials.status-badge :status="$project->status" />
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2 text-sm">
@@ -30,6 +35,10 @@
             @if ($task->description)
                 <div class="mt-4 whitespace-pre-line text-sm text-[#111827]">{{ $task->description }}</div>
             @endif
+        </x-ui.card>
+
+        <x-ui.card>
+            <livewire:shared.task-attachment-list :project="$project" :task="$task" />
         </x-ui.card>
 
         <x-ui.card>

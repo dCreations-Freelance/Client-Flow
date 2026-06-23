@@ -10,11 +10,13 @@ use App\Models\ProjectChatRead;
 use App\Models\ProjectMessage;
 use App\Models\User;
 use App\Notifications\NewProjectMessage;
+use App\Services\Attachments\AttachmentService;
 use App\Services\Notifications\NotificationDispatcher;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 /**
  * Componente Livewire compartido del chat de un proyecto.
@@ -39,6 +41,7 @@ use Livewire\Component;
 class ChatWindow extends Component
 {
     use AuthorizesRequests;
+    use WithFileUploads;
 
     public Project $project;
 
@@ -53,6 +56,17 @@ class ChatWindow extends Component
      * Texto del input. Sincronizado con el textarea via `wire:model`.
      */
     public string $newMessage = '';
+
+    /**
+     * Adjuntos pendientes de enviar. Livewire los sube a
+     * `livewire-tmp/` cuando se asigna el input; aqui los
+     * procesamos en `sendMessage`. Es un array porque
+     * permitimos hasta `max_files_per_upload` archivos en una
+     * sola operacion (consistente con el config).
+     *
+     * @var \Livewire\Features\SupportFileUploads\TemporaryUploadedFile[]
+     */
+    public array $attachments = [];
 
     /**
      * Numero de mensajes cargados en pantalla. Se incrementa con
@@ -194,13 +208,19 @@ class ChatWindow extends Component
      * las mismas reglas que un Form Request tradicional para
      * mantener la consistencia y poder usar mensajes en
      * castellano.
+     *
+     * Si hay adjuntos pendientes, primero los sube via
+     * `AttachmentService` y crea un mensaje con el texto (o
+     * vacio si solo hay adjuntos). Si el texto es vacio y no
+     * hay adjuntos, muestra un error y no hace nada.
      */
     public function sendMessage(): void
     {
         $content = trim($this->newMessage);
+        $hasAttachments = $this->attachments !== [];
 
-        if ($content === '') {
-            $this->addError('newMessage', 'Escribe un mensaje antes de enviarlo.');
+        if ($content === '' && ! $hasAttachments) {
+            $this->addError('newMessage', 'Escribe un mensaje o adjunta un archivo antes de enviar.');
 
             return;
         }
@@ -211,18 +231,45 @@ class ChatWindow extends Component
             return;
         }
 
+        $this->validate([
+            'attachments' => ['nullable', 'array', 'max:'.(int) config('clientflow.attachments.max_files_per_upload', 5)],
+            'attachments.*' => ['file', 'max:'.(int) config('clientflow.attachments.max_size_kb', 10240), 'mimes:'.implode(',', (array) config('clientflow.attachments.allowed_mimes', []))],
+        ]);
+
         // Forzamos la policy de ProjectMessage porque
         // authorize('create', $this->project) infiere
         // ProjectPolicy::create (que es admin-only). Aqui
         // queremos permitir clientes que pueden ver el proyecto.
         $this->authorize('create', [ProjectMessage::class, $this->project]);
 
+        $messageType = $hasAttachments && $content === ''
+            ? MessageType::File
+            : MessageType::Text;
+
         $message = ProjectMessage::create([
             'project_id' => $this->project->id,
             'user_id' => $this->user->id,
             'content' => $content,
-            'type' => MessageType::Text,
+            'type' => $messageType,
         ]);
+
+        // Si hay adjuntos, los subimos uno a uno via el
+        // servicio. Esto crea las filas en `message_attachments`
+        // y mueve los archivos de `livewire-tmp/` al disco
+        // definitivo. El orden de subida se mantiene tal cual
+        // el usuario los encolo.
+        if ($hasAttachments) {
+            $service = app(AttachmentService::class);
+            foreach ($this->attachments as $file) {
+                $service->store(
+                    $this->project,
+                    AttachmentService::CONTEXT_MESSAGE,
+                    $message->id,
+                    $file,
+                    $this->user,
+                );
+            }
+        }
 
         // Marcamos como leido para el emisor: ya "ve" su propio
         // mensaje. Si no lo hicieramos, su propio mensaje le
@@ -242,9 +289,55 @@ class ChatWindow extends Component
             );
         }
 
-        $this->reset('newMessage');
+        $this->reset(['newMessage', 'attachments']);
         $this->resetErrorBag();
         $this->dispatch('chat-message-sent', messageId: $message->id);
+    }
+
+    /**
+     * Quita un adjunto pendiente del array `attachments`. Pensado
+     * para los botones "X" en la UI cuando el usuario se
+     * arrepiente de un archivo antes de enviar.
+     *
+     * @param  int  $index
+     * @return void
+     */
+    public function removePendingAttachment(int $index): void
+    {
+        if (array_key_exists($index, $this->attachments)) {
+            unset($this->attachments[$index]);
+            $this->attachments = array_values($this->attachments);
+        }
+    }
+
+    /**
+     * Elimina un adjunto ya enviado. Solo admin. Se invoca desde
+     * los botones de la UI en cada burbuja; en el chat del
+     * cliente este boton no se renderiza (la policy lo
+     * rechaza).
+     *
+     * @param  int  $attachmentId
+     * @return void
+     */
+    public function deleteMessageAttachment(int $attachmentId): void
+    {
+        $attachment = \App\Models\MessageAttachment::find($attachmentId);
+        if ($attachment === null) {
+            return;
+        }
+
+        $this->authorize('delete', $attachment);
+
+        $message = $attachment->message;
+        $service = app(AttachmentService::class);
+        $service->deleteMessageAttachment($attachment);
+
+        // Si el mensaje queda sin texto y sin adjuntos,
+        // tambien lo borramos para no dejar una burbuja
+        // fantasma.
+        if ($message !== null && $message->isEmpty() && $message->attachments()->doesntExist()) {
+            $message->delete();
+        }
     }
 
     /**
@@ -307,6 +400,7 @@ class ChatWindow extends Component
             'totalMessages' => $this->totalMessages,
             'unreadCount' => $this->unreadCount,
             'readMessageIds' => $this->readMessageIds,
+            'canDeleteAttachments' => $this->user->isAdmin(),
         ]);
     }
 }

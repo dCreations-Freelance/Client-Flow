@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UpdateProjectRequest;
 use App\Models\Organization;
 use App\Models\Project;
 use App\Services\DefaultBoardColumnsService;
+use App\Services\Project\ProjectSummaryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -141,10 +142,13 @@ class ProjectController extends Controller
     }
 
     /**
-     * Detalle del proyecto: header, miembros, descripcion. Los tabs
-     * de Kanban, Documentos, Chat y Calendario se anadiran en fases
-     * siguientes, manteniendo la vista enfocada en lo que la fase 2
-     * ofrece.
+     * Detalle del proyecto (hub).
+     *
+     * Carga el snapshot precalculado via `ProjectSummaryService`
+     * para que la vista no lance queries adicionales, y resuelve
+     * los miembros de la organizacion que aun no estan en el
+     * proyecto (necesarios para el componente Livewire de gestion
+     * de miembros).
      *
      * @param  \App\Models\Project  $project
      * @return \Illuminate\View\View
@@ -153,13 +157,17 @@ class ProjectController extends Controller
     {
         $this->authorize('view', $project);
 
-        $project->load(['organization', 'members']);
+        $summary = app(ProjectSummaryService::class)
+            ->loadForAdmin($project, request()->user());
 
-        $organizationMembers = $project->organization->members()->orderBy('name')->get();
-        $availableMembers = $organizationMembers->diff($project->members);
+        $availableMembers = $project->organization
+            ->members()
+            ->orderBy('name')
+            ->get()
+            ->diff($summary->project->members);
 
         return view('admin.projects.show', [
-            'project' => $project,
+            'summary' => $summary,
             'availableMembers' => $availableMembers,
         ]);
     }

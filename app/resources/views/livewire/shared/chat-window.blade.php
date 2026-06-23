@@ -7,17 +7,16 @@
     - Lista de mensajes scrollable con autoscroll al fondo.
     - Boton "Cargar mensajes anteriores" al inicio si hay mas
       de los cargados en pantalla.
-    - Input con textarea y boton Enviar.
+    - Input con textarea, zona de adjuntos pendientes y boton Enviar.
     - Polling cada 5s para refrescar mensajes.
 
     Reglas:
     - El contenedor lleva `wire:poll.5s="refresh"` para que
-      Livewire re-renderice periodicamente. No usamos
-      `wire:poll.5s` a secas para que el render sea explicito.
+      Livewire re-renderice periodicamente.
     - JS minimo inline para autoscroll al fondo y para
       Shift+Enter (salto de linea) vs Enter (enviar).
     - Los mensajes se renderizan via partial `chat-message` que
-      decide su alineacion y estilo.
+      decide su alineacion, estilo y los adjuntos.
 --}}
 <div
     x-data="{
@@ -77,12 +76,17 @@
                 </div>
                 <h3 class="text-sm font-medium text-[#111827]">Aun no hay mensajes</h3>
                 <p class="mt-1 text-sm text-[#6B7280]">
-                    Escribe el primer mensaje para empezar la conversacion con tu cliente.
+                    Escribe el primer mensaje o arrastra un archivo para empezar la conversacion.
                 </p>
             </div>
         @else
             @foreach ($messages as $message)
-                <x-partials.chat-message :message="$message" :currentUserId="$user->id" :isReadByOther="(bool) ($readMessageIds[$message->id] ?? false)" />
+                <x-partials.chat-message
+                    :message="$message"
+                    :currentUserId="$user->id"
+                    :isReadByOther="(bool) ($readMessageIds[$message->id] ?? false)"
+                    :canDeleteAttachments="$canDeleteAttachments"
+                />
             @endforeach
         @endif
     </div>
@@ -94,15 +98,66 @@
     >
         <div class="flex-1">
             <label for="chat-input" class="sr-only">Escribe un mensaje</label>
-            <textarea
-                id="chat-input"
-                wire:model="newMessage"
-                rows="2"
-                maxlength="2000"
-                placeholder="Escribe un mensaje... (Enter para enviar, Shift+Enter para nueva linea)"
-                class="block w-full resize-none rounded-lg border border-[#E7E2D8] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
-                x-on:keydown.enter.prevent="if (!event.shiftKey) { $wire.call('sendMessage'); }"
-            ></textarea>
+
+            {{-- Lista de adjuntos pendientes de enviar. Cada uno con
+                boton X para quitarlo. --}}
+            @if (count($attachments) > 0)
+                <div class="mb-2 flex flex-wrap gap-2">
+                    @foreach ($attachments as $index => $file)
+                        <div class="flex items-center gap-2 rounded-lg border border-[#E7E2D8] bg-[#FAFAF7] px-2.5 py-1.5 text-xs">
+                            <svg class="h-4 w-4 text-[#6B7280]" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                            </svg>
+                            <span class="max-w-[180px] truncate text-[#111827]">{{ $file->getClientOriginalName() }}</span>
+                            <span class="text-[#9CA3AF]">{{ \App\Models\TaskAttachment::formatBytes($file->getSize()) }}</span>
+                            <button
+                                type="button"
+                                wire:click="removePendingAttachment({{ $index }})"
+                                class="ml-1 text-[#6B7280] hover:text-[#DC2626]"
+                                title="Quitar"
+                            >&times;</button>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
+            <div class="flex items-end gap-2">
+                <textarea
+                    id="chat-input"
+                    wire:model="newMessage"
+                    rows="2"
+                    maxlength="2000"
+                    placeholder="Escribe un mensaje... (Enter para enviar, Shift+Enter para nueva linea)"
+                    class="block w-full resize-none rounded-lg border border-[#E7E2D8] bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#2563EB] focus:border-transparent"
+                    x-on:keydown.enter.prevent="if (!event.shiftKey) { $wire.call('sendMessage'); }"
+                ></textarea>
+
+                {{-- Boton para adjuntar archivos. El input file
+                    multiple permite arrastrar o seleccionar varios.
+                    Al cambiar, Livewire sube los archivos a
+                    livewire-tmp/ y los refleja en $wire.attachments. --}}
+                <label
+                    class="inline-flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-[#E7E2D8] bg-white text-[#6B7280] hover:bg-[#F4F1EA] hover:text-[#111827]"
+                    title="Adjuntar archivo"
+                >
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                    </svg>
+                    <input
+                        type="file"
+                        wire:model="attachments"
+                        multiple
+                        class="hidden"
+                    >
+                </label>
+            </div>
+
+            @error('attachments')
+                <p class="mt-1 text-xs text-[#DC2626]">{{ $message }}</p>
+            @enderror
+            @error('attachments.*')
+                <p class="mt-1 text-xs text-[#DC2626]">{{ $message }}</p>
+            @enderror
             @error('newMessage')
                 <p class="mt-1 text-xs text-[#DC2626]">{{ $message }}</p>
             @enderror
