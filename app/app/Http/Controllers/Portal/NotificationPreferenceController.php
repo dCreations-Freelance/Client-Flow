@@ -22,11 +22,16 @@ class NotificationPreferenceController extends Controller
 {
     /**
      * Muestra la pagina de preferencias del cliente actual.
+     * Si el cliente todavia no tiene ninguna fila persistida,
+     * siembra las seis preferencias por defecto antes de
+     * renderizar.
      */
     public function index(): View
     {
         $user = auth()->user();
         $this->authorize('viewAny', NotificationPreference::class);
+
+        $this->seedDefaultsIfMissing($user);
 
         $preferences = $this->loadPreferencesFor($user);
 
@@ -83,5 +88,26 @@ class NotificationPreferenceController extends Controller
         }
 
         return $out;
+    }
+
+    /**
+     * Si el usuario no tiene ninguna preferencia persistida, crea
+     * las seis filas con los defaults del enum. Es idempotente: si
+     * ya existe al menos una fila, no toca la tabla.
+     */
+    private function seedDefaultsIfMissing($user): void
+    {
+        if ($user->notificationPreferences()->exists()) {
+            return;
+        }
+
+        foreach (NotificationEvent::cases() as $event) {
+            NotificationPreference::create([
+                'user_id' => $user->id,
+                'event' => $event->value,
+                'in_app' => $event->defaultInApp(),
+                'email' => $event->defaultEmail(),
+            ]);
+        }
     }
 }

@@ -21,15 +21,18 @@ use Illuminate\View\View;
 class NotificationPreferenceController extends Controller
 {
     /**
-     * Muestra la pagina de preferencias del admin actual. Carga
-     * las seis preferencias persistidas (o genera defaults en
-     * memoria para las que falten) y las pasa a la vista con
-     * el catalogo completo de eventos del enum.
+     * Muestra la pagina de preferencias del admin actual. Si el
+     * admin todavia no tiene ninguna fila persistida, siembra las
+     * seis preferencias por defecto antes de renderizar. Asi
+     * garantizamos que la tabla refleja siempre el estado actual
+     * (defaults o personalizaciones) sin obligar a un PUT previo.
      */
     public function index(): View
     {
         $user = auth()->user();
         $this->authorize('viewAny', NotificationPreference::class);
+
+        $this->seedDefaultsIfMissing($user);
 
         $preferences = $this->loadPreferencesFor($user);
 
@@ -95,5 +98,26 @@ class NotificationPreferenceController extends Controller
         }
 
         return $out;
+    }
+
+    /**
+     * Si el usuario no tiene ninguna preferencia persistida, crea
+     * las seis filas con los defaults del enum. Es idempotente: si
+     * ya existe al menos una fila, no toca la tabla.
+     */
+    private function seedDefaultsIfMissing($user): void
+    {
+        if ($user->notificationPreferences()->exists()) {
+            return;
+        }
+
+        foreach (NotificationEvent::cases() as $event) {
+            NotificationPreference::create([
+                'user_id' => $user->id,
+                'event' => $event->value,
+                'in_app' => $event->defaultInApp(),
+                'email' => $event->defaultEmail(),
+            ]);
+        }
     }
 }

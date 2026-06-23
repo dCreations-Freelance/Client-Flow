@@ -175,17 +175,7 @@ class NotificationDispatcherTest extends TestCase
     {
         Notification::fake();
 
-        $notification = new class extends \Illuminate\Notifications\Notification {
-            public function via($notifiable): array
-            {
-                return ['mail'];
-            }
-
-            public function toMail($notifiable): MailMessage
-            {
-                return (new MailMessage)->line('hola');
-            }
-        };
+        $notification = new DispatchToAddressFakeNotification;
 
         NotificationDispatcher::dispatchToAddress(
             'externo@example.com',
@@ -195,7 +185,29 @@ class NotificationDispatcherTest extends TestCase
 
         Notification::assertSentTo(
             new AnonymousNotifiable,
-            $notification,
+            DispatchToAddressFakeNotification::class,
         );
+    }
+}
+
+/**
+ * Notificacion anonima usada por el test `test_dispatch_to_address_envia_a_email_anonimo`.
+ *
+ * Se declara como clase con nombre (no anonima) porque el fake de
+ * notificaciones de Laravel indexa las notificaciones enviadas por
+ * `get_class($notification)` y `assertSentTo` espera poder resolver
+ * la clase como string. Con clases anonimas PHP no permite
+ * referenciarlas por nombre.
+ */
+class DispatchToAddressFakeNotification extends \Illuminate\Notifications\Notification
+{
+    public function via($notifiable): array
+    {
+        return ['mail'];
+    }
+
+    public function toMail($notifiable): MailMessage
+    {
+        return (new MailMessage)->line('hola');
     }
 }

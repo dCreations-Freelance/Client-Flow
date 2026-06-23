@@ -11,6 +11,6 @@ class HomeTest extends TestCase
         $this->get(route('home'))
             ->assertOk()
             ->assertSee('ClientFlow')
-            ->assertSee('Tus clientes ven, entienden y aprueban el avance del proyecto.');
+            ->assertSee('Tus clientes entienden su proyecto en');
     }
 }

@@ -8,10 +8,10 @@ use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
 use App\Notifications\DailyDigest;
-use App\Services\Notifications\NotificationDispatcher;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Notification;
 
 /**
  * Envia el resumen diario por email a los usuarios que lo tengan
@@ -109,28 +109,24 @@ class NotificationsDailyDigest extends Command
                 continue;
             }
 
-            $ok = NotificationDispatcher::dispatchToAddress(
-                $user->email,
-                $user->name,
-                new DailyDigest(
-                    $user,
-                    $payload['projects'],
-                    $payload['pendingTasks'],
-                    $payload['upcomingEvents'],
-                    $payload['unreadMessages'],
-                ),
+            // Enviamos el digest directamente al User (no a un
+            // `AnonymousNotifiable`) para que los tests puedan
+            // localizarlo con `Notification::assertSentTo($user, ...)`
+            // y para que el `last_digest_sent_at` se actualice
+            // sobre el usuario real. La preferencia ya se filtro
+            // arriba, asi que no hace falta volver a comprobarla.
+            $notification = new DailyDigest(
+                $user,
+                $payload['projects'],
+                $payload['pendingTasks'],
+                $payload['upcomingEvents'],
+                $payload['unreadMessages'],
             );
 
-            // `dispatchToAddress` no respeta preferencias (es email
-            // puro), asi que siempre devuelve true. Aun asi dejamos
-            // la condicion para mantener simetria con el otro
-            // dispatcher y poder cambiarlo en una fase futura.
-            if ($ok) {
-                $user->forceFill(['last_digest_sent_at' => now()])->save();
-                $sent++;
-            } else {
-                $skipped++;
-            }
+            Notification::sendNow($user, $notification);
+
+            $user->forceFill(['last_digest_sent_at' => now()])->save();
+            $sent++;
         }
 
         $this->info(sprintf('Resúmenes enviados: %d. Omitidos: %d.', $sent, $skipped));

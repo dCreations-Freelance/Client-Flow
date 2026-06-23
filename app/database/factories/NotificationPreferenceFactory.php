@@ -22,7 +22,7 @@ class NotificationPreferenceFactory extends Factory
      */
     public function definition(): array
     {
-        $event = fake()->randomElement(NotificationEvent::cases());
+        $event = fake()->unique()->randomElement(NotificationEvent::cases());
 
         return [
             'user_id' => User::factory(),

@@ -109,7 +109,7 @@ Route::middleware('guest')->group(function (): void {
     Route::post('recuperar-contrasena', [PasswordResetLinkController::class, 'store'])->name('password.email');
 
     Route::get('recuperar-contrasena/{token}', [NewPasswordController::class, 'create'])->name('password.reset');
-    Route::post('recuperar-contrasena', [NewPasswordController::class, 'store'])->name('password.update');
+    Route::post('restablecer-contrasena', [NewPasswordController::class, 'store'])->name('password.update');
 });
 
 Route::post('cerrar-sesion', [AuthenticatedSessionController::class, 'destroy'])

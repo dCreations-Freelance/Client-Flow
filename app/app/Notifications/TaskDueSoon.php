@@ -80,10 +80,18 @@ class TaskDueSoon extends Notification
     public function toMail($notifiable): MailMessage
     {
         $url = route('admin.projects.board', $this->project);
-        $daysLeft = (int) now()->startOfDay()->diffInDays($this->task->due_date, false);
-        $when = $daysLeft <= 0
-            ? 'hoy'
-            : ($daysLeft === 1 ? 'mañana' : sprintf('en %d dias', $daysLeft));
+        $daysLeft = $this->task->due_date
+            ? (int) now()->startOfDay()->diffInDays($this->task->due_date, false)
+            : null;
+        $when = $daysLeft === null
+            ? 'proximamente'
+            : ($daysLeft <= 0
+                ? 'hoy'
+                : ($daysLeft === 1 ? 'mañana' : sprintf('en %d dias', $daysLeft)));
+
+        $dateLine = $this->task->due_date
+            ? sprintf('Fecha exacta: %s.', $this->task->due_date->format('d/m/Y'))
+            : 'La fecha limite aun no esta definida.';
 
         return (new MailMessage)
             ->subject(sprintf('Recordatorio: "%s" vence %s', $this->task->title, $when))
@@ -94,7 +102,7 @@ class TaskDueSoon extends Notification
                 $this->project->name,
                 $when,
             ))
-            ->line(sprintf('Fecha exacta: %s.', $this->task->due_date->format('d/m/Y')))
+            ->line($dateLine)
             ->action('Ir al tablero', $url)
             ->line('Si ya esta terminada, marcala como completada para que no vuelva a avisarte.');
     }

@@ -37,6 +37,11 @@
                                 name="preferences[{{ $loop->index }}][event]"
                                 value="{{ $row['event']->value }}"
                             >
+                            <input
+                                type="hidden"
+                                name="preferences[{{ $loop->index }}][in_app]"
+                                value="0"
+                            >
                             <label class="inline-flex cursor-pointer items-center">
                                 <input
                                     type="checkbox"
@@ -48,6 +53,11 @@
                             </label>
                         </div>
                         <div class="col-span-3 flex items-center justify-center pt-1">
+                            <input
+                                type="hidden"
+                                name="preferences[{{ $loop->index }}][email]"
+                                value="0"
+                            >
                             <label class="inline-flex cursor-pointer items-center">
                                 <input
                                     type="checkbox"
