@@ -30,6 +30,7 @@ class TaskFactory extends Factory
             'type' => TaskType::Task,
             'estimated_hours' => null,
             'actual_hours' => null,
+            'total_logged_minutes' => 0,
             'due_date' => null,
             'position' => 0,
             'assignee_id' => null,

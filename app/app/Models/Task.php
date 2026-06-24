@@ -38,6 +38,7 @@ class Task extends Model
         'type',
         'estimated_hours',
         'actual_hours',
+        'total_logged_minutes',
         'due_date',
         'position',
         'assignee_id',
@@ -58,6 +59,7 @@ class Task extends Model
             'position' => 'integer',
             'estimated_hours' => 'decimal:2',
             'actual_hours' => 'decimal:2',
+            'total_logged_minutes' => 'integer',
         ];
     }
 
@@ -129,6 +131,21 @@ class Task extends Model
         return $this->hasMany(TaskAttachment::class)->latest('created_at');
     }
 
+    /**
+     * Entradas de tiempo registradas contra esta tarea.
+     * La cache `total_logged_minutes` se mantiene
+     * sincronizada por el observer del modelo
+     * `TimeEntry`, por lo que esta relacion se usa
+     * para los listados y los calculos detallados,
+     * no para conocer el total.
+     *
+     * @return HasMany<TimeEntry>
+     */
+    public function timeEntries(): HasMany
+    {
+        return $this->hasMany(TimeEntry::class)->recent();
+    }
+
     // -----------------------------------------------------------------
     // Helpers
     // -----------------------------------------------------------------
@@ -189,6 +206,45 @@ class Task extends Model
     public function getSubtasksCountAttribute(): int
     {
         return $this->subtasks()->count();
+    }
+
+    /**
+     * Tiempo total registrado en la tarea convertido a
+     * horas decimales. Es la conversion directa de
+     * `total_logged_minutes` (la cache que mantiene el
+     * observer de `TimeEntry`).
+     *
+     * @return float
+     */
+    public function getTotalLoggedHoursAttribute(): float
+    {
+        return round(((int) $this->total_logged_minutes) / 60, 2);
+    }
+
+    /**
+     * Tiempo total registrado en formato `HH:MM` para
+     * mostrar en la UI sin que el usuario tenga que
+     * dividir entre 60 mentalmente. Reutiliza la
+     * misma logica que `TimeEntry::displayMinutes`
+     * aplicada a la suma de la tarea.
+     *
+     * @return string
+     */
+    public function getTotalLoggedDisplayAttribute(): string
+    {
+        $total = (int) $this->total_logged_minutes;
+        $hours = intdiv($total, 60);
+        $mins = $total % 60;
+
+        if ($hours === 0) {
+            return $mins.'m';
+        }
+
+        if ($mins === 0) {
+            return $hours.'h';
+        }
+
+        return $hours.'h '.str_pad((string) $mins, 2, '0', STR_PAD_LEFT).'m';
     }
 
     /**

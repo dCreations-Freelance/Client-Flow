@@ -21,6 +21,8 @@ use App\Http\Controllers\Admin\MessageAttachmentController as AdminMessageAttach
 use App\Http\Controllers\Admin\TaskAttachmentController as AdminTaskAttachmentController;
 use App\Http\Controllers\Admin\TaskController as AdminTaskController;
 use App\Http\Controllers\Admin\TaskMoveController as AdminTaskMoveController;
+use App\Http\Controllers\Admin\TimeEntryController as AdminTimeEntryController;
+use App\Http\Controllers\Admin\ProjectTimeController as AdminProjectTimeController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\InvitationAcceptanceController;
 use App\Http\Controllers\Auth\NewPasswordController;
@@ -37,6 +39,7 @@ use App\Http\Controllers\Portal\ProjectDocumentController as PortalProjectDocume
 use App\Http\Controllers\Portal\ProjectMessageController as PortalProjectMessageController;
 use App\Http\Controllers\Portal\MessageAttachmentController as PortalMessageAttachmentController;
 use App\Http\Controllers\Portal\TaskAttachmentController as PortalTaskAttachmentController;
+use App\Http\Controllers\Portal\ProjectTimeController as PortalProjectTimeController;
 use App\Http\Controllers\PwaController;
 use App\Http\Controllers\NotificationsController;
 use Illuminate\Support\Facades\Route;
@@ -274,6 +277,22 @@ Route::middleware(['auth', 'admin'])
         Route::get('projects/{project}/calendar', [AdminProjectCalendarController::class, 'index'])
             ->name('projects.calendar');
 
+        // Registro de tiempo: dashboard por proyecto y CRUD HTTP
+        // de entradas (la mayor parte de la interaccion se hace
+        // via componentes Livewire `TimeTracker` y
+        // `ProjectTimeDashboard`; las rutas HTTP son fallback
+        // para tests e integraciones externas).
+        Route::get('projects/{project}/time', [AdminProjectTimeController::class, 'index'])
+            ->name('projects.time.index');
+        Route::get('projects/{project}/time/export', [AdminProjectTimeController::class, 'export'])
+            ->name('projects.time.export');
+        Route::post('projects/{project}/tasks/{task}/time-entries', [AdminTimeEntryController::class, 'store'])
+            ->name('projects.tasks.time-entries.store');
+        Route::put('projects/{project}/tasks/{task}/time-entries/{entry}', [AdminTimeEntryController::class, 'update'])
+            ->name('projects.tasks.time-entries.update');
+        Route::delete('projects/{project}/tasks/{task}/time-entries/{entry}', [AdminTimeEntryController::class, 'destroy'])
+            ->name('projects.tasks.time-entries.destroy');
+
         // Preferencias de notificacion del admin (solo las suyas)
         // y endpoints JSON para la campana in-app.
         Route::get('notifications/preferences', [AdminNotificationPreferenceController::class, 'index'])
@@ -348,6 +367,12 @@ Route::middleware(['auth', 'client'])
         // El mismo componente Livewire se monta con readOnly=true.
         Route::get('projects/{project}/calendar', [PortalProjectCalendarController::class, 'index'])
             ->name('projects.calendar');
+
+        // Resumen de tiempo del proyecto (solo lectura).
+        // Muestra totales agregados, sin descripciones
+        // individuales ni desglose por tarea.
+        Route::get('projects/{project}/time', [PortalProjectTimeController::class, 'index'])
+            ->name('projects.time.index');
 
         // Preferencias de notificacion del cliente y endpoints
         // JSON para la campana in-app del portal. Mismas rutas

@@ -58,6 +58,16 @@
             @endif
         </x-ui.card>
 
+        <x-ui.card>
+            <h2 class="text-sm font-semibold">Horas dedicadas</h2>
+            <p class="mt-2 text-2xl font-semibold text-[#111827]">
+                {{ $task->total_logged_display }}
+            </p>
+            <p class="mt-1 text-xs text-[#6B7280]">
+                Total registrado por el equipo en esta tarea.
+            </p>
+        </x-ui.card>
+
         @if ($task->subtasks->isNotEmpty())
             <x-ui.card>
                 <h2 class="text-sm font-semibold">Subtareas</h2>

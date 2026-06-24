@@ -49,6 +49,12 @@
                         Asistente IA
                     </a>
                 @endif
+
+                @if (Route::has('portal.projects.time.index'))
+                    <a href="{{ route('portal.projects.time.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                        Tiempo dedicado
+                    </a>
+                @endif
             </x-slot:actions>
         </x-partials.project-hero>
 
@@ -80,6 +86,24 @@
                 title="Tu equipo"
                 :value="$summary->totalMembers"
                 :sub="$summary->totalMembers === 1 ? 'persona trabajando' : 'personas trabajando'"
+            />
+        </div>
+
+        @php
+            $totalHours = intdiv($summary->totalLoggedMinutes, 60);
+            $totalMins = $summary->totalLoggedMinutes % 60;
+            $totalDisplay = $totalHours > 0
+                ? $totalHours.'h '.str_pad((string) $totalMins, 2, '0', STR_PAD_LEFT).'m'
+                : $totalMins.'m';
+        @endphp
+
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <x-partials.project-stat-tile
+                title="Horas dedicadas"
+                :value="$totalDisplay"
+                :sub="$summary->totalLoggedMinutes > 0 ? 'Total invertido en este proyecto' : 'Aun no hay tiempo registrado'"
+                :href="Route::has('portal.projects.time.index') ? route('portal.projects.time.index', $project) : null"
+                tone="primary"
             />
         </div>
 

@@ -288,6 +288,19 @@ class Project extends Model
         return $this->hasMany(AiChatSession::class);
     }
 
+    /**
+     * Entradas de tiempo registradas en cualquier tarea
+     * del proyecto. Se persiste `project_id` en la fila
+     * de `time_entries` para que esta consulta sea
+     * directa (sin JOIN con `tasks`).
+     *
+     * @return HasMany<TimeEntry>
+     */
+    public function timeEntries(): HasMany
+    {
+        return $this->hasMany(TimeEntry::class)->recent();
+    }
+
     // -----------------------------------------------------------------
     // Scopes
     // -----------------------------------------------------------------

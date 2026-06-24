@@ -3,13 +3,14 @@
 namespace App\Livewire\Admin\AiConfig;
 
 use App\Enums\AiProvider;
+use App\Http\Controllers\Admin\AiConfigController;
 use App\Models\AiConfig;
 use App\Models\Project;
 use App\Services\Ai\AiService;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Livewire\Component;
-use RuntimeException;
 
 /**
  * Formulario de configuracion de la IA en el panel admin.
@@ -26,6 +27,8 @@ use RuntimeException;
  *   formulario, sin recargar la pagina.
  * - El boton "Probar conexion" usa `AiService::testConnection()`
  *   y muestra un flash con el resultado.
+ * - Muestra un panel resumen con todas las configs
+ *   existentes para dar visibilidad al admin.
  *
  * La API key se persiste vacia al renderizar si la config
  * ya tiene una clave: asi el admin ve el formulario sin
@@ -40,59 +43,43 @@ class SettingsForm extends Component
     /**
      * ID del proyecto al que aplica esta configuracion.
      * `null` = configuracion global.
-     *
-     * @var int|null
      */
     public ?int $projectId = null;
 
     /**
      * Provider seleccionado en el formulario.
-     *
-     * @var string
      */
     public string $provider = 'openai';
 
     /**
      * API key en texto plano durante la edicion. Se
      * envia vacia si el admin no la quiere cambiar.
-     *
-     * @var string
      */
     public string $apiKey = '';
 
     /**
      * Modelo opcional. Vacio = usar el del provider.
-     *
-     * @var string
      */
     public string $model = '';
 
     /**
      * System prompt opcional que sobreescribe al
      * autogenerado por `ProjectContextBuilder`.
-     *
-     * @var string
      */
     public string $systemPrompt = '';
 
     /**
      * Indica si la configuracion esta activa.
-     *
-     * @var bool
      */
     public bool $isActive = true;
 
     /**
      * Limite horario de mensajes.
-     *
-     * @var int
      */
     public int $maxMessagesPerHour = 20;
 
     /**
      * Limite diario de sesiones nuevas.
-     *
-     * @var int
      */
     public int $maxSessionsPerDay = 10;
 
@@ -103,6 +90,36 @@ class SettingsForm extends Component
      * @var array{ok: bool, message: string}|null
      */
     public ?array $testResult = null;
+
+    /**
+     * Indica si la configuracion tiene una API key
+     * persistida en BD. Se usa para mostrar un badge
+     * informativo en el formulario.
+     */
+    public bool $hasApiKey = false;
+
+    /**
+     * Indica si se acaba de guardar exitosamente.
+     * Muestra un banner temporal de confirmacion.
+     */
+    public bool $saved = false;
+
+    /**
+     * Snapshot del estado del formulario al cargar/guardar.
+     * Se usa para detectar cambios sin guardar.
+     *
+     * @var array<string, mixed>
+     */
+    public array $originalState = [];
+
+    /**
+     * Todas las configuraciones de IA existentes (global +
+     * por proyecto). Se usa en la vista para el panel
+     * resumen y para los indicadores del dropdown.
+     *
+     * @var Collection<int, AiConfig>
+     */
+    public Collection $existingConfigs;
 
     /**
      * Inicializa el formulario a partir de la URL
@@ -120,12 +137,16 @@ class SettingsForm extends Component
 
         $this->projectId = ($projectId === null || $projectId === 0) ? null : $projectId;
 
+        $this->loadExistingConfigs();
+
         $config = $this->loadConfig();
         if ($config !== null) {
             $this->fillFromConfig($config);
         } else {
             $this->fillDefaults();
         }
+
+        $this->captureOriginalState();
     }
 
     /**
@@ -146,9 +167,22 @@ class SettingsForm extends Component
     }
 
     /**
+     * Carga todas las configuraciones de IA existentes
+     * (global + por proyecto) para el panel resumen
+     * y los indicadores del dropdown.
+     */
+    private function loadExistingConfigs(): void
+    {
+        $this->existingConfigs = AiConfig::query()
+            ->with('project:id,name')
+            ->get();
+    }
+
+    /**
      * Hidrata las propiedades del componente desde una
      * fila persistida. La API key no se rellena: nunca
-     * debe llegar al frontend.
+     * debe llegar al frontend. Actualiza `$hasApiKey`
+     * para que la vista muestre el badge correspondiente.
      */
     private function fillFromConfig(AiConfig $config): void
     {
@@ -162,6 +196,11 @@ class SettingsForm extends Component
         $this->isActive = (bool) $config->is_active;
         $this->maxMessagesPerHour = (int) ($config->max_messages_per_hour ?: 20);
         $this->maxSessionsPerDay = (int) ($config->max_sessions_per_day ?: 10);
+
+        // Determinamos si la config ya tiene una API key
+        // persistida en BD. El cast `encrypted` devuelve
+        // null si no hay clave, o el texto cifrado si la hay.
+        $this->hasApiKey = filled($config->getOriginal('api_key'));
     }
 
     /**
@@ -177,6 +216,39 @@ class SettingsForm extends Component
         $this->isActive = true;
         $this->maxMessagesPerHour = (int) config('ai.default_max_messages_per_hour', 20);
         $this->maxSessionsPerDay = (int) config('ai.default_max_sessions_per_day', 10);
+        $this->hasApiKey = false;
+    }
+
+    /**
+     * Captura el estado actual del formulario para poder
+     * detectar si hay cambios sin guardar.
+     */
+    private function captureOriginalState(): void
+    {
+        $this->originalState = [
+            'provider' => $this->provider,
+            'apiKey' => $this->apiKey,
+            'model' => $this->model,
+            'systemPrompt' => $this->systemPrompt,
+            'isActive' => $this->isActive,
+            'maxMessagesPerHour' => $this->maxMessagesPerHour,
+            'maxSessionsPerDay' => $this->maxSessionsPerDay,
+        ];
+    }
+
+    /**
+     * Determina si el formulario tiene cambios sin guardar
+     * respecto al estado original capturado al cargar/guardar.
+     */
+    public function isDirty(): bool
+    {
+        return $this->provider !== $this->originalState['provider']
+            || $this->apiKey !== $this->originalState['apiKey']
+            || $this->model !== $this->originalState['model']
+            || $this->systemPrompt !== $this->originalState['systemPrompt']
+            || $this->isActive !== $this->originalState['isActive']
+            || $this->maxMessagesPerHour !== $this->originalState['maxMessagesPerHour']
+            || $this->maxSessionsPerDay !== $this->originalState['maxSessionsPerDay'];
     }
 
     /**
@@ -225,7 +297,7 @@ class SettingsForm extends Component
 
         $data = $this->validate();
 
-        $controller = app(\App\Http\Controllers\Admin\AiConfigController::class);
+        $controller = app(AiConfigController::class);
         $controller->save([
             'project_id' => $this->projectId,
             'provider' => $this->provider,
@@ -246,7 +318,38 @@ class SettingsForm extends Component
             $this->fillFromConfig($fresh);
         }
 
+        // Refrescamos el snapshot para que el formulario
+        // vuelva a estar en estado "limpio" y el badge
+        // de "cambios sin guardar" desaparezca.
+        $this->captureOriginalState();
+        $this->loadExistingConfigs();
+
+        $this->saved = true;
+
         $this->dispatch('ai-config-saved');
+    }
+
+    /**
+     * Cambia el proyecto seleccionado. Carga la config
+     * correspondiente o inicializa con valores por defecto.
+     *
+     * @param  mixed  $value
+     */
+    public function selectProject($value): void
+    {
+        // Normalizamos: 0 se trata como null (config global)
+        $this->projectId = ($value === null || $value === 0) ? null : (int) $value;
+
+        $config = $this->loadConfig();
+        if ($config !== null) {
+            $this->fillFromConfig($config);
+        } else {
+            $this->fillDefaults();
+        }
+
+        $this->captureOriginalState();
+        $this->testResult = null;
+        $this->saved = false;
     }
 
     /**
@@ -270,7 +373,7 @@ class SettingsForm extends Component
      */
     private function buildInMemoryConfig(): AiConfig
     {
-        $config = new AiConfig();
+        $config = new AiConfig;
         $config->project_id = $this->projectId;
         $config->provider = AiProvider::from($this->provider);
         $config->api_key = $this->apiKey !== '' ? $this->apiKey : 'sk-placeholder';
@@ -293,6 +396,7 @@ class SettingsForm extends Component
         return view('livewire.admin.ai-config.settings-form', [
             'providers' => AiProvider::cases(),
             'projects' => Project::orderBy('name')->get(['id', 'name']),
+            'existingConfigs' => $this->existingConfigs,
         ]);
     }
 }

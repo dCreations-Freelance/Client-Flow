@@ -43,6 +43,7 @@ final class ProjectSummary
         public readonly ?CalendarEvent $nextEvent,
         public readonly int $totalMessages,
         public readonly int $totalDocuments,
+        public readonly int $totalLoggedMinutes = 0,
     ) {}
 
     /**

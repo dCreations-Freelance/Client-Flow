@@ -59,6 +59,10 @@
             {{-- Columna principal: adjuntos y subtareas --}}
             <div class="space-y-6 lg:col-span-2">
                 <x-ui.card>
+                    <livewire:admin.time-tracking.time-tracker :project="$project" :task="$task" />
+                </x-ui.card>
+
+                <x-ui.card>
                     <livewire:shared.task-attachment-list :project="$project" :task="$task" />
                 </x-ui.card>
 
@@ -115,6 +119,12 @@
                         <div class="flex justify-between">
                             <dt class="text-[#6B7280]">Horas reales</dt>
                             <dd class="text-[#111827]">{{ $task->actual_hours ?? '—' }}</dd>
+                        </div>
+                        <div class="flex justify-between">
+                            <dt class="text-[#6B7280]">Horas registradas</dt>
+                            <dd class="font-semibold text-[#111827]" data-test="task-total-logged-card">
+                                {{ $task->total_logged_display }}
+                            </dd>
                         </div>
                         <div class="flex justify-between">
                             <dt class="text-[#6B7280]">Creada</dt>

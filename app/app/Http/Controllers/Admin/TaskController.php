@@ -13,6 +13,7 @@ use App\Services\Activity\ProjectActivityLogger;
 use App\Services\Notifications\NotificationDispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 /**
  * CRUD de tareas del proyecto.
@@ -168,6 +169,35 @@ class TaskController extends Controller
         });
 
         return back()->with('status', 'Tarea eliminada.');
+    }
+
+    /**
+     * Muestra la vista de detalle de una tarea con
+     * todos sus componentes interactivos: registro
+     * de tiempo, adjuntos, subtareas, etc. Pensada
+     * para que el admin gestione una tarea
+     * concreta sin volver al tablero kanban.
+     *
+     * Verifica que la tarea pertenece al proyecto
+     * (defensa en profundidad contra manipulacion
+     * de IDs en la URL).
+     *
+     * @return \Illuminate\View\View
+     */
+    public function show(Project $project, Task $task): View
+    {
+        if ((int) $task->project_id !== (int) $project->id) {
+            abort(404);
+        }
+
+        $this->authorize('view', $task);
+
+        $task->load(['project.organization', 'assignee', 'column']);
+
+        return view('admin.projects.tasks.show', [
+            'project' => $project,
+            'task' => $task,
+        ]);
     }
 
     /**

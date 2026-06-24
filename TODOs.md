@@ -257,16 +257,16 @@ Detalles en `docs/tasks/fase-transversal-notificaciones.md`.
 
 ## Fase 11: Registro de tiempo
 
-- [ ] Crear migracion `time_entries`
-- [ ] Crear modelo `TimeEntry` con relaciones (task, user, project)
-- [ ] Crear enum `TimeEntryType` (manual, timer)
-- [ ] Implementar temporizador start/stop en vista detalle de tarea
-- [ ] Implementar entrada manual de tiempo (descripcion, minutos, fecha)
-- [ ] Crear vista de registro de tiempo por proyecto (admin)
-- [ ] Crear dashboard de horas: total por proyecto, por miembro, por tarea
-- [ ] Marcar entradas como facturables (billed flag)
-- [ ] Vista de resumen de tiempo en portal cliente (solo lectura)
-- [ ] Anadir columna `total_logged_minutes` a `tasks` como cache
+- [x] Crear migracion `time_entries`
+- [x] Crear modelo `TimeEntry` con relaciones (task, user, project)
+- [x] Crear enum `TimeEntryType` (manual, timer)
+- [x] Implementar temporizador start/stop en vista detalle de tarea
+- [x] Implementar entrada manual de tiempo (descripcion, minutos, fecha)
+- [x] Crear vista de registro de tiempo por proyecto (admin)
+- [x] Crear dashboard de horas: total por proyecto, por miembro, por tarea
+- [x] Marcar entradas como facturables (billed flag)
+- [x] Vista de resumen de tiempo en portal cliente (solo lectura)
+- [x] Anadir columna `total_logged_minutes` a `tasks` como cache
 
 ---
 

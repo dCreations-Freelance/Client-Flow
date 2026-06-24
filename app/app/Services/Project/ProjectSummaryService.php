@@ -158,6 +158,8 @@ class ProjectSummaryService
 
         [$nextDelivery, $nextDeliveryLabel, $nextDeliveryTone] = $this->nextDelivery($project);
 
+        $totalLoggedMinutes = $this->totalLoggedMinutes($project);
+
         return new ProjectSummary(
             project: $project,
             viewer: $viewer,
@@ -176,7 +178,24 @@ class ProjectSummaryService
             totalDocuments: $includePrivateDocuments
                 ? (int) $project->documents_count
                 : (int) ($project->public_documents_count ?? 0),
+            totalLoggedMinutes: $totalLoggedMinutes,
         );
+    }
+
+    /**
+     * Suma el tiempo total registrado en cualquier
+     * tarea del proyecto. Como `project_id` esta
+     * desnormalizado en `time_entries`, se resuelve
+     * con una sola query agregada (sin JOIN con
+     * `tasks`).
+     *
+     * @return int
+     */
+    private function totalLoggedMinutes(Project $project): int
+    {
+        return (int) \App\Models\TimeEntry::query()
+            ->where('project_id', $project->id)
+            ->sum('minutes');
     }
 
     /**

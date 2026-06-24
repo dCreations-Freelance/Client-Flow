@@ -202,6 +202,18 @@ class User extends Authenticatable
     }
 
     /**
+     * Entradas de tiempo registradas por el usuario.
+     * Se usa para el dashboard "tiempo por miembro" y
+     * para localizar timers activos.
+     *
+     * @return HasMany<TimeEntry>
+     */
+    public function timeEntries(): HasMany
+    {
+        return $this->hasMany(TimeEntry::class)->recent();
+    }
+
+    /**
      * Devuelve la preferencia del usuario para un evento concreto.
      *
      * Si el usuario aun no tiene una fila persistida (por ejemplo
