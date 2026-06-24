@@ -4,6 +4,21 @@
             &larr; Volver al listado
         </a>
 
+        @if (\App\Models\ProjectTemplate::query()->exists())
+            <div class="mb-4 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] p-4">
+                <p class="text-sm text-[#1E3A8A]">
+                    <strong>Tip:</strong> puedes crear un proyecto a partir de una plantilla para copiar sus
+                    columnas, tareas y documentos.
+                    <a
+                        href="{{ route('admin.project-templates.index') }}"
+                        class="ml-1 font-medium text-[#2563EB] underline hover:text-[#1D4ED8]"
+                    >
+                        Ver plantillas disponibles
+                    </a>
+                </p>
+            </div>
+        @endif
+
         <x-ui.card>
             <h2 class="text-lg font-semibold">Nuevo proyecto</h2>
             <p class="mt-1 text-sm text-[#6B7280]">Crea un proyecto asociado a una organizacion existente.</p>

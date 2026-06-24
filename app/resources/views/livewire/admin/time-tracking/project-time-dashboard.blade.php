@@ -54,6 +54,29 @@
         </a>
     </div>
 
+    {{-- Empty state: guia al usuario a registrar tiempo desde una tarea --}}
+    @if ($summary['total_minutes'] === 0 && $summary['total_entries'] === 0)
+        <div class="mb-6 rounded-xl border border-dashed border-[#E7E2D8] bg-[#FAFAF7] p-8 text-center">
+            <div class="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-full bg-[#F4F1EA]">
+                <svg class="h-6 w-6 text-[#6B7280]" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+            </div>
+            <h3 class="text-sm font-semibold text-[#111827]">Aun no hay tiempo registrado</h3>
+            <p class="mt-1 text-sm text-[#6B7280] max-w-md mx-auto">
+                El tiempo se registra desde cada tarea individual. Abre una tarea en el tablero y usa el cronometro o anade una entrada manual.
+            </p>
+            <a
+                href="{{ route('admin.projects.board', $project) }}"
+                class="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]"
+            >
+                <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125Z" />
+                </svg>
+                Ir al tablero
+            </a>
+        </div>
+    @else
     {{-- Tarjetas de resumen --}}
     <div class="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <div class="rounded-xl border border-[#E7E2D8] bg-white p-4">
@@ -153,4 +176,5 @@
             @endif
         @endif
     </x-ui.card>
+    @endif
 </div>

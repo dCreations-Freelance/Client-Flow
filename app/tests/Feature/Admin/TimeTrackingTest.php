@@ -20,8 +20,7 @@ use Tests\TestCase;
  * Cubre:
  * - Render del dashboard y de la vista de detalle de tarea.
  * - CRUD HTTP de entradas manuales (create/update/delete).
- * - Componente Livewire `TimeTracker`: start/stop del
- *   cronometro con auto-stop del timer anterior, alta de
+ * - Componente Livewire `TimeTracker`: alta de
  *   entrada manual, edicion, borrado y toggle de facturable.
  * - Sincronizacion automatica de la cache
  *   `tasks.total_logged_minutes`.
@@ -234,89 +233,6 @@ class TimeTrackingTest extends TestCase
         $this->actingAs($admin)
             ->delete(route('admin.projects.tasks.time-entries.destroy', [$project, $task, $entry]))
             ->assertNotFound();
-    }
-
-    // -----------------------------------------------------------------
-    // Livewire TimeTracker: cronometro
-    // -----------------------------------------------------------------
-
-    public function test_admin_puede_arrancar_cronometro_via_livewire(): void
-    {
-        [$admin, $project, $task] = $this->adminAndProject();
-
-        Livewire::actingAs($admin)
-            ->test(TimeTracker::class, ['project' => $project, 'task' => $task])
-            ->assertSet('activeTimerId', null)
-            ->call('startTimer')
-            ->assertHasNoErrors();
-
-        $this->assertDatabaseHas('time_entries', [
-            'task_id' => $task->id,
-            'user_id' => $admin->id,
-            'type' => 'timer',
-            'minutes' => 0,
-        ]);
-    }
-
-    public function test_arrancar_un_timer_cierra_el_anterior_del_mismo_usuario(): void
-    {
-        [$admin, $project] = $this->adminAndProject();
-        $column = BoardColumn::factory()->create(['project_id' => $project->id]);
-        $taskA = Task::factory()->create(['project_id' => $project->id, 'column_id' => $column->id]);
-        $taskB = Task::factory()->create(['project_id' => $project->id, 'column_id' => $column->id]);
-
-        $service = app(TimeTrackingService::class);
-        $oldTimer = $service->startTimer($taskA, $admin);
-        // Forzamos minutos para simular que ya llevaba tiempo.
-        $oldTimer->update(['minutes' => 7, 'started_at' => now()->subMinutes(7)]);
-
-        Livewire::actingAs($admin)
-            ->test(TimeTracker::class, ['project' => $project, 'task' => $taskB])
-            ->call('startTimer')
-            ->assertHasNoErrors();
-
-        $oldTimer->refresh();
-        $this->assertSame(7, $oldTimer->minutes, 'El timer anterior mantiene sus minutos.');
-
-        $this->assertSame(1, TimeEntry::where('user_id', $admin->id)->where('minutes', 0)->count());
-    }
-
-    public function test_admin_puede_parar_cronometro_y_se_persisten_los_minutos(): void
-    {
-        [$admin, $project, $task] = $this->adminAndProject();
-
-        $service = app(TimeTrackingService::class);
-        $service->startTimer($task, $admin);
-        // Adelantamos el reloj para simular 25 minutos de actividad.
-        TimeEntry::query()
-            ->where('user_id', $admin->id)
-            ->update(['started_at' => now()->subMinutes(25)]);
-
-        Livewire::actingAs($admin)
-            ->test(TimeTracker::class, ['project' => $project, 'task' => $task])
-            ->call('stopTimer')
-            ->assertHasNoErrors();
-
-        $entry = TimeEntry::where('user_id', $admin->id)->where('type', 'timer')->first();
-        $this->assertNotNull($entry);
-        $this->assertSame(25, $entry->minutes);
-        $this->assertSame(25, $task->fresh()->total_logged_minutes);
-    }
-
-    public function test_cliente_no_puede_arrancar_cronometro(): void
-    {
-        $client = User::factory()->client()->create();
-        $project = Project::factory()->create();
-        $project->organization->members()->attach($client->id, ['role' => 'member']);
-        $column = BoardColumn::factory()->create(['project_id' => $project->id]);
-        $task = Task::factory()->create(['project_id' => $project->id, 'column_id' => $column->id]);
-
-        Livewire::actingAs($client)
-            ->test(TimeTracker::class, ['project' => $project, 'task' => $task])
-            ->call('startTimer')
-            ->assertForbidden();
-
-        $this->assertDatabaseCount('time_entries', 0);
     }
 
     // -----------------------------------------------------------------

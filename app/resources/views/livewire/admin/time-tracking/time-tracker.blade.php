@@ -4,7 +4,7 @@
         <div>
             <h3 class="text-sm font-semibold text-[#111827]">Registro de tiempo</h3>
             <p class="mt-0.5 text-xs text-[#6B7280]">
-                Cronometro y entradas manuales para esta tarea.
+                Entradas manuales de tiempo para esta tarea.
             </p>
         </div>
         <div class="text-right">
@@ -15,84 +15,7 @@
         </div>
     </div>
 
-    {{-- Cronometro: dos estados (activo / parado) --}}
-    <div @class([
-        'mb-4 rounded-lg border p-3',
-        'border-[#BFDBFE] bg-[#EFF6FF]' => $activeTimerId !== null,
-        'border-[#E7E2D8] bg-[#FAFAF7]' => $activeTimerId === null,
-    ])>
-        @if ($activeTimerId !== null && $activeTimerStartedAt !== null)
-            {{-- Cronometro en curso: el JS actualiza el contador cada segundo --}}
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <p class="text-xs font-medium uppercase tracking-wider text-[#2563EB]">
-                        Cronometro en curso
-                    </p>
-                    <p
-                        class="mt-1 font-mono text-2xl font-semibold text-[#111827]"
-                        data-test="timer-elapsed"
-                        x-data="{
-                            startedAt: new Date('{{ $activeTimerStartedAt }}').getTime(),
-                            now: Date.now(),
-                            elapsed: '00:00:00',
-                            timer: null,
-                            init() {
-                                this.tick();
-                                this.timer = setInterval(() => this.tick(), 1000);
-                            },
-                            destroy() {
-                                if (this.timer) clearInterval(this.timer);
-                            },
-                            tick() {
-                                this.now = Date.now();
-                                const seconds = Math.max(0, Math.floor((this.now - this.startedAt) / 1000));
-                                const h = String(Math.floor(seconds / 3600)).padStart(2, '0');
-                                const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
-                                const s = String(seconds % 60).padStart(2, '0');
-                                this.elapsed = `${h}:${m}:${s}`;
-                            }
-                        }"
-                        x-text="elapsed"
-                    >00:00:00</p>
-                </div>
-                <button
-                    type="button"
-                    wire:click="stopTimer"
-                    class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#DC2626] px-4 py-2 text-sm font-medium text-white hover:bg-[#B91C1C]"
-                    data-test="stop-timer"
-                >
-                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                        <rect x="6" y="6" width="12" height="12" rx="2" />
-                    </svg>
-                    Detener
-                </button>
-            </div>
-        @else
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <p class="text-sm font-medium text-[#111827]">
-                        Inicia un cronometro para registrar el tiempo en tiempo real.
-                    </p>
-                    <p class="mt-0.5 text-xs text-[#6B7280]">
-                        Si tienes otro cronometro activo, se detendra automaticamente.
-                    </p>
-                </div>
-                <button
-                    type="button"
-                    wire:click="startTimer"
-                    class="inline-flex items-center justify-center gap-2 rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]"
-                    data-test="start-timer"
-                >
-                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z" />
-                    </svg>
-                    Iniciar cronometro
-                </button>
-            </div>
-        @endif
-    </div>
-
-    {{-- Accion rapida: nueva entrada manual --}}
+    {{-- Accion: nueva entrada manual --}}
     <div class="mb-4 flex items-center justify-between">
         <h4 class="text-sm font-semibold text-[#111827]">Entradas</h4>
         <button
@@ -154,7 +77,7 @@
                             required
                         >
                         <p class="mt-1 text-[10px] text-[#9CA3AF]">
-                            Minutos dedicados. Para tiempo en curso, usa el cronometro de arriba.
+                            Minutos dedicados a esta tarea.
                         </p>
                         @error('entryForm.minutes')
                             <p class="mt-1 text-xs text-[#DC2626]">{{ $message }}</p>

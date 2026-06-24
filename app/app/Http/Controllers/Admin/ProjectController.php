@@ -7,8 +7,10 @@ use App\Http\Requests\Admin\StoreProjectRequest;
 use App\Http\Requests\Admin\UpdateProjectRequest;
 use App\Models\Organization;
 use App\Models\Project;
+use App\Models\ProjectTemplate;
 use App\Services\DefaultBoardColumnsService;
 use App\Services\Project\ProjectSummaryService;
+use App\Services\ProjectTemplate\ProjectTemplateService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -139,6 +141,84 @@ class ProjectController extends Controller
         return redirect()
             ->route('admin.projects.show', $project)
             ->with('status', 'Proyecto creado.');
+    }
+
+    // -----------------------------------------------------------------
+    // Creacion de proyectos desde plantilla
+    // -----------------------------------------------------------------
+
+    /**
+     * Muestra el formulario de creacion de un
+     * proyecto a partir de una plantilla. El nombre
+     * se pre-rellena como `"{nombre plantilla}
+     * (copia)"` para que el admin solo tenga que
+     * ajustarlo si quiere.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function createFromTemplate(ProjectTemplate $projectTemplate): View
+    {
+        $this->authorize('apply', $projectTemplate);
+        $this->authorize('create', Project::class);
+
+        $organizations = Organization::orderBy('name')->get();
+
+        return view('admin.projects.create-from-template', [
+            'template' => $projectTemplate->load('creator'),
+            'organizations' => $organizations,
+            'suggestedName' => $projectTemplate->name.' (copia)',
+        ]);
+    }
+
+    /**
+     * Crea el proyecto a partir de la plantilla:
+     * 1. Crea el proyecto (con los 4 columnas por
+     *    defecto, igual que el flujo normal).
+     * 2. Sobrescribe las columnas por defecto con
+     *    las de la plantilla, junto con las tareas
+     *    y los documentos, via
+     *    `ProjectTemplateService::applyToProject`.
+     *
+     * @return RedirectResponse
+     */
+    public function storeFromTemplate(Request $request, ProjectTemplate $projectTemplate): RedirectResponse
+    {
+        $this->authorize('apply', $projectTemplate);
+        $this->authorize('create', Project::class);
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'min:2', 'max:255'],
+            'organization_id' => ['required', 'integer', 'exists:organizations,id'],
+            'description' => ['nullable', 'string', 'max:5000'],
+            'status' => ['nullable', 'string', 'in:planning,in_progress,on_hold,waiting_client,completed,archived'],
+            'is_visible_to_client' => ['nullable', 'boolean'],
+        ]);
+
+        // Por defecto, las plantillas se crean en
+        // estado `planning` y visibles al cliente.
+        $data['is_visible_to_client'] = $request->boolean('is_visible_to_client', true);
+        $data['status'] = $data['status'] ?? \App\Enums\ProjectStatus::Planning->value;
+
+        $project = Project::create($data);
+
+        // Aplica la plantilla encima de las columnas
+        // por defecto. `applyToProject` es la unica
+        // fuente de verdad de la copia.
+        $result = app(ProjectTemplateService::class)->applyToProject(
+            $projectTemplate,
+            $project,
+            $request->user(),
+        );
+
+        return redirect()
+            ->route('admin.projects.show', $project)
+            ->with('status', sprintf(
+                'Proyecto creado desde la plantilla "%s": %d columnas, %d tareas y %d documentos.',
+                $projectTemplate->name,
+                $result['columns'],
+                $result['tasks'],
+                $result['documents'],
+            ));
     }
 
     /**

@@ -25,6 +25,7 @@ Las definiciones formales de cada agente (con frontmatter YAML para opencode Go)
 | `laravel-backend` | subagent | Implementa dominio, modelos, migraciones, policies, servicios y rutas Laravel |
 | `livewire-frontend` | subagent | Implementa pantallas Blade/Livewire manteniendo la experiencia premium del portal |
 | `mcp-server` | subagent | Implementa el MCP server para conexion desde IDEs |
+| `security-auditor` | subagent | Audita seguridad de la app y del stack: policies, fugas, hardening, dependencias |
 | `qa-reviewer` | subagent | Revisa riesgos, permisos, pruebas faltantes y regresiones |
 | `devops-docker` | subagent | Mantiene Docker local, variables de entorno y comandos de arranque |
 
@@ -34,8 +35,9 @@ Las definiciones formales de cada agente (con frontmatter YAML para opencode Go)
 2. `@laravel-backend` - implementa base de datos, modelos y permisos.
 3. `@livewire-frontend` - construye la interfaz.
 4. `@mcp-server` - cuando se llegue a la fase 6 del PRD.
-5. `@qa-reviewer` - revision antes de cerrar la tarea.
-6. `@devops-docker` - ayuda si falla el entorno local.
+5. `@security-auditor` - auditoria de seguridad antes del merge.
+6. `@qa-reviewer` - revision funcional antes de cerrar la tarea.
+7. `@devops-docker` - ayuda si falla el entorno local.
 
 ## Uso en opencode Go
 

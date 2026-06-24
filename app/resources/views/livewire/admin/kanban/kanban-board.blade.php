@@ -83,13 +83,12 @@
                             class="cursor-grab rounded-lg border border-[#E7E2D8] bg-white p-3 shadow-sm transition-all hover:border-[#D8D0C3] hover:shadow-md {{ $task->isCompleted() ? 'opacity-60' : '' }}"
                         >
                             <div class="mb-2 flex items-start justify-between gap-2">
-                                <button
-                                    type="button"
-                                    wire:click="openEditForm({{ $task->id }})"
-                                    class="min-w-0 flex-1 text-left text-sm font-medium text-[#111827] hover:text-[#2563EB]"
+                                <a
+                                    href="{{ route('admin.projects.tasks.show', [$project, $task]) }}"
+                                    class="min-w-0 flex-1 text-sm font-medium text-[#111827] hover:text-[#2563EB]"
                                 >
                                     <span class="line-clamp-3 break-words">{{ $task->title }}</span>
-                                </button>
+                                </a>
                                 <x-partials.task-priority-badge :priority="$task->priority" />
                             </div>
 
@@ -98,6 +97,16 @@
                             @endif
 
                             <div class="flex flex-wrap items-center gap-1.5 text-xs">
+                                <button
+                                    type="button"
+                                    wire:click="openEditForm({{ $task->id }})"
+                                    class="rounded p-0.5 text-[#6B7280] transition-colors hover:bg-[#F4F1EA] hover:text-[#111827]"
+                                    title="Editar tarea"
+                                >
+                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                                    </svg>
+                                </button>
                                 <x-partials.task-type-badge :type="$task->type" />
 
                                 @if ($task->estimated_hours)

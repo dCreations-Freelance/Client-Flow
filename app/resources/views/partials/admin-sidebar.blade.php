@@ -41,8 +41,15 @@ contador en el sidebar.
 
         @if (Route::has('admin.agent-templates.index'))
             <a href="{{ route('admin.agent-templates.index') }}"
-                class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium transition-colors {{ str_starts_with($current, 'admin.agent-templates') ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#6B7280] hover:bg-[#F4F1EA] hover:text-[#111827]' }}">
+               class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium transition-colors {{ str_starts_with($current, 'admin.agent-templates') ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#6B7280] hover:bg-[#F4F1EA] hover:text-[#111827]' }}">
                 <span>Templates IA</span>
+            </a>
+        @endif
+
+        @if (Route::has('admin.project-templates.index'))
+            <a href="{{ route('admin.project-templates.index') }}"
+               class="flex items-center gap-3 rounded-lg px-3 py-2 font-medium transition-colors {{ str_starts_with($current, 'admin.project-templates') ? 'bg-[#EFF6FF] text-[#2563EB]' : 'text-[#6B7280] hover:bg-[#F4F1EA] hover:text-[#111827]' }}">
+                <span>Plantillas</span>
             </a>
         @endif
 

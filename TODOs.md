@@ -272,18 +272,18 @@ Detalles en `docs/tasks/fase-transversal-notificaciones.md`.
 
 ## Fase 12: Plantillas de proyecto
 
-- [ ] Crear migracion `project_templates`
-- [ ] Crear migracion `project_template_columns`
-- [ ] Crear migracion `project_template_tasks`
-- [ ] Crear migracion `project_template_documents`
-- [ ] Crear modelo `ProjectTemplate` con relaciones
-- [ ] Crear CRUD plantillas (admin)
-- [ ] Crear vista listado de plantillas con filtro por categoria
-- [ ] Implementar asociacion de columnas default a plantilla
-- [ ] Implementar asociacion de tareas predefinidas a plantilla
-- [ ] Implementar asociacion de documentos esqueleto a plantilla
-- [ ] Boton "Crear proyecto desde plantilla" en listado de proyectos
-- [ ] Al crear desde plantilla, copiar columnas, tareas y documentos
+- [x] Crear migracion `project_templates`
+- [x] Crear migracion `project_template_columns`
+- [x] Crear migracion `project_template_tasks`
+- [x] Crear migracion `project_template_documents`
+- [x] Crear modelo `ProjectTemplate` con relaciones
+- [x] Crear CRUD plantillas (admin)
+- [x] Crear vista listado de plantillas con filtro por categoria
+- [x] Implementar asociacion de columnas default a plantilla
+- [x] Implementar asociacion de tareas predefinidas a plantilla
+- [x] Implementar asociacion de documentos esqueleto a plantilla
+- [x] Boton "Crear proyecto desde plantilla" en listado de proyectos
+- [x] Al crear desde plantilla, copiar columnas, tareas y documentos
 
 ---
 

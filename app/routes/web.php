@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ProjectDocumentController as AdminProjectDocument
 use App\Http\Controllers\Admin\ProjectMemberController as AdminProjectMemberController;
 use App\Http\Controllers\Admin\ProjectMessageController as AdminProjectMessageController;
 use App\Http\Controllers\Admin\MessageAttachmentController as AdminMessageAttachmentController;
+use App\Http\Controllers\Admin\ProjectTemplateController as AdminProjectTemplateController;
 use App\Http\Controllers\Admin\TaskAttachmentController as AdminTaskAttachmentController;
 use App\Http\Controllers\Admin\TaskController as AdminTaskController;
 use App\Http\Controllers\Admin\TaskMoveController as AdminTaskMoveController;
@@ -255,6 +256,41 @@ Route::middleware(['auth', 'admin'])
             ->names('agent-templates');
         Route::get('agent-templates/{agent_template}/export', [AdminAgentTemplateController::class, 'export'])
             ->name('agent-templates.export');
+
+        // Plantillas de proyecto: biblioteca de esqueletos
+        // reutilizables. `resource` registra las 7 acciones
+        // canonicas; las acciones anidadas (columnas, tareas,
+        // documentos) se anaden a mano para evitar proliferacion
+        // de rutas.
+        Route::resource('project-templates', AdminProjectTemplateController::class)
+            ->names('project-templates');
+        Route::post('project-templates/{project_template}/columns', [AdminProjectTemplateController::class, 'storeColumn'])
+            ->name('project-templates.columns.store');
+        Route::put('project-templates/{project_template}/columns/{column}', [AdminProjectTemplateController::class, 'updateColumn'])
+            ->name('project-templates.columns.update');
+        Route::delete('project-templates/{project_template}/columns/{column}', [AdminProjectTemplateController::class, 'destroyColumn'])
+            ->name('project-templates.columns.destroy');
+        Route::post('project-templates/{project_template}/tasks', [AdminProjectTemplateController::class, 'storeTask'])
+            ->name('project-templates.tasks.store');
+        Route::put('project-templates/{project_template}/tasks/{task}', [AdminProjectTemplateController::class, 'updateTask'])
+            ->name('project-templates.tasks.update');
+        Route::delete('project-templates/{project_template}/tasks/{task}', [AdminProjectTemplateController::class, 'destroyTask'])
+            ->name('project-templates.tasks.destroy');
+        Route::post('project-templates/{project_template}/documents', [AdminProjectTemplateController::class, 'storeDocument'])
+            ->name('project-templates.documents.store');
+        Route::put('project-templates/{project_template}/documents/{document}', [AdminProjectTemplateController::class, 'updateDocument'])
+            ->name('project-templates.documents.update');
+        Route::delete('project-templates/{project_template}/documents/{document}', [AdminProjectTemplateController::class, 'destroyDocument'])
+            ->name('project-templates.documents.destroy');
+
+        // Creacion de proyectos desde plantilla: formulario
+        // pre-rellenado y endpoint de aplicacion. Vive en el
+        // ProjectController (no en ProjectTemplateController)
+        // porque produce un Project, no un ProjectTemplate.
+        Route::get('projects/create-from-template/{project_template}', [AdminProjectController::class, 'createFromTemplate'])
+            ->name('projects.create-from-template');
+        Route::post('projects/from-template/{project_template}', [AdminProjectController::class, 'storeFromTemplate'])
+            ->name('projects.store-from-template');
 
         // Asignacion de agentes a proyectos. Cinco rutas planas
         // en vez de un resource porque el conjunto de acciones

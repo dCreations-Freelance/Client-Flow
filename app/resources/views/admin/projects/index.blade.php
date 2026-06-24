@@ -43,6 +43,28 @@
             </a>
         </div>
 
+        @if (\App\Models\ProjectTemplate::query()->exists())
+            <x-ui.card class="bg-[#EFF6FF]">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h3 class="text-sm font-semibold text-[#1E3A8A]">Ahorra tiempo con una plantilla</h3>
+                        <p class="text-xs text-[#1D4ED8]">
+                            Crea un proyecto a partir de una plantilla para copiar sus columnas, tareas y documentos.
+                        </p>
+                    </div>
+                    <a
+                        href="{{ route('admin.project-templates.index') }}"
+                        class="inline-flex items-center justify-center gap-1 rounded-lg border border-[#2563EB] bg-white px-3 py-1.5 text-sm font-medium text-[#2563EB] hover:bg-[#DBEAFE]"
+                    >
+                        Ver plantillas
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                    </a>
+                </div>
+            </x-ui.card>
+        @endif
+
         @if (session('status'))
             <x-ui.alert variant="success">{{ session('status') }}</x-ui.alert>
         @endif
