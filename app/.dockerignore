@@ -1,0 +1,12 @@
+.env
+.git
+.gitignore
+docker/
+node_modules/
+storage/logs/
+storage/framework/cache/data/
+storage/framework/sessions/
+storage/framework/testing/
+storage/framework/views/
+tests/
+vendor/
