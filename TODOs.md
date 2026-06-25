@@ -1,5 +1,30 @@
 # TODOs ClientFlow
 
+## Seguridad: Auditoría (14 hallazgos)
+
+### 🟠 Alta prioridad
+
+- [ ] **H-01: Validar pertenencia en sesiones MCP** — `McpSessionStore::find()` debe filtrar por `user_id` para evitar que un admin acceda al stream SSE de otro admin (`app/Http/Controllers/Api/McpController.php:133`, `app/Services/Mcp/McpSessionStore.php:42`)
+- [ ] **H-02: Rate limiting en auth** — Agregar middleware `throttle:5,1` a `POST /iniciar-sesion` y `throttle:3,60` a `POST /registro` (`routes/web.php:105-121`)
+- [ ] **H-03: Expiración de tokens Sanctum** — Establecer `'expiration' => 60 * 24 * 30` en `config/sanctum.php:53`
+
+### 🟡 Media prioridad
+
+- [ ] **M-01: Headers de seguridad HTTP en Nginx** — Agregar X-Frame-Options, X-Content-Type-Options, HSTS, Referrer-Policy y CSP en `docker/nginx/default.conf`
+- [ ] **M-02: Usuario no-root en contenedor PHP** — Crear usuario `clientflow` y ejecutar PHP-FPM con `USER clientflow` en `docker/php/Dockerfile`
+- [ ] **M-03: No exponer MySQL al host** — Cambiar `ports` por `expose` en `docker-compose.yml:34-35`
+- [ ] **M-04: LOG_LEVEL=debug en .env.example** — Cambiar a `LOG_LEVEL=warning` para evitar logs con datos sensibles en producción (`.env.example:21`)
+- [ ] **M-05: Proteger token de invitación contra Referer** — Agregar `<meta name="referrer" content="no-referrer">` en vista de invitación (`routes/web.php:73-74`)
+- [ ] **M-07: Cleanup automático de sesiones MCP** — Registrar `McpSessionStore::cleanup()` en el scheduler (`bootstrap/app.php`)
+
+### 🔵 Baja prioridad
+
+- [ ] **L-02: APP_DEBUG=false en .env.example** — Cambiar a `false` para evitar exponer stack traces en producción (`.env.example:4`)
+- [ ] **L-04: Quitar `password` de `$fillable` en User** — No permitir asignación masiva de `password` (`app/Models/User.php:37`)
+- [ ] **Sanitizar excepción en log MCP** — En `McpController.php:162`, loguear solo `$e->getMessage()` y `$e->getCode()` sin el stack trace completo
+
+---
+
 ## Pre-requisito: Reset del proyecto
 
 - [x] Ejecutar cleanup segun `docs/CLEANUP.md` para dejar Laravel vacio

@@ -20,71 +20,54 @@
                 ['label' => $project->organization->name, 'href' => route('admin.organizations.show', $project->organization)],
                 ['label' => $project->name],
             ];
+
+            // Kebab menu del hero: Editar (link normal) +
+            // Archivar/Desarchivar (POST con confirmacion,
+            // tono danger). Se construyen como array para
+            // pasarlos al partial `project-hero::kebabActions`,
+            // que se encarga del render del `<details>/<summary>`
+            // y de los forms con CSRF.
+            $kebabActions = [
+                ['label' => 'Editar', 'href' => route('admin.projects.edit', $project), 'method' => 'get', 'tone' => 'normal'],
+            ];
+
+            if ($project->isArchived()) {
+                $kebabActions[] = [
+                    'label' => 'Desarchivar',
+                    'href' => route('admin.projects.unarchive', $project),
+                    'method' => 'post',
+                    'tone' => 'normal',
+                ];
+            } else {
+                $kebabActions[] = [
+                    'label' => 'Archivar',
+                    'href' => route('admin.projects.archive', $project),
+                    'method' => 'post',
+                    'tone' => 'danger',
+                ];
+            }
         @endphp
 
-        <x-partials.project-hero :project="$project" :crumbs="$crumbs" :unreadMessages="$summary->unreadMessages">
-            <x-slot:actions>
-                @if (Route::has('admin.projects.board'))
-                    <a href="{{ route('admin.projects.board', $project) }}" class="inline-flex items-center justify-center rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]">
-                        Abrir tablero
-                    </a>
-                @endif
+        {{-- Hero limpio: titulo + CTA principal + menu kebab. --}}
+        <x-partials.project-hero
+            :project="$project"
+            :crumbs="$crumbs"
+            :primaryAction="['label' => 'Abrir tablero', 'href' => route('admin.projects.board', $project)]"
+            :kebabActions="$kebabActions"
+        />
 
-                @if (Route::has('admin.projects.chat'))
-                    <a href="{{ route('admin.projects.chat', $project) }}" class="relative inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Chat
-                        @if ($summary->unreadMessages > 0)
-                            <span class="ml-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#DC2626] px-1.5 text-[10px] font-semibold text-white">
-                                {{ $summary->unreadMessages }}
-                            </span>
-                        @endif
-                    </a>
-                @endif
+        {{--
+            Nav strip con las 8 secciones del proyecto. Reemplaza
+            a la antigua "wall of buttons" del hero. Sticky bajo
+            el header del layout, con el tab activo resaltado.
+        --}}
+        <x-partials.project-nav
+            :project="$project"
+            area="admin"
+            :unreadMessages="$summary->unreadMessages"
+        />
 
-                @if (Route::has('admin.projects.documents.index'))
-                    <a href="{{ route('admin.projects.documents.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Documentos
-                    </a>
-                @endif
-
-                @if (Route::has('admin.projects.calendar'))
-                    <a href="{{ route('admin.projects.calendar', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Calendario
-                    </a>
-                @endif
-
-                @if (Route::has('admin.projects.ai'))
-                    <a href="{{ route('admin.projects.ai', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Asistente IA
-                    </a>
-                @endif
-
-                @if (Route::has('admin.projects.agents.index'))
-                    <a href="{{ route('admin.projects.agents.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Agentes
-                    </a>
-                @endif
-
-                @if (Route::has('admin.projects.time.index'))
-                    <a href="{{ route('admin.projects.time.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Registro de tiempo
-                    </a>
-                @endif
-
-                @if (Route::has('admin.projects.activity'))
-                    <a href="{{ route('admin.projects.activity', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Actividad
-                    </a>
-                @endif
-
-                <a href="{{ route('admin.projects.edit', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                    Editar
-                </a>
-
-                @include('admin.projects._archive_button', ['project' => $project])
-            </x-slot:actions>
-        </x-partials.project-hero>
-
+        {{-- Stat tiles: 4 KPIs en una fila. --}}
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <x-partials.project-stat-tile
                 title="Progreso"

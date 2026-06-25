@@ -13,57 +13,33 @@
             ];
         @endphp
 
-        <x-partials.project-hero :project="$project" :crumbs="$crumbs" :unreadMessages="$summary->unreadMessages" :showArchived="false">
-            <x-slot:actions>
-                @if (Route::has('portal.projects.board'))
-                    <a href="{{ route('portal.projects.board', $project) }}" class="inline-flex items-center justify-center rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]">
-                        Ver tablero kanban
-                    </a>
-                @endif
+        {{--
+            Hero limpio: mismo patron que el admin pero sin
+            menu kebab (el portal cliente no edita ni archiva
+            proyectos). El CTA principal "Ver tablero kanban"
+            sigue siendo la accion mas util para un cliente
+            cuando entra al detalle del proyecto.
+        --}}
+        <x-partials.project-hero
+            :project="$project"
+            :crumbs="$crumbs"
+            :unreadMessages="$summary->unreadMessages"
+            :showArchived="false"
+            :primaryAction="['label' => 'Ver tablero kanban', 'href' => route('portal.projects.board', $project)]"
+        />
 
-                @if (Route::has('portal.projects.chat'))
-                    <a href="{{ route('portal.projects.chat', $project) }}" class="relative inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Chat
-                        @if ($summary->unreadMessages > 0)
-                            <span class="ml-2 inline-flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-[#DC2626] px-1.5 text-[10px] font-semibold text-white">
-                                {{ $summary->unreadMessages }}
-                            </span>
-                        @endif
-                    </a>
-                @endif
+        {{--
+            Nav strip con las 7 secciones que el cliente puede
+            usar del proyecto. Sin "Agentes" (admin-only) y sin
+            "Editar/Archivar" (no aplica).
+        --}}
+        <x-partials.project-nav
+            :project="$project"
+            area="portal"
+            :unreadMessages="$summary->unreadMessages"
+        />
 
-                @if (Route::has('portal.projects.documents.index'))
-                    <a href="{{ route('portal.projects.documents.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Ver documentos
-                    </a>
-                @endif
-
-                @if (Route::has('portal.projects.calendar'))
-                    <a href="{{ route('portal.projects.calendar', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Ver calendario
-                    </a>
-                @endif
-
-                @if (Route::has('portal.projects.ai'))
-                    <a href="{{ route('portal.projects.ai', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Asistente IA
-                    </a>
-                @endif
-
-                @if (Route::has('portal.projects.time.index'))
-                    <a href="{{ route('portal.projects.time.index', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Tiempo dedicado
-                    </a>
-                @endif
-
-                @if (Route::has('portal.projects.activity'))
-                    <a href="{{ route('portal.projects.activity', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
-                        Actividad
-                    </a>
-                @endif
-            </x-slot:actions>
-        </x-partials.project-hero>
-
+        {{-- Stat tiles: 4 KPIs adaptados al portal. --}}
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <x-partials.project-stat-tile
                 title="Progreso"
