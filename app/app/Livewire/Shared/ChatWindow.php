@@ -10,6 +10,7 @@ use App\Models\ProjectChatRead;
 use App\Models\ProjectMessage;
 use App\Models\User;
 use App\Notifications\NewProjectMessage;
+use App\Services\Activity\ActivityLogger;
 use App\Services\Attachments\AttachmentService;
 use App\Services\Notifications\NotificationDispatcher;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -252,6 +253,10 @@ class ChatWindow extends Component
             'content' => $content,
             'type' => $messageType,
         ]);
+
+        // Registramos el mensaje humano en el feed para que el
+        // admin y el cliente tengan un timeline unificado.
+        app(ActivityLogger::class)->messageSent($this->project, $message);
 
         // Si hay adjuntos, los subimos uno a uno via el
         // servicio. Esto crea las filas en `message_attachments`

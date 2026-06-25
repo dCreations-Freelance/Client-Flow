@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\OrganizationController as AdminOrganizationContro
 use App\Http\Controllers\Admin\OrganizationMemberController as AdminOrganizationMemberController;
 use App\Http\Controllers\Admin\ProjectArchiveController as AdminProjectArchiveController;
 use App\Http\Controllers\Admin\ProjectCalendarController as AdminProjectCalendarController;
+use App\Http\Controllers\Admin\ProjectActivityController as AdminProjectActivityController;
 use App\Http\Controllers\Admin\ProjectAgentController as AdminProjectAgentController;
 use App\Http\Controllers\Admin\ProjectController as AdminProjectController;
 use App\Http\Controllers\Admin\ProjectDocumentController as AdminProjectDocumentController;
@@ -33,6 +34,7 @@ use App\Http\Controllers\Portal\AiChatController as PortalAiChatController;
 use App\Http\Controllers\Portal\DashboardController as PortalDashboardController;
 use App\Http\Controllers\Portal\KanbanController as PortalKanbanController;
 use App\Http\Controllers\Portal\NotificationController as PortalNotificationController;
+use App\Http\Controllers\Portal\ProjectActivityController as PortalProjectActivityController;
 use App\Http\Controllers\Portal\NotificationPreferenceController as PortalNotificationPreferenceController;
 use App\Http\Controllers\Portal\ProjectCalendarController as PortalProjectCalendarController;
 use App\Http\Controllers\Portal\ProjectController as PortalProjectController;
@@ -230,6 +232,13 @@ Route::middleware(['auth', 'admin'])
         Route::post('projects/{project}/messages', [AdminProjectMessageController::class, 'store'])
             ->name('projects.chat.store');
 
+        // Feed de actividad del proyecto. Read-only: el admin
+        // ve TODOS los eventos (incluidos los privados). El
+        // componente Livewire concentra la logica de paginacion
+        // y filtros; este endpoint solo renderiza la vista.
+        Route::get('projects/{project}/activity', [AdminProjectActivityController::class, 'index'])
+            ->name('projects.activity');
+
         // Asistente IA por proyecto (admin usa su propio chat
         // de prueba en cada proyecto).
         Route::get('projects/{project}/ai', [AdminAiChatController::class, 'index'])
@@ -388,6 +397,14 @@ Route::middleware(['auth', 'client'])
             ->name('projects.chat');
         Route::post('projects/{project}/messages', [PortalProjectMessageController::class, 'store'])
             ->name('projects.chat.store');
+
+        // Feed de actividad del proyecto (cliente). Mismo
+        // componente compartido que el admin, pero montado
+        // con `portalMode = true` para que aplique el scope
+        // `public` y el cliente solo vea los eventos que
+        // `ActivityType::isPublic()` admite.
+        Route::get('projects/{project}/activity', [PortalProjectActivityController::class, 'index'])
+            ->name('projects.activity');
 
         // Asistente IA por proyecto (portal cliente).
         Route::get('projects/{project}/ai', [PortalAiChatController::class, 'index'])

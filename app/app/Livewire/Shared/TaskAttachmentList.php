@@ -5,7 +5,7 @@ namespace App\Livewire\Shared;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\TaskAttachment;
-use App\Services\Activity\ProjectActivityLogger;
+use App\Services\Activity\ActivityLogger;
 use App\Services\Attachments\AttachmentService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
@@ -97,7 +97,7 @@ class TaskAttachmentList extends Component
         }
 
         if ($count > 0) {
-            app(ProjectActivityLogger::class)->attachmentUploadedToTask(
+            app(ActivityLogger::class)->attachmentUploadedToTask(
                 $this->project,
                 $this->task,
                 $count,

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Project;
-use App\Services\Activity\ProjectActivityLogger;
+use App\Services\Activity\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 
 /**
@@ -31,7 +31,7 @@ class ProjectArchiveController extends Controller
 
         $project->archive();
 
-        app(ProjectActivityLogger::class)->projectArchived($project, request()->user());
+        app(ActivityLogger::class)->projectArchived($project, request()->user());
 
         return back()->with('status', 'Proyecto archivado.');
     }
@@ -50,7 +50,7 @@ class ProjectArchiveController extends Controller
 
         $project->unarchive();
 
-        app(ProjectActivityLogger::class)->projectUnarchived($project, request()->user());
+        app(ActivityLogger::class)->projectUnarchived($project, request()->user());
 
         return back()->with('status', 'Proyecto desarchivado.');
     }

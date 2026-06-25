@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\UpdateProjectRequest;
 use App\Models\Organization;
 use App\Models\Project;
 use App\Models\ProjectTemplate;
+use App\Services\Activity\ActivityLogger;
 use App\Services\DefaultBoardColumnsService;
 use App\Services\Project\ProjectSummaryService;
 use App\Services\ProjectTemplate\ProjectTemplateService;
@@ -138,6 +139,10 @@ class ProjectController extends Controller
 
         app(DefaultBoardColumnsService::class)->create($project);
 
+        // Registramos la creacion en el feed (evento privado,
+        // admin-only). El chat no recibe system message.
+        app(ActivityLogger::class)->projectCreated($project, $request->user());
+
         return redirect()
             ->route('admin.projects.show', $project)
             ->with('status', 'Proyecto creado.');
@@ -207,6 +212,15 @@ class ProjectController extends Controller
         $result = app(ProjectTemplateService::class)->applyToProject(
             $projectTemplate,
             $project,
+            $request->user(),
+        );
+
+        // Registramos la aplicacion de la plantilla en el feed
+        // (evento privado). Lo hacemos despues de aplicar para
+        // que el `template_id` este disponible en `properties`.
+        app(ActivityLogger::class)->templateApplied(
+            $project,
+            $projectTemplate,
             $request->user(),
         );
 
@@ -286,6 +300,11 @@ class ProjectController extends Controller
         $data = $request->validated();
         $data['is_visible_to_client'] = $request->boolean('is_visible_to_client');
 
+        // Capturamos el status anterior ANTES de aplicar la
+        // actualizacion para detectar la transicion. Si cambia,
+        // emitimos un `StatusChanged` en el feed (no en el chat).
+        $previousStatus = $project->status;
+
         $status = \App\Enums\ProjectStatus::from($data['status']);
         if ($status === \App\Enums\ProjectStatus::Archived && ! $project->isArchived()) {
             $data['archived_at'] = now();
@@ -294,6 +313,15 @@ class ProjectController extends Controller
         }
 
         $project->update($data);
+
+        if ($project->status !== $previousStatus) {
+            app(ActivityLogger::class)->statusChanged(
+                $project,
+                $previousStatus,
+                $project->status,
+                $request->user(),
+            );
+        }
 
         return redirect()
             ->route('admin.projects.show', $project)

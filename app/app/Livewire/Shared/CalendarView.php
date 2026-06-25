@@ -9,7 +9,7 @@ use App\Models\CalendarEvent;
 use App\Models\Project;
 use App\Models\User;
 use App\Notifications\CalendarEventInvitation;
-use App\Services\Activity\ProjectActivityLogger;
+use App\Services\Activity\ActivityLogger;
 use App\Services\Calendar\CalendarQueryService;
 use App\Services\Notifications\NotificationDispatcher;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -332,9 +332,9 @@ class CalendarView extends Component
 
         $actor = $this->user;
         if ($isEdit) {
-            app(ProjectActivityLogger::class)->eventUpdated($this->project, $event, $actor);
+            app(ActivityLogger::class)->eventUpdated($this->project, $event, $actor);
         } else {
-            app(ProjectActivityLogger::class)->eventCreated($this->project, $event, $actor);
+            app(ActivityLogger::class)->eventCreated($this->project, $event, $actor);
         }
 
         // Notificamos solo a los attendees invitados que no son
@@ -381,7 +381,7 @@ class CalendarView extends Component
         $title = $event->title;
         $event->delete();
 
-        app(ProjectActivityLogger::class)->eventDeleted($this->project, $title, $this->user);
+        app(ActivityLogger::class)->eventDeleted($this->project, $title, $this->user);
 
         $this->dispatch('calendar-event-deleted', eventId: $eventId);
     }

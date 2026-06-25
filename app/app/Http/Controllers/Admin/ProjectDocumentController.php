@@ -8,7 +8,7 @@ use App\Http\Requests\Admin\StoreProjectDocumentRequest;
 use App\Http\Requests\Admin\UpdateProjectDocumentRequest;
 use App\Models\Project;
 use App\Models\ProjectDocument;
-use App\Services\Activity\ProjectActivityLogger;
+use App\Services\Activity\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -95,9 +95,15 @@ class ProjectDocumentController extends Controller
 
         $document = ProjectDocument::create($data);
 
-        // Si el documento se crea ya como publico, dejamos constancia
-        // en el chat del proyecto.
-        app(ProjectActivityLogger::class)->documentPublished($project, $document, $request->user());
+        // El feed (activity_log) siempre recibe el evento de
+        // creacion, sea publico o privado. El chat solo se
+        // notifica si el documento es publico: eso lo decide
+        // internamente `ActivityLogger::documentPublished`.
+        app(ActivityLogger::class)->documentCreated($project, $document, $request->user());
+
+        if ($document->visibility?->isPublic() ?? false) {
+            app(ActivityLogger::class)->documentPublished($project, $document, $request->user());
+        }
 
         return redirect()
             ->route('admin.projects.documents.show', [$project, $document])
@@ -175,8 +181,14 @@ class ProjectDocumentController extends Controller
         $document->update($request->documentData());
 
         $isPublic = $document->visibility?->isPublic() ?? false;
+
+        // El feed siempre registra la actualizacion (sea de
+        // contenido o de visibilidad). El chat solo se notifica
+        // si la visibilidad pasa de privado a publico.
+        app(ActivityLogger::class)->documentUpdated($project, $document, $request->user());
+
         if ($isPublic && ! $wasPublic) {
-            app(ProjectActivityLogger::class)->documentPublished($project, $document, $request->user());
+            app(ActivityLogger::class)->documentPublished($project, $document, $request->user());
         }
 
         return redirect()
@@ -192,13 +204,26 @@ class ProjectDocumentController extends Controller
      * @param  \App\Models\ProjectDocument  $document
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Project $project, ProjectDocument $document): RedirectResponse
+    public function destroy(Request $request, Project $project, ProjectDocument $document): RedirectResponse
     {
         $this->authorize('delete', $document);
 
         abort_unless($document->project_id === $project->id, 404);
 
+        // Capturamos titulo y visibilidad ANTES de borrar para
+        // registrar el evento en el feed (el documento ya no
+        // existira cuando se persista la entrada).
+        $title = $document->title;
+        $visibility = $document->visibility;
+
         $document->delete();
+
+        app(ActivityLogger::class)->documentDeleted(
+            $project,
+            $title,
+            $request->user(),
+            $visibility,
+        );
 
         return redirect()
             ->route('admin.projects.documents.index', $project)

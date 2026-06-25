@@ -7,7 +7,7 @@ use App\Http\Requests\Admin\UploadTaskAttachmentRequest;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\TaskAttachment;
-use App\Services\Activity\ProjectActivityLogger;
+use App\Services\Activity\ActivityLogger;
 use App\Services\Attachments\AttachmentService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Storage;
@@ -31,7 +31,7 @@ class TaskAttachmentController extends Controller
 {
     public function __construct(
         private AttachmentService $attachments,
-        private ProjectActivityLogger $activity,
+        private ActivityLogger $activity,
     ) {
     }
 

@@ -1,0 +1,199 @@
+<template id="scene-5-template">
+  <div data-composition-id="scene-5" data-width="1920" data-height="1080">
+    <style>
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:400; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-400-normal.woff2) format('woff2'); }
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:500; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-500-normal.woff2) format('woff2'); }
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:600; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-600-normal.woff2) format('woff2'); }
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:700; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-700-normal.woff2) format('woff2'); }
+      #scene-5 { width: 1920px; height: 1080px; background: #FAFAF7; position: relative; overflow: hidden; font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif; }
+      .noise-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0.06; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); background-size: 200px 200px; }
+      .blob { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+      .blob-1 { width: 480px; height: 480px; background: #16A34A; opacity: 0.13; top: -100px; right: 15%; animation: drift1 18s ease-in-out infinite; }
+      .blob-2 { width: 460px; height: 460px; background: #8B5CF6; opacity: 0.16; bottom: -120px; left: 5%; animation: drift2 22s ease-in-out infinite; }
+      @keyframes drift1 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(30px,-20px) scale(1.06); } }
+      @keyframes drift2 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,20px) scale(1.06); } }
+      .s5-marker { position: absolute; top: 60px; left: 96px; display: inline-flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6B7280; z-index: 10; }
+      .s5-marker .num { font-family: ui-monospace, monospace; color: #8B5CF6; font-weight: 600; font-size: 16px; }
+      .s5-marker .line { width: 32px; height: 1px; background: #6B7280; }
+      .s5-title { position: absolute; top: 92px; left: 96px; font-size: 48px; font-weight: 600; line-height: 1.1; letter-spacing: -0.025em; color: #111827; z-index: 10; }
+      .s5-title .accent { color: #16A34A; }
+      .s5-stage { position: absolute; top: 200px; left: 96px; right: 96px; bottom: 60px; display: grid; grid-template-rows: 1fr 1fr; gap: 24px; }
+      .s5-cal { background: #fff; border: 2px solid #E7E2D8; border-radius: 24px; padding: 24px; display: flex; flex-direction: column; overflow: hidden; }
+      .s5-cal-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+      .s5-cal-t { font-size: 22px; font-weight: 600; color: #111827; display: flex; align-items: center; gap: 14px; }
+      .s5-cal-t .nav { width: 32px; height: 32px; border-radius: 8px; background: #F4F1EA; display: flex; align-items: center; justify-content: center; color: #6B7280; font-size: 14px; }
+      .s5-cal-t .today { font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 8px; background: #2563EB; color: #fff; }
+      .s5-legend { display: flex; gap: 14px; }
+      .s5-leg { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: #6B7280; }
+      .s5-leg .dot { width: 8px; height: 8px; border-radius: 50%; }
+      .s5-dow { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; margin-bottom: 4px; }
+      .s5-dow span { text-align: center; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #6B7280; padding: 6px 0; }
+      .s5-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(5, 1fr); gap: 6px; flex: 1; }
+      .s5-day { background: #FAFAF7; border-radius: 10px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; min-height: 0; overflow: hidden; }
+      .s5-day.out { opacity: 0.4; }
+      .s5-day.today { background: #EFF6FF; border: 2px solid #2563EB; }
+      .s5-dn { font-size: 12px; font-weight: 600; color: #111827; }
+      .s5-day.today .s5-dn { color: #2563EB; }
+      .s5-day.out .s5-dn { color: #9CA3AF; }
+      .s5-ev { display: flex; align-items: center; gap: 4px; font-size: 10px; padding: 2px 6px; border-radius: 4px; background: #fff; }
+      .s5-ev .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+      .s5-ev.meet { color: #2563EB; }
+      .s5-ev.dead { color: #D97706; }
+      .s5-ev.milestone { color: #16A34A; }
+      .s5-time { background: #fff; border: 2px solid #E7E2D8; border-radius: 24px; padding: 24px 32px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 28px; overflow: hidden; }
+      .s5-time-l { display: flex; flex-direction: column; justify-content: center; gap: 12px; }
+      .s5-time-h { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #6B7280; }
+      .s5-time-big { font-size: 64px; font-weight: 700; color: #111827; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+      .s5-time-big .accent { color: #8B5CF6; }
+      .s5-time-meta { font-size: 14px; color: #6B7280; }
+      .s5-time-r { display: flex; flex-direction: column; gap: 12px; }
+      .s5-pr { display: flex; flex-direction: column; gap: 6px; }
+      .s5-prh { display: flex; align-items: center; justify-content: space-between; }
+      .s5-prn { font-size: 13px; font-weight: 500; color: #111827; display: flex; align-items: center; gap: 8px; }
+      .s5-prn .av { width: 22px; height: 22px; border-radius: 50%; background: #2563EB; color: #fff; font-size: 9px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+      .s5-prv { font-size: 12px; font-weight: 600; color: #111827; font-variant-numeric: tabular-nums; }
+      .s5-prb { height: 6px; background: #F4F1EA; border-radius: 3px; overflow: hidden; }
+      .s5-prbf { height: 100%; border-radius: 3px; width: 0%; }
+    </style>
+
+    <div class="noise-bg"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="s5-marker" id="marker">
+      <span class="num">05</span>
+      <span class="line"></span>
+      <span>Organización</span>
+    </div>
+    <h2 class="s5-title">Calendario y <span class="accent">tiempo</span>, ambos visibles.</h2>
+
+    <div class="s5-stage">
+      <div class="s5-cal" id="cal">
+        <div class="s5-cal-h">
+          <div class="s5-cal-t">
+            <span class="nav">‹</span>
+            Junio 2026
+            <span class="nav">›</span>
+            <span class="today">Hoy</span>
+          </div>
+          <div class="s5-legend">
+            <span class="s5-leg"><span class="dot" style="background:#2563EB"></span>Reunión</span>
+            <span class="s5-leg"><span class="dot" style="background:#16A34A"></span>Hito</span>
+            <span class="s5-leg"><span class="dot" style="background:#D97706"></span>Deadline</span>
+          </div>
+        </div>
+        <div class="s5-dow">
+          <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+        </div>
+        <div class="s5-grid" id="cal-grid">
+          <div class="s5-day out"><span class="s5-dn">26</span></div>
+          <div class="s5-day out"><span class="s5-dn">27</span></div>
+          <div class="s5-day out"><span class="s5-dn">28</span></div>
+          <div class="s5-day out"><span class="s5-dn">29</span></div>
+          <div class="s5-day out"><span class="s5-dn">30</span></div>
+          <div class="s5-day out"><span class="s5-dn">31</span></div>
+          <div class="s5-day"><span class="s5-dn">1</span></div>
+          <div class="s5-day"><span class="s5-dn">2</span></div>
+          <div class="s5-day"><span class="s5-dn">3</span></div>
+          <div class="s5-day"><span class="s5-dn">4</span>
+            <div class="s5-ev meet"><span class="dot" style="background:#2563EB"></span>Kickoff</div>
+          </div>
+          <div class="s5-day"><span class="s5-dn">5</span></div>
+          <div class="s5-day"><span class="s5-dn">6</span></div>
+          <div class="s5-day"><span class="s5-dn">7</span></div>
+          <div class="s5-day"><span class="s5-dn">8</span></div>
+          <div class="s5-day"><span class="s5-dn">9</span>
+            <div class="s5-ev meet"><span class="dot" style="background:#2563EB"></span>Review</div>
+          </div>
+          <div class="s5-day"><span class="s5-dn">10</span></div>
+          <div class="s5-day"><span class="s5-dn">11</span>
+            <div class="s5-ev milestone"><span class="dot" style="background:#16A34A"></span>Beta</div>
+          </div>
+          <div class="s5-day"><span class="s5-dn">12</span>
+            <div class="s5-ev dead"><span class="dot" style="background:#D97706"></span>Deploy</div>
+          </div>
+          <div class="s5-day"><span class="s5-dn">13</span></div>
+          <div class="s5-day"><span class="s5-dn">14</span></div>
+          <div class="s5-day today"><span class="s5-dn">15</span>
+            <div class="s5-ev meet"><span class="dot" style="background:#2563EB"></span>Daily</div>
+          </div>
+          <div class="s5-day"><span class="s5-dn">16</span></div>
+          <div class="s5-day"><span class="s5-dn">17</span>
+            <div class="s5-ev meet"><span class="dot" style="background:#2563EB"></span>Sprint</div>
+          </div>
+          <div class="s5-day"><span class="s5-dn">18</span>
+            <div class="s5-ev dead"><span class="dot" style="background:#D97706"></span>OAuth</div>
+          </div>
+          <div class="s5-day"><span class="s5-dn">19</span></div>
+          <div class="s5-day"><span class="s5-dn">20</span>
+            <div class="s5-ev dead"><span class="dot" style="background:#D97706"></span>Precios</div>
+          </div>
+          <div class="s5-day"><span class="s5-dn">21</span></div>
+          <div class="s5-day"><span class="s5-dn">22</span>
+            <div class="s5-ev meet"><span class="dot" style="background:#2563EB"></span>Cliente</div>
+          </div>
+          <div class="s5-day"><span class="s5-dn">23</span></div>
+          <div class="s5-day"><span class="s5-dn">24</span></div>
+          <div class="s5-day"><span class="s5-dn">25</span>
+            <div class="s5-ev milestone"><span class="dot" style="background:#16A34A"></span>RC1</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="s5-time" id="time">
+        <div class="s5-time-l">
+          <div class="s5-time-h">Tiempo dedicado este sprint</div>
+          <div class="s5-time-big"><span class="accent" id="hours">0</span>h</div>
+          <div class="s5-time-meta">de 80h estimadas · 12 entradas facturables</div>
+        </div>
+        <div class="s5-time-r" id="prs">
+          <div class="s5-pr">
+            <div class="s5-prh"><span class="s5-prn"><span class="av" style="background:#2563EB">DR</span>Daniel R.</span><span class="s5-prv">18h</span></div>
+            <div class="s5-prb"><div class="s5-prbf" id="pr1" style="background:#2563EB"></div></div>
+          </div>
+          <div class="s5-pr">
+            <div class="s5-prh"><span class="s5-prn"><span class="av" style="background:#8B5CF6">MP</span>María P.</span><span class="s5-prv">14h</span></div>
+            <div class="s5-prb"><div class="s5-prbf" id="pr2" style="background:#8B5CF6"></div></div>
+          </div>
+          <div class="s5-pr">
+            <div class="s5-prh"><span class="s5-prn"><span class="av" style="background:#16A34A">JM</span>Javier M.</span><span class="s5-prv">10h</span></div>
+            <div class="s5-prb"><div class="s5-prbf" id="pr3" style="background:#16A34A"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      tl.from("#marker .num", { scale: 0, duration: 0.4, ease: "back.out(2)" }, 0.3);
+      tl.from("#marker .line", { scaleX: 0, transformOrigin: "left center", duration: 0.5, ease: "power2.out" }, 0.45);
+      tl.from("#marker span:last-child", { opacity: 0, x: -6, duration: 0.4, ease: "power2.out" }, 0.55);
+      tl.from("#title", { y: 25, opacity: 0, duration: 0.5, ease: "power2.out" }, 0.7);
+
+      tl.from("#cal", { y: 30, opacity: 0, duration: 0.5, ease: "power2.out" }, 0.9);
+      tl.from("#cal .s5-cal-h", { y: -10, opacity: 0, duration: 0.4, ease: "power2.out" }, 1.3);
+      tl.from("#cal .s5-dow span", { opacity: 0, y: -5, duration: 0.2, ease: "power2.out", stagger: 0.03 }, 1.5);
+      tl.from("#cal-grid .s5-day", { scale: 0.85, opacity: 0, duration: 0.2, ease: "power2.out", stagger: 0.015 }, 1.7);
+      tl.from("#cal-grid .s5-ev", { scale: 0, opacity: 0, duration: 0.3, ease: "back.out(2)", stagger: 0.06 }, 2.3);
+
+      tl.from("#time", { y: 30, opacity: 0, duration: 0.5, ease: "power2.out" }, 2.8);
+      tl.from("#time .s5-time-h", { opacity: 0, duration: 0.3, ease: "power1.out" }, 3.1);
+      window._s5h = { v: 0 };
+      tl.fromTo(window._s5h, { v: 0 }, { v: 42, duration: 1.2, ease: "power1.out", snap: { v: 1 },
+        onUpdate: function() { document.getElementById("hours").textContent = window._s5h.v; }
+      }, 3.3);
+      tl.from("#time .s5-time-meta", { opacity: 0, duration: 0.4, ease: "power2.out" }, 3.6);
+      tl.from("#prs .s5-pr", { y: 15, opacity: 0, duration: 0.4, ease: "power2.out", stagger: 0.12 }, 3.8);
+      tl.to("#pr1", { width: "72%", duration: 0.6, ease: "power2.out" }, 4.1);
+      tl.to("#pr2", { width: "56%", duration: 0.6, ease: "power2.out" }, 4.2);
+      tl.to("#pr3", { width: "40%", duration: 0.6, ease: "power2.out" }, 4.3);
+
+      tl.set({}, {}, 14);
+
+      window.__timelines["scene-5"] = tl;
+    </script>
+  </div>
+</template>

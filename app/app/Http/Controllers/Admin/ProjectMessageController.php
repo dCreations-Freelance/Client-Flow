@@ -6,6 +6,7 @@ use App\Enums\NotificationEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Notifications\NewProjectMessage;
+use App\Services\Activity\ActivityLogger;
 use App\Services\Notifications\NotificationDispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -63,6 +64,11 @@ class ProjectMessageController extends Controller
             'content' => trim($data['content']),
             'type' => \App\Enums\MessageType::Text,
         ]);
+
+        // Registramos el mensaje humano en el feed para que el
+        // admin y el cliente tengan un timeline unificado de la
+        // conversacion.
+        app(ActivityLogger::class)->messageSent($project, $message);
 
         // Marcamos como leido para el emisor: ya "ve" su propio
         // mensaje, no debe contar como no leido.

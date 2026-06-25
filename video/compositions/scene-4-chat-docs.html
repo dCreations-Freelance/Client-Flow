@@ -1,0 +1,196 @@
+<template id="scene-4-template">
+  <div data-composition-id="scene-4" data-width="1920" data-height="1080">
+    <style>
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:400; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-400-normal.woff2) format('woff2'); }
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:500; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-500-normal.woff2) format('woff2'); }
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:600; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-600-normal.woff2) format('woff2'); }
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:700; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-700-normal.woff2) format('woff2'); }
+      #scene-4 { width: 1920px; height: 1080px; background: #FAFAF7; position: relative; overflow: hidden; font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif; }
+      .noise-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0.06; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); background-size: 200px 200px; }
+      .blob { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+      .blob-1 { width: 500px; height: 500px; background: #8B5CF6; opacity: 0.18; top: -120px; left: 25%; animation: drift1 18s ease-in-out infinite; }
+      .blob-2 { width: 460px; height: 460px; background: #2563EB; opacity: 0.13; bottom: -120px; right: 10%; animation: drift2 22s ease-in-out infinite; }
+      @keyframes drift1 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(30px,-20px) scale(1.06); } }
+      @keyframes drift2 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px,20px) scale(1.06); } }
+      .s4-marker { position: absolute; top: 60px; left: 96px; display: inline-flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6B7280; z-index: 10; }
+      .s4-marker .num { font-family: ui-monospace, monospace; color: #8B5CF6; font-weight: 600; font-size: 16px; }
+      .s4-marker .line { width: 32px; height: 1px; background: #6B7280; }
+      .s4-title { position: absolute; top: 92px; left: 96px; font-size: 48px; font-weight: 600; line-height: 1.1; letter-spacing: -0.025em; color: #111827; z-index: 10; }
+      .s4-title .accent { color: #2563EB; }
+      .s4-grid { position: absolute; top: 200px; left: 96px; right: 96px; bottom: 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+      .s4-panel { background: #fff; border: 2px solid #E7E2D8; border-radius: 24px; display: flex; flex-direction: column; overflow: hidden; }
+      .s4-panel-h { padding: 20px 28px; border-bottom: 2px solid #E7E2D8; background: #FAFAF7; display: flex; align-items: center; justify-content: space-between; }
+      .s4-panel-t { font-size: 17px; font-weight: 600; color: #111827; display: flex; align-items: center; gap: 10px; }
+      .s4-dot { width: 8px; height: 8px; border-radius: 50%; background: #16A34A; animation: pulse 2s ease-out infinite; }
+      @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(22,163,74,0.6); } 70% { box-shadow: 0 0 0 6px rgba(22,163,74,0); } 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); } }
+      .s4-badge { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 12px; background: #FEF2F2; color: #DC2626; }
+      .s4-chat { flex: 1; padding: 24px; display: flex; flex-direction: column; gap: 14px; background: #FAFAF7; }
+      .s4-msg { max-width: 80%; padding: 14px 18px; font-size: 14px; line-height: 1.45; opacity: 0; }
+      .s4-msg.own { align-self: flex-end; background: #2563EB; color: #fff; border-radius: 18px 18px 4px 18px; }
+      .s4-msg.other { align-self: flex-start; background: #fff; color: #111827; border: 2px solid #E7E2D8; border-radius: 18px 18px 18px 4px; }
+      .s4-msg.sys { align-self: center; background: #F4F1EA; color: #6B7280; font-size: 12px; border-radius: 100px; padding: 8px 18px; text-align: center; }
+      .s4-mt { font-size: 11px; margin-top: 6px; display: flex; align-items: center; gap: 6px; }
+      .s4-msg.own .s4-mt { color: rgba(255,255,255,0.7); }
+      .s4-msg.other .s4-mt { color: #9CA3AF; }
+      .s4-mt .check { display: inline-block; }
+      .s4-mt .check.double { color: #93C5FD; }
+      .s4-attach { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding: 10px 14px; border-radius: 10px; }
+      .s4-msg.own .s4-attach { background: rgba(255,255,255,0.12); }
+      .s4-msg.other .s4-attach { background: #F4F1EA; }
+      .s4-ai { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+      .s4-msg.own .s4-ai { background: rgba(255,255,255,0.18); }
+      .s4-msg.other .s4-ai { background: #E7E2D8; }
+      .s4-ain { font-size: 13px; font-weight: 500; }
+      .s4-ais { font-size: 11px; opacity: 0.7; }
+      .s4-msg.own .s4-ais { color: rgba(255,255,255,0.7); }
+      .s4-msg.other .s4-ais { color: #9CA3AF; }
+      .s4-docs { flex: 1; padding: 24px; display: flex; flex-direction: column; gap: 14px; overflow: hidden; }
+      .s4-tabs { display: flex; gap: 4px; padding: 4px; background: #F4F1EA; border-radius: 10px; }
+      .s4-tab { padding: 8px 16px; font-size: 13px; font-weight: 500; color: #6B7280; border-radius: 8px; cursor: pointer; }
+      .s4-tab.active { background: #fff; color: #2563EB; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+      .s4-toolbar { display: flex; gap: 4px; padding: 6px 8px; background: #FAFAF7; border: 1px solid #E7E2D8; border-radius: 8px; }
+      .s4-tb { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #6B7280; }
+      .s4-tb.sep { width: 1px; background: #E7E2D8; }
+      .s4-doc { background: #fff; border: 2px solid #E7E2D8; border-radius: 14px; padding: 20px; }
+      .s4-doc-h { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #E7E2D8; }
+      .s4-doc-i { width: 36px; height: 36px; border-radius: 10px; background: #EFF6FF; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+      .s4-doc-n { font-size: 15px; font-weight: 600; color: #111827; }
+      .s4-doc-m { font-size: 12px; color: #6B7280; }
+      .s4-doc-vis { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 100px; }
+      .s4-doc-vis.pub { background: #EFF6FF; color: #2563EB; }
+      .s4-doc-vis.priv { background: #F5F3FF; color: #8B5CF6; }
+      .s4-md { font-size: 13px; line-height: 1.6; color: #111827; }
+      .s4-md h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; color: #111827; }
+      .s4-md p { margin-bottom: 6px; color: #4B5563; }
+      .s4-md code { background: #F4F1EA; padding: 2px 6px; border-radius: 4px; font-family: ui-monospace, monospace; font-size: 12px; }
+      .s4-md ul { margin: 6px 0 6px 20px; color: #4B5563; }
+    </style>
+
+    <div class="noise-bg"></div>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="s4-marker" id="marker">
+      <span class="num">04</span>
+      <span class="line"></span>
+      <span>Comunicación</span>
+    </div>
+    <h2 class="s4-title">Chat y docs en el <span class="accent">mismo lugar</span>.</h2>
+
+    <div class="s4-grid" id="grid">
+      <div class="s4-panel" id="chat-panel">
+        <div class="s4-panel-h">
+          <div class="s4-panel-t"><span class="s4-dot"></span>Chat — Diseño Web</div>
+          <span class="s4-badge">2 sin leer</span>
+        </div>
+        <div class="s4-chat" id="chat">
+          <div class="s4-msg other" id="m1">Buenos días! ¿Cómo vamos con el diseño del hero?<div class="s4-mt">09:45</div></div>
+          <div class="s4-msg own" id="m2">¡Hola! Justo terminé la primera versión. Te comparto el preview.<div class="s4-mt">09:48 <span class="check double">✓✓</span></div></div>
+          <div class="s4-msg sys" id="m3">Daniel subió diseño-v2.fig</div>
+          <div class="s4-msg other" id="m4">Perfecto, lo reviso y te digo. ¿Vamos bien con el timeline?<div class="s4-mt">09:50</div></div>
+          <div class="s4-msg own" id="m5">Sí, todo en orden. Te adjunto los assets actualizados.
+            <div class="s4-attach">
+              <div class="s4-ai">📎</div>
+              <div>
+                <div class="s4-ain">brand-assets-v2.zip</div>
+                <div class="s4-ais">12.4 MB</div>
+              </div>
+            </div>
+            <div class="s4-mt">09:52 <span class="check">✓</span></div>
+          </div>
+          <div class="s4-msg other" id="m6">Recibido, gracias! 🙌<div class="s4-mt">09:53</div></div>
+        </div>
+      </div>
+
+      <div class="s4-panel" id="docs-panel">
+        <div class="s4-panel-h">
+          <div class="s4-panel-t">📄 Documentos del proyecto</div>
+          <span style="font-size:12px;color:#2563EB;font-weight:500">+ Nuevo</span>
+        </div>
+        <div class="s4-docs" id="docs">
+          <div class="s4-tabs" id="tabs">
+            <div class="s4-tab active">Editor</div>
+            <div class="s4-tab">Vista previa</div>
+          </div>
+          <div class="s4-toolbar" id="toolbar">
+            <div class="s4-tb"><b>B</b></div>
+            <div class="s4-tb"><i>I</i></div>
+            <div class="s4-tb"><u>U</u></div>
+            <div class="s4-tb sep"></div>
+            <div class="s4-tb" style="font-size:11px">H1</div>
+            <div class="s4-tb" style="font-size:11px">H2</div>
+            <div class="s4-tb sep"></div>
+            <div class="s4-tb" style="font-size:11px">•</div>
+            <div class="s4-tb" style="font-size:11px">1.</div>
+            <div class="s4-tb sep"></div>
+            <div class="s4-tb" style="font-family:monospace">&lt;/&gt;</div>
+          </div>
+          <div class="s4-doc" id="doc1">
+            <div class="s4-doc-h">
+              <div class="s4-doc-i" style="background:#F5F3FF">📋</div>
+              <div style="flex:1">
+                <div class="s4-doc-n">Especificaciones técnicas</div>
+                <div class="s4-doc-m">Actualizado ayer · 8.7 KB</div>
+              </div>
+              <span class="s4-doc-vis pub">Público</span>
+            </div>
+            <div class="s4-md">
+              <h3># Stack del proyecto</h3>
+              <p>Este documento describe la arquitectura y el stack usado en ClientFlow.</p>
+              <ul>
+                <li>Laravel 13 + Livewire 4</li>
+                <li>Tailwind CSS 4</li>
+                <li>MySQL 8.4</li>
+              </ul>
+              <p>Para empezar: <code>docker compose up -d</code></p>
+            </div>
+          </div>
+          <div class="s4-doc" id="doc2">
+            <div class="s4-doc-h">
+              <div class="s4-doc-i">📄</div>
+              <div style="flex:1">
+                <div class="s4-doc-n">Brief del proyecto</div>
+                <div class="s4-doc-m">Actualizado hace 2 días · 3.2 KB</div>
+              </div>
+              <span class="s4-doc-vis priv">Privado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      tl.from("#marker .num", { scale: 0, duration: 0.4, ease: "back.out(2)" }, 0.3);
+      tl.from("#marker .line", { scaleX: 0, transformOrigin: "left center", duration: 0.5, ease: "power2.out" }, 0.45);
+      tl.from("#marker span:last-child", { opacity: 0, x: -6, duration: 0.4, ease: "power2.out" }, 0.55);
+      tl.from("#title", { y: 25, opacity: 0, duration: 0.5, ease: "power2.out" }, 0.7);
+
+      tl.from("#chat-panel", { x: -60, opacity: 0, duration: 0.6, ease: "expo.out" }, 0.9);
+      tl.from("#chat-panel .s4-panel-h", { y: -10, opacity: 0, duration: 0.4, ease: "power2.out" }, 1.3);
+
+      tl.from("#m1", { y: 20, opacity: 0, duration: 0.4, ease: "power2.out" }, 1.6);
+      tl.from("#m2", { y: 20, opacity: 0, duration: 0.4, ease: "power2.out" }, 1.9);
+      tl.from("#m3", { scale: 0.8, opacity: 0, duration: 0.4, ease: "back.out(1.5)" }, 2.2);
+      tl.from("#m4", { y: 20, opacity: 0, duration: 0.4, ease: "power2.out" }, 2.5);
+      tl.from("#m5", { y: 20, opacity: 0, duration: 0.4, ease: "power2.out" }, 2.9);
+      tl.from("#m6", { y: 20, opacity: 0, duration: 0.4, ease: "back.out(1.4)" }, 3.4);
+
+      tl.from("#docs-panel", { x: 60, opacity: 0, duration: 0.6, ease: "expo.out" }, 0.9);
+      tl.from("#docs-panel .s4-panel-h", { y: -10, opacity: 0, duration: 0.4, ease: "power2.out" }, 1.3);
+      tl.from("#tabs .s4-tab", { y: 10, opacity: 0, duration: 0.3, ease: "power2.out", stagger: 0.08 }, 1.6);
+      tl.from("#toolbar .s4-tb", { scale: 0.7, opacity: 0, duration: 0.25, ease: "back.out(1.5)", stagger: 0.04 }, 1.9);
+      tl.from("#doc1", { y: 25, opacity: 0, duration: 0.5, ease: "power2.out" }, 2.3);
+      tl.from("#doc1 .s4-doc-h > *", { x: -10, opacity: 0, duration: 0.3, ease: "power2.out", stagger: 0.06 }, 2.6);
+      tl.from("#doc1 .s4-md > *", { y: 8, opacity: 0, duration: 0.3, ease: "power2.out", stagger: 0.05 }, 2.8);
+      tl.from("#doc2", { y: 25, opacity: 0, duration: 0.4, ease: "power2.out" }, 3.5);
+
+      tl.set({}, {}, 13);
+
+      window.__timelines["scene-4"] = tl;
+    </script>
+  </div>
+</template>

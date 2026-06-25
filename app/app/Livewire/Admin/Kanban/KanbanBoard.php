@@ -8,7 +8,7 @@ use App\Models\BoardColumn;
 use App\Models\Project;
 use App\Models\Task;
 use App\Models\User;
-use App\Services\Activity\ProjectActivityLogger;
+use App\Services\Activity\ActivityLogger;
 use App\Services\Attachments\AttachmentService;
 use App\Services\TaskMoveService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -344,7 +344,7 @@ class KanbanBoard extends Component
             }
 
             if ($attachmentCount > 0) {
-                app(ProjectActivityLogger::class)->attachmentUploadedToTask(
+                app(ActivityLogger::class)->attachmentUploadedToTask(
                     $this->project,
                     $task,
                     $attachmentCount,

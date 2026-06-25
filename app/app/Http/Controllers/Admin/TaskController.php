@@ -9,7 +9,7 @@ use App\Http\Requests\Admin\UpdateTaskRequest;
 use App\Models\Project;
 use App\Models\Task;
 use App\Notifications\TaskAssigned;
-use App\Services\Activity\ProjectActivityLogger;
+use App\Services\Activity\ActivityLogger;
 use App\Services\Notifications\NotificationDispatcher;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -66,8 +66,11 @@ class TaskController extends Controller
 
         $task = Task::create($data);
 
-        // Mensaje automatico en el chat del proyecto.
-        app(ProjectActivityLogger::class)->taskCreated($project, $task);
+        // Doble persistencia: el feed (activity_log) recibe el
+        // evento estructurado y el chat recibe el system message
+        // correspondiente. `ActivityLogger` se encarga de ambas
+        // escrituras.
+        app(ActivityLogger::class)->taskCreated($project, $task, $request->user());
 
         // Si la tarea se ha creado con un assignee, le enviamos
         // la notificacion de "tarea asignada". Pasamos por el
@@ -132,7 +135,44 @@ class TaskController extends Controller
             : null;
         $assigneeChanged = $previousAssigneeId !== $newAssigneeId;
 
+        // Capturamos el diff de campos trackeables para emitir
+        // un `TaskUpdated` en el feed (no genera system message
+        // en el chat, solo aparece en el feed admin). Asi un
+        // cambio de prioridad o de fecha limite queda trazado
+        // sin saturar el chat.
+        $trackedFields = ['title', 'description', 'priority', 'type', 'due_date', 'assignee_id'];
+        $changes = [];
+        foreach ($trackedFields as $field) {
+            if (! array_key_exists($field, $data)) {
+                continue;
+            }
+
+            $oldValue = $task->{$field};
+            $newValue = $data[$field];
+
+            // Normalizamos la representacion a string para
+            // comparar de forma estable. Importante para los
+            // enums: compararlos por su `->value` evita que un
+            // cambio `Medium` -> `medium` se detecte como
+            // distinto (seria ruido en el feed).
+            $oldString = $oldValue instanceof \BackedEnum ? (string) $oldValue->value : (string) ($oldValue ?? '');
+            $newString = $newValue instanceof \BackedEnum ? (string) $newValue->value : (string) ($newValue ?? '');
+
+            if ($oldString !== $newString) {
+                $changes[$field] = ['old' => $oldValue, 'new' => $newValue];
+            }
+        }
+
         $task->update($data);
+
+        if ($changes !== []) {
+            app(ActivityLogger::class)->taskUpdated(
+                $project,
+                $task->fresh(),
+                $request->user(),
+                $changes,
+            );
+        }
 
         if ($assigneeChanged && $newAssigneeId !== null && $newAssigneeId !== (int) $request->user()->id) {
             $assignee = \App\Models\User::find($newAssigneeId);
@@ -156,6 +196,9 @@ class TaskController extends Controller
     {
         $this->authorize('delete', $task);
 
+        $title = $task->title;
+        $actor = request()->user();
+
         DB::transaction(function () use ($task): void {
             $columnId = $task->column_id;
             $position = $task->position;
@@ -167,6 +210,11 @@ class TaskController extends Controller
                 ->where('position', '>', $position)
                 ->decrement('position');
         });
+
+        // Tras borrarla registramos el evento en el feed. El
+        // `taskDeleted` recibe el titulo (string) porque la
+        // tarea ya no existe en BD.
+        app(ActivityLogger::class)->taskDeleted($project, $title, $actor);
 
         return back()->with('status', 'Tarea eliminada.');
     }
@@ -209,7 +257,7 @@ class TaskController extends Controller
 
         $task->markCompleted();
 
-        app(ProjectActivityLogger::class)->taskCompleted($project, $task, request()->user());
+        app(ActivityLogger::class)->taskCompleted($project, $task, request()->user());
 
         return back()->with('status', 'Tarea completada.');
     }
@@ -223,7 +271,7 @@ class TaskController extends Controller
 
         $task->markPending();
 
-        app(ProjectActivityLogger::class)->taskReopened($project, $task, request()->user());
+        app(ActivityLogger::class)->taskReopened($project, $task, request()->user());
 
         return back()->with('status', 'Tarea re-abierta.');
     }

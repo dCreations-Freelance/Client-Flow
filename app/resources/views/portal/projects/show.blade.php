@@ -55,6 +55,12 @@
                         Tiempo dedicado
                     </a>
                 @endif
+
+                @if (Route::has('portal.projects.activity'))
+                    <a href="{{ route('portal.projects.activity', $project) }}" class="inline-flex items-center justify-center rounded-lg border border-[#E7E2D8] bg-white px-4 py-2 text-sm font-medium text-[#111827] hover:bg-[#F4F1EA]">
+                        Actividad
+                    </a>
+                @endif
             </x-slot:actions>
         </x-partials.project-hero>
 

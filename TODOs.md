@@ -289,16 +289,18 @@ Detalles en `docs/tasks/fase-transversal-notificaciones.md`.
 
 ## Fase 13: Feed de actividad
 
-- [ ] Crear migracion `activity_log`
-- [ ] Crear modelo `ActivityLog` con relaciones polimorficas
-- [ ] Crear enum `ActivityType` (task_created, task_completed, document_updated, status_changed, etc.)
-- [ ] Implementar `ActivityLogger` service para registrar acciones
-- [ ] Registrar actividad automatica: tareas creadas/completadas, docs creadas, estado cambiado, mensajes
-- [ ] Crear componente Livewire `ActivityFeed` por proyecto
-- [ ] Crear vista feed de actividad en detalle de proyecto (admin)
-- [ ] Crear vista feed de actividad en detalle de proyecto (portal, solo eventos visibles)
-- [ ] Paginacion o carga infinita en el feed
-- [ ] Anadir enlace "Ver actividad" en sidebar del proyecto
+- [x] Crear migracion `activity_log`
+- [x] Crear modelo `ActivityLog` con relaciones polimorficas
+- [x] Crear enum `ActivityType` (task_created, task_completed, document_updated, status_changed, etc.)
+- [x] Implementar `ActivityLogger` service para registrar acciones
+- [x] Registrar actividad automatica: tareas creadas/completadas, docs creadas, estado cambiado, mensajes
+- [x] Crear componente Livewire `ActivityFeed` por proyecto
+- [x] Crear vista feed de actividad en detalle de proyecto (admin)
+- [x] Crear vista feed de actividad en detalle de proyecto (portal, solo eventos visibles)
+- [x] Paginacion o carga infinita en el feed
+- [x] Anadir enlace "Ver actividad" en sidebar del proyecto
+
+Detalles en `docs/tasks/fase-13-feed-actividad.md`.
 
 ---
 

@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\AttachProjectMemberRequest;
 use App\Models\Project;
+use App\Models\User;
+use App\Services\Activity\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 /**
  * Gestion de miembros asignados a un proyecto.
@@ -45,6 +48,17 @@ class ProjectMemberController extends Controller
 
         if (! $project->members()->where('users.id', $userId)->exists()) {
             $project->members()->attach($userId);
+
+            // Registramos el alta en el feed (evento privado:
+            // el portal cliente no ve quien-trabaja-con-quien).
+            $member = User::find($userId);
+            if ($member !== null) {
+                app(ActivityLogger::class)->memberAdded(
+                    $project,
+                    $member,
+                    $request->user(),
+                );
+            }
         }
 
         return back()->with('status', 'Miembro anadido al proyecto.');
@@ -59,11 +73,22 @@ class ProjectMemberController extends Controller
      * @param  int  $userId
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Project $project, int $userId): RedirectResponse
+    public function destroy(Request $request, Project $project, int $userId): RedirectResponse
     {
         $this->authorize('manageMembers', $project);
 
+        // Capturamos el nombre ANTES de desvincular para que el
+        // log de actividad siga siendo legible despues.
+        $member = User::find($userId);
+        $name = $member?->name ?? "Usuario #{$userId}";
+
         $project->members()->detach($userId);
+
+        app(ActivityLogger::class)->memberRemoved(
+            $project,
+            $name,
+            $request->user(),
+        );
 
         return back()->with('status', 'Miembro retirado del proyecto.');
     }

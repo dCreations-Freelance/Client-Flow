@@ -1,0 +1,186 @@
+<template id="scene-2-template">
+  <div data-composition-id="scene-2" data-width="1920" data-height="1080">
+    <style>
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:400; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-400-normal.woff2) format('woff2'); }
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:500; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-500-normal.woff2) format('woff2'); }
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:600; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-600-normal.woff2) format('woff2'); }
+      @font-face { font-family:'Instrument Sans'; font-style:normal; font-weight:700; font-stretch:100%; src:url(https://fonts.bunny.net/instrument-sans/files/instrument-sans-latin-700-normal.woff2) format('woff2'); }
+      #scene-2 {
+        width: 1920px; height: 1080px;
+        background: #FAFAF7;
+        position: relative; overflow: hidden;
+        font-family: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
+      }
+      .noise-bg { position: absolute; inset: 0; pointer-events: none; z-index: 0; opacity: 0.06; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); background-size: 200px 200px; }
+      .blob { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+      .blob-violet { width: 600px; height: 600px; background: #8B5CF6; opacity: 0.2; top: -100px; right: -100px; animation: drift1 18s ease-in-out infinite; }
+      .blob-blue { width: 540px; height: 540px; background: #2563EB; opacity: 0.15; bottom: -120px; left: -80px; animation: drift2 22s ease-in-out infinite; }
+      @keyframes drift1 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(30px, -20px) scale(1.05); } }
+      @keyframes drift2 { 0%, 100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-30px, 20px) scale(1.05); } }
+      .s2-marker { position: absolute; top: 80px; left: 96px; display: inline-flex; align-items: center; gap: 12px; font-size: 14px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #6B7280; z-index: 10; }
+      .s2-marker .num { font-family: ui-monospace, monospace; color: #8B5CF6; font-weight: 600; font-size: 16px; }
+      .s2-marker .line { width: 32px; height: 1px; background: #6B7280; }
+      .s2-title { position: absolute; top: 110px; left: 96px; font-size: 56px; font-weight: 600; line-height: 1.1; letter-spacing: -0.025em; color: #111827; max-width: 700px; z-index: 10; }
+      .s2-title .accent { color: #2563EB; }
+      .s2-stage { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 1100px; z-index: 5; }
+      .s2-glow { position: absolute; inset: -40px; background: linear-gradient(135deg, rgba(139,92,246,0.2) 0%, rgba(37,99,235,0.2) 100%); filter: blur(48px); border-radius: 60px; z-index: -1; }
+      .s2-card { background: #fff; border: 2px solid #E7E2D8; border-radius: 40px; padding: 48px; box-shadow: 0 30px 80px rgba(17, 24, 39, 0.15); }
+      .s2-head { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 32px; }
+      .s2-live { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #6B7280; margin-bottom: 10px; }
+      .s2-live-dot { width: 10px; height: 10px; border-radius: 50%; background: #16A34A; animation: pulse 2s ease-out infinite; }
+      @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(22,163,74,0.6); } 70% { box-shadow: 0 0 0 10px rgba(22,163,74,0); } 100% { box-shadow: 0 0 0 0 rgba(22,163,74,0); } }
+      .s2-ct { font-size: 30px; font-weight: 600; color: #111827; }
+      .s2-cs { font-size: 16px; color: #6B7280; margin-top: 6px; }
+      .s2-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 18px; background: #FFFBEB; color: #D97706; font-size: 14px; font-weight: 500; border-radius: 24px; }
+      .s2-badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #D97706; }
+      .s2-prog { margin-bottom: 32px; }
+      .s2-phead { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 10px; }
+      .s2-pl { color: #6B7280; font-weight: 500; }
+      .s2-pp { color: #111827; font-weight: 600; font-variant-numeric: tabular-nums; }
+      .s2-bar { height: 12px; background: #F4F1EA; border-radius: 6px; overflow: hidden; }
+      .s2-bf { height: 100%; background: #111827; border-radius: 6px; width: 0%; }
+      .s2-mk { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 32px; }
+      .s2-mkc { background: #FAFAF7; border: 2px solid #E7E2D8; border-radius: 16px; padding: 16px; }
+      .s2-mkn { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #6B7280; margin-bottom: 12px; }
+      .s2-mkcd { background: #fff; border: 1.5px solid #E7E2D8; border-radius: 10px; padding: 10px 12px; font-size: 14px; font-weight: 500; color: #111827; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+      .s2-mkcd:last-child { margin-bottom: 0; }
+      .s2-mkcd.pop { animation: kpop 3.5s ease-in-out infinite; }
+      @keyframes kpop { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+      .s2-up { display: flex; gap: 18px; background: #F4F1EA; border-radius: 24px; padding: 24px; }
+      .s2-upi { width: 48px; height: 48px; flex-shrink: 0; background: #8B5CF6; border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+      .s2-upi svg { width: 24px; height: 24px; stroke: #fff; stroke-width: 2.2; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .s2-upc { flex: 1; }
+      .s2-upt { font-size: 15px; font-weight: 600; color: #111827; }
+      .s2-upx { font-size: 14px; line-height: 1.5; color: #6B7280; margin-top: 6px; }
+      .s2-upm { font-size: 12px; font-weight: 500; color: #8B5CF6; margin-top: 8px; }
+      .s2-chip { position: absolute; left: -32px; bottom: -32px; display: inline-flex; align-items: center; gap: 10px; padding: 14px 22px; background: #fff; border: 2px solid #E7E2D8; border-radius: 32px; font-size: 14px; font-weight: 500; color: #111827; box-shadow: 0 10px 30px rgba(17, 24, 39, 0.1); }
+      .s2-chip .dot { width: 10px; height: 10px; border-radius: 50%; background: #16A34A; }
+      .s2-side-card { position: absolute; width: 240px; background: #fff; border: 2px solid #E7E2D8; border-radius: 20px; padding: 20px; box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08); z-index: 5; }
+      .s2-side-1 { top: 220px; left: 60px; }
+      .s2-side-2 { top: 480px; right: 60px; }
+      .s2-side-title { font-size: 12px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 10px; }
+      .s2-side-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+      .s2-side-row:last-child { margin-bottom: 0; }
+      .s2-side-avatar { width: 28px; height: 28px; border-radius: 50%; background: #2563EB; color: #fff; font-size: 10px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+      .s2-side-text { font-size: 13px; color: #111827; font-weight: 500; }
+      .s2-side-meta { font-size: 11px; color: #9CA3AF; }
+    </style>
+
+    <div class="noise-bg"></div>
+    <div class="blob blob-violet"></div>
+    <div class="blob blob-blue"></div>
+
+    <div class="s2-marker" id="marker">
+      <span class="num">02</span>
+      <span class="line"></span>
+      <span>Tu proyecto</span>
+    </div>
+    <h2 class="s2-title" id="title">Tu cliente lo entiende <span class="accent">en un vistazo</span>.</h2>
+
+    <div class="s2-stage" id="stage">
+      <div class="s2-glow"></div>
+      <div class="s2-card">
+        <div class="s2-head">
+          <div>
+            <div class="s2-live"><span class="s2-live-dot"></span>Proyecto en vivo</div>
+            <div class="s2-ct">Web corporativa clínica dental</div>
+            <div class="s2-cs">Cliente: Sonrisa Sana · actualizado hace 2 min</div>
+          </div>
+          <div class="s2-badge">En progreso</div>
+        </div>
+        <div class="s2-prog">
+          <div class="s2-phead">
+            <span class="s2-pl">Progreso del proyecto</span>
+            <span class="s2-pp" id="pct">68%</span>
+          </div>
+          <div class="s2-bar"><div class="s2-bf" id="bf"></div></div>
+        </div>
+        <div class="s2-mk" id="mk">
+          <div class="s2-mkc">
+            <div class="s2-mkn">Por hacer · 3</div>
+            <div class="s2-mkcd">Hero animado</div>
+            <div class="s2-mkcd">Página de servicios</div>
+            <div class="s2-mkcd">Integración SEO</div>
+          </div>
+          <div class="s2-mkc">
+            <div class="s2-mkn">En curso · 2</div>
+            <div class="s2-mkcd pop">Formulario de cita</div>
+            <div class="s2-mkcd">Integración maps</div>
+          </div>
+          <div class="s2-mkc">
+            <div class="s2-mkn">Hecho · 5</div>
+            <div class="s2-mkcd">Wireframes</div>
+            <div class="s2-mkcd">Diseño desktop</div>
+            <div class="s2-mkcd">Branding</div>
+          </div>
+        </div>
+        <div class="s2-up">
+          <div class="s2-upi"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+          <div class="s2-upc">
+            <div class="s2-upt">Último avance del equipo</div>
+            <div class="s2-upx">Subimos la versión mobile del formulario de cita para tu revisión. Avísanos por el chat si quieres ajustes.</div>
+            <div class="s2-upm">María · hace 12 min</div>
+          </div>
+        </div>
+      </div>
+      <div class="s2-chip"><span class="dot"></span>El cliente ha visto este avance</div>
+    </div>
+
+    <div class="s2-side-card s2-side-1" id="side1">
+      <div class="s2-side-title">Equipo</div>
+      <div class="s2-side-row">
+        <div class="s2-side-avatar">DR</div>
+        <div>
+          <div class="s2-side-text">Daniel R.</div>
+          <div class="s2-side-meta">Admin</div>
+        </div>
+      </div>
+      <div class="s2-side-row">
+        <div class="s2-side-avatar" style="background:#8B5CF6">MP</div>
+        <div>
+          <div class="s2-side-text">María P.</div>
+          <div class="s2-side-meta">Diseñadora</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s2-side-card s2-side-2" id="side2">
+      <div class="s2-side-title">Próximo evento</div>
+      <div class="s2-side-row">
+        <div style="width:36px;height:36px;border-radius:8px;background:#2563EB;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px">22</div>
+        <div>
+          <div class="s2-side-text">Reunión de revisión</div>
+          <div class="s2-side-meta">Jueves · 16:00</div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      window.__timelines = window.__timelines || {};
+      var tl = gsap.timeline({ paused: true });
+
+      tl.from("#marker .num", { scale: 0, duration: 0.4, ease: "back.out(2)" }, 0.3);
+      tl.from("#marker .line", { scaleX: 0, transformOrigin: "left center", duration: 0.5, ease: "power2.out" }, 0.45);
+      tl.from("#marker span:last-child", { opacity: 0, x: -6, duration: 0.4, ease: "power2.out" }, 0.55);
+      tl.from("#title", { y: 30, opacity: 0, duration: 0.5, ease: "power2.out" }, 0.7);
+
+      tl.from("#stage", { scale: 0.85, opacity: 0, duration: 0.8, ease: "expo.out" }, 1);
+      tl.from("#stage .s2-head > div > *", { y: 15, opacity: 0, duration: 0.4, ease: "power2.out", stagger: 0.08 }, 1.5);
+      tl.from(".s2-badge", { scale: 0.7, opacity: 0, duration: 0.4, ease: "back.out(2)" }, 1.8);
+      tl.from(".s2-phead", { opacity: 0, duration: 0.3, ease: "power1.out" }, 2);
+      tl.to("#bf", { width: "68%", duration: 1, ease: "power2.out" }, 2.3);
+      tl.from("#mk .s2-mkc", { y: 25, opacity: 0, duration: 0.4, ease: "power2.out", stagger: 0.1 }, 2.6);
+      tl.from("#mk .s2-mkcd", { x: -10, opacity: 0, duration: 0.3, ease: "power1.out", stagger: 0.04 }, 2.9);
+      tl.from(".s2-up", { y: 20, opacity: 0, duration: 0.5, ease: "power2.out" }, 3.3);
+      tl.from(".s2-chip", { y: 30, opacity: 0, scale: 0.9, duration: 0.5, ease: "back.out(1.4)" }, 3.8);
+
+      tl.from("#side1", { x: -50, opacity: 0, duration: 0.5, ease: "power2.out" }, 4);
+      tl.from("#side2", { x: 50, opacity: 0, duration: 0.5, ease: "power2.out" }, 4.2);
+
+      tl.set({}, {}, 11);
+
+      window.__timelines["scene-2"] = tl;
+    </script>
+  </div>
+</template>

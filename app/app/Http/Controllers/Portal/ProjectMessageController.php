@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Portal;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Notifications\NewProjectMessage;
+use App\Services\Activity\ActivityLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -56,6 +57,10 @@ class ProjectMessageController extends Controller
             'content' => trim($data['content']),
             'type' => \App\Enums\MessageType::Text,
         ]);
+
+        // Registramos el mensaje en el feed de actividad para
+        // que el portal tenga un timeline unificado.
+        app(ActivityLogger::class)->messageSent($project, $message);
 
         \App\Models\ProjectChatRead::markAsRead($project, $user, $message->id);
 
