@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
  * Decisiones de diseno:
  * - `name` y `slug` se generan automaticamente al
  *   crear. El slug se usa en URLs amigables del
- *   estilo `/admin/project-templates/lanzamiento-web`.
+ *   estilo `/admin/plantillas-proyecto/lanzamiento-web`.
  * - `category` es texto libre (no FK a una tabla de
  *   categorias) para que el admin pueda agrupar
  *   plantillas con sus propias etiquetas. Se

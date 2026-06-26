@@ -8,7 +8,7 @@ use Illuminate\Validation\Rule;
 
 /**
  * Validacion del formulario de configuracion de la IA en
- * el panel admin (`/admin/settings/ai`).
+ * el panel admin (`/admin/configuracion/ia`).
  *
  * Cubre dos modos:
  * - Configuracion global: `project_id` vacio o `null`. Es

@@ -109,7 +109,7 @@ const POLL_INTERVAL_MS = 30 * 1000;
                     body: diff === 1
                         ? 'Tienes un mensaje nuevo en el chat de un proyecto.'
                         : `Tienes ${diff} mensajes nuevos en el chat.`,
-                    url: data.messages_url || '/portal/dashboard',
+                    url: data.messages_url || '/portal/tablero',
                     tag: 'clientflow-new-message',
                 });
             }
@@ -122,7 +122,7 @@ const POLL_INTERVAL_MS = 30 * 1000;
                     body: diff === 1
                         ? 'Te han asignado una tarea nueva.'
                         : `Tienes ${diff} tareas nuevas.`,
-                    url: data.tasks_url || '/portal/dashboard',
+                    url: data.tasks_url || '/portal/tablero',
                     tag: 'clientflow-new-task',
                 });
             }

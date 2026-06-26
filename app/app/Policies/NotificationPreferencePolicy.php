@@ -21,8 +21,8 @@ class NotificationPreferencePolicy
 {
     /**
      * Ver el listado de preferencias propias. Equivalente a
-     * poder ver la pagina `/admin/notifications/preferences` o
-     * `/portal/notifications/preferences`.
+     * poder ver la pagina `/admin/notificaciones/preferencias` o
+     * `/portal/notificaciones/preferencias`.
      *
      * @param  \App\Models\User  $user
      * @return bool

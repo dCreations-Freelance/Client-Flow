@@ -31,7 +31,7 @@ use RuntimeException;
  * 5. Persistir el mensaje del usuario y la respuesta del
  *    asistente, ambos en la sesion indicada.
  * 6. Proveer un `testConnection()` para que el admin valide
- *    la configuracion desde `/admin/settings/ai`.
+ *    la configuracion desde `/admin/configuracion/ia`.
  *
  * Los providers se resuelven en `resolveProvider()` segun
  * `AiConfig::provider`. Anadir un provider nuevo = crear
@@ -129,7 +129,7 @@ class AiService
     /**
      * Ejecuta una peticion de prueba contra el provider para
      * validar la API key. El admin lo lanza desde el boton
-     * "Probar conexion" en `/admin/settings/ai`.
+     * "Probar conexion" en `/admin/configuracion/ia`.
      *
      * @return array{ok: bool, message: string}
      */
@@ -188,7 +188,7 @@ class AiService
 
         if ($config === null) {
             throw new RuntimeException(
-                'No hay ninguna configuracion de IA activa. El admin debe crear una en /admin/settings/ai.'
+                'No hay ninguna configuracion de IA activa. El admin debe crear una en /admin/configuracion/ia.'
             );
         }
 

@@ -15,7 +15,7 @@ use Livewire\Component;
 /**
  * Formulario de configuracion de la IA en el panel admin.
  *
- * Se monta en `/admin/settings/ai` y permite al admin
+ * Se monta en `/admin/configuracion/ia` y permite al admin
  * crear/editar la configuracion global o la especifica
  * de un proyecto.
  *

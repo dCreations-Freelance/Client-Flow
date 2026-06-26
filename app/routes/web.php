@@ -131,129 +131,133 @@ Route::middleware(['auth', 'admin'])
     ->name('admin.')
     ->group(function (): void {
         Route::get('/', fn () => redirect()->route('admin.dashboard'));
-        Route::get('dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('tablero', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         // Organizaciones
-        Route::resource('organizations', AdminOrganizationController::class);
-        Route::get('organizations/{organization}/members', [AdminOrganizationMemberController::class, 'index'])
+        Route::resource('organizaciones', AdminOrganizationController::class)
+            ->parameters(['organizaciones' => 'organization'])
+            ->names('organizations');
+        Route::get('organizaciones/{organization}/miembros', [AdminOrganizationMemberController::class, 'index'])
             ->name('organizations.members');
-        Route::post('organizations/{organization}/members', [AdminOrganizationMemberController::class, 'store'])
+        Route::post('organizaciones/{organization}/miembros', [AdminOrganizationMemberController::class, 'store'])
             ->name('organizations.members.store');
-        Route::delete('organizations/{organization}/members/{user}', [AdminOrganizationMemberController::class, 'destroy'])
+        Route::delete('organizaciones/{organization}/miembros/{user}', [AdminOrganizationMemberController::class, 'destroy'])
             ->name('organizations.members.destroy');
 
         // Proyectos
-        Route::resource('projects', AdminProjectController::class);
-        Route::post('projects/{project}/members', [AdminProjectMemberController::class, 'store'])
+        Route::resource('proyectos', AdminProjectController::class)
+            ->parameters(['proyectos' => 'project'])
+            ->names('projects');
+        Route::post('proyectos/{project}/miembros', [AdminProjectMemberController::class, 'store'])
             ->name('projects.members.store');
-        Route::delete('projects/{project}/members/{user}', [AdminProjectMemberController::class, 'destroy'])
+        Route::delete('proyectos/{project}/miembros/{user}', [AdminProjectMemberController::class, 'destroy'])
             ->name('projects.members.destroy');
-        Route::post('projects/{project}/archive', [AdminProjectArchiveController::class, 'archive'])
+        Route::post('proyectos/{project}/archivar', [AdminProjectArchiveController::class, 'archive'])
             ->name('projects.archive');
-        Route::post('projects/{project}/unarchive', [AdminProjectArchiveController::class, 'unarchive'])
+        Route::post('proyectos/{project}/restaurar', [AdminProjectArchiveController::class, 'unarchive'])
             ->name('projects.unarchive');
 
         // Kanban: tablero, columnas y tareas.
-        Route::get('projects/{project}/board', [AdminKanbanController::class, 'index'])
+        Route::get('proyectos/{project}/tablero', [AdminKanbanController::class, 'index'])
             ->name('projects.board');
 
-        Route::post('projects/{project}/columns', [AdminBoardColumnController::class, 'store'])
+        Route::post('proyectos/{project}/columnas', [AdminBoardColumnController::class, 'store'])
             ->name('projects.columns.store');
-        Route::put('projects/{project}/columns/{column}', [AdminBoardColumnController::class, 'update'])
+        Route::put('proyectos/{project}/columnas/{column}', [AdminBoardColumnController::class, 'update'])
             ->name('projects.columns.update');
-        Route::delete('projects/{project}/columns/{column}', [AdminBoardColumnController::class, 'destroy'])
+        Route::delete('proyectos/{project}/columnas/{column}', [AdminBoardColumnController::class, 'destroy'])
             ->name('projects.columns.destroy');
-        Route::post('projects/{project}/columns/reorder', [AdminBoardColumnController::class, 'reorder'])
+        Route::post('proyectos/{project}/columnas/reordenar', [AdminBoardColumnController::class, 'reorder'])
             ->name('projects.columns.reorder');
 
-        Route::post('projects/{project}/tasks', [AdminTaskController::class, 'store'])
+        Route::post('proyectos/{project}/tareas', [AdminTaskController::class, 'store'])
             ->name('projects.tasks.store');
-        Route::put('projects/{project}/tasks/{task}', [AdminTaskController::class, 'update'])
+        Route::put('proyectos/{project}/tareas/{task}', [AdminTaskController::class, 'update'])
             ->name('projects.tasks.update');
-        Route::delete('projects/{project}/tasks/{task}', [AdminTaskController::class, 'destroy'])
+        Route::delete('proyectos/{project}/tareas/{task}', [AdminTaskController::class, 'destroy'])
             ->name('projects.tasks.destroy');
-        Route::post('projects/{project}/tasks/{task}/complete', [AdminTaskController::class, 'complete'])
+        Route::post('proyectos/{project}/tareas/{task}/completar', [AdminTaskController::class, 'complete'])
             ->name('projects.tasks.complete');
-        Route::post('projects/{project}/tasks/{task}/reopen', [AdminTaskController::class, 'reopen'])
+        Route::post('proyectos/{project}/tareas/{task}/reabrir', [AdminTaskController::class, 'reopen'])
             ->name('projects.tasks.reopen');
 
         // Vista de detalle de tarea (usada para gestionar adjuntos).
-        Route::get('projects/{project}/tasks/{task}', [AdminTaskController::class, 'show'])
+        Route::get('proyectos/{project}/tareas/{task}', [AdminTaskController::class, 'show'])
             ->name('projects.tasks.show');
 
         // Mover tarea entre columnas (drag & drop del kanban).
-        Route::patch('projects/{project}/tasks/{task}/move', [AdminTaskMoveController::class, 'update'])
+        Route::patch('proyectos/{project}/tareas/{task}/mover', [AdminTaskMoveController::class, 'update'])
             ->name('projects.tasks.move');
 
         // Adjuntos de tareas: subir, descargar y eliminar.
         // Solo admin puede crear/eliminar; descargar sigue la
         // policy `download` que delega en la policy de la tarea.
-        Route::post('projects/{project}/tasks/{task}/attachments', [AdminTaskAttachmentController::class, 'store'])
+        Route::post('proyectos/{project}/tareas/{task}/adjuntos', [AdminTaskAttachmentController::class, 'store'])
             ->name('projects.tasks.attachments.store');
-        Route::get('projects/{project}/tasks/{task}/attachments/{attachment}', [AdminTaskAttachmentController::class, 'download'])
+        Route::get('proyectos/{project}/tareas/{task}/adjuntos/{attachment}', [AdminTaskAttachmentController::class, 'download'])
             ->name('projects.tasks.attachments.download');
-        Route::delete('projects/{project}/tasks/{task}/attachments/{attachment}', [AdminTaskAttachmentController::class, 'destroy'])
+        Route::delete('proyectos/{project}/tareas/{task}/adjuntos/{attachment}', [AdminTaskAttachmentController::class, 'destroy'])
             ->name('projects.tasks.attachments.destroy');
 
         // Adjuntos de mensajes del chat: descargar y eliminar.
         // La subida se hace desde el componente Livewire del
         // chat, pero mantenemos una ruta HTTP equivalente en
         // tests y como fallback.
-        Route::post('projects/{project}/messages/{message}/attachments', [AdminMessageAttachmentController::class, 'store'])
+        Route::post('proyectos/{project}/mensajes/{message}/adjuntos', [AdminMessageAttachmentController::class, 'store'])
             ->name('projects.messages.attachments.store');
-        Route::get('projects/{project}/messages/{message}/attachments/{attachment}', [AdminMessageAttachmentController::class, 'download'])
+        Route::get('proyectos/{project}/mensajes/{message}/adjuntos/{attachment}', [AdminMessageAttachmentController::class, 'download'])
             ->name('projects.messages.attachments.download');
-        Route::delete('projects/{project}/messages/{message}/attachments/{attachment}', [AdminMessageAttachmentController::class, 'destroy'])
+        Route::delete('proyectos/{project}/mensajes/{message}/adjuntos/{attachment}', [AdminMessageAttachmentController::class, 'destroy'])
             ->name('projects.messages.attachments.destroy');
 
         // Documentacion: CRUD de documentos del proyecto.
         // Las acciones del editor se hacen via componente Livewire
         // (POST PUT a los mismos endpoints).
-        Route::get('projects/{project}/documents', [AdminProjectDocumentController::class, 'index'])
+        Route::get('proyectos/{project}/documentos', [AdminProjectDocumentController::class, 'index'])
             ->name('projects.documents.index');
-        Route::get('projects/{project}/documents/create', [AdminProjectDocumentController::class, 'create'])
+        Route::get('proyectos/{project}/documentos/crear', [AdminProjectDocumentController::class, 'create'])
             ->name('projects.documents.create');
-        Route::post('projects/{project}/documents', [AdminProjectDocumentController::class, 'store'])
+        Route::post('proyectos/{project}/documentos', [AdminProjectDocumentController::class, 'store'])
             ->name('projects.documents.store');
-        Route::get('projects/{project}/documents/{document}', [AdminProjectDocumentController::class, 'show'])
+        Route::get('proyectos/{project}/documentos/{document}', [AdminProjectDocumentController::class, 'show'])
             ->name('projects.documents.show');
-        Route::get('projects/{project}/documents/{document}/edit', [AdminProjectDocumentController::class, 'edit'])
+        Route::get('proyectos/{project}/documentos/{document}/editar', [AdminProjectDocumentController::class, 'edit'])
             ->name('projects.documents.edit');
-        Route::put('projects/{project}/documents/{document}', [AdminProjectDocumentController::class, 'update'])
+        Route::put('proyectos/{project}/documentos/{document}', [AdminProjectDocumentController::class, 'update'])
             ->name('projects.documents.update');
-        Route::delete('projects/{project}/documents/{document}', [AdminProjectDocumentController::class, 'destroy'])
+        Route::delete('proyectos/{project}/documentos/{document}', [AdminProjectDocumentController::class, 'destroy'])
             ->name('projects.documents.destroy');
 
         // Chat del proyecto. El grueso de la interaccion se hace
         // via componente Livewire; el POST es para tests y como
         // fallback si Livewire falla.
-        Route::get('projects/{project}/chat', [AdminProjectMessageController::class, 'index'])
+        Route::get('proyectos/{project}/chat', [AdminProjectMessageController::class, 'index'])
             ->name('projects.chat');
-        Route::post('projects/{project}/messages', [AdminProjectMessageController::class, 'store'])
+        Route::post('proyectos/{project}/mensajes', [AdminProjectMessageController::class, 'store'])
             ->name('projects.chat.store');
 
         // Feed de actividad del proyecto. Read-only: el admin
         // ve TODOS los eventos (incluidos los privados). El
         // componente Livewire concentra la logica de paginacion
         // y filtros; este endpoint solo renderiza la vista.
-        Route::get('projects/{project}/activity', [AdminProjectActivityController::class, 'index'])
+        Route::get('proyectos/{project}/actividad', [AdminProjectActivityController::class, 'index'])
             ->name('projects.activity');
 
         // Asistente IA por proyecto (admin usa su propio chat
         // de prueba en cada proyecto).
-        Route::get('projects/{project}/ai', [AdminAiChatController::class, 'index'])
+        Route::get('proyectos/{project}/ia', [AdminAiChatController::class, 'index'])
             ->name('projects.ai');
-        Route::get('projects/{project}/ai/sessions/{session}', [AdminAiChatController::class, 'show'])
+        Route::get('proyectos/{project}/ia/sesiones/{session}', [AdminAiChatController::class, 'show'])
             ->name('projects.ai.show');
-        Route::delete('projects/{project}/ai/sessions/{session}', [AdminAiChatController::class, 'destroy'])
+        Route::delete('proyectos/{project}/ia/sesiones/{session}', [AdminAiChatController::class, 'destroy'])
             ->name('projects.ai.destroy');
 
         // Configuracion global de IA.
-        Route::get('settings/ai', [AdminAiConfigController::class, 'edit'])
+        Route::get('configuracion/ia', [AdminAiConfigController::class, 'edit'])
             ->name('ai.config.edit');
-        Route::put('settings/ai', [AdminAiConfigController::class, 'update'])
+        Route::put('configuracion/ia', [AdminAiConfigController::class, 'update'])
             ->name('ai.config.update');
-        Route::post('settings/ai/test', [AdminAiConfigController::class, 'test'])
+        Route::post('configuracion/ia/probar', [AdminAiConfigController::class, 'test'])
             ->name('ai.config.test');
 
         // Templates de agentes IA. La biblioteca de prompts y
@@ -261,9 +265,10 @@ Route::middleware(['auth', 'admin'])
         // a proyectos. `resource` registra las 7 acciones
         // canonicas (incluido `create` sin param y `edit` con
         // el template) y `export` se anade a mano.
-        Route::resource('agent-templates', AdminAgentTemplateController::class)
+        Route::resource('plantillas-agente', AdminAgentTemplateController::class)
+            ->parameters(['plantillas-agente' => 'agent_template'])
             ->names('agent-templates');
-        Route::get('agent-templates/{agent_template}/export', [AdminAgentTemplateController::class, 'export'])
+        Route::get('plantillas-agente/{agent_template}/exportar', [AdminAgentTemplateController::class, 'export'])
             ->name('agent-templates.export');
 
         // Plantillas de proyecto: biblioteca de esqueletos
@@ -271,55 +276,56 @@ Route::middleware(['auth', 'admin'])
         // canonicas; las acciones anidadas (columnas, tareas,
         // documentos) se anaden a mano para evitar proliferacion
         // de rutas.
-        Route::resource('project-templates', AdminProjectTemplateController::class)
+        Route::resource('plantillas-proyecto', AdminProjectTemplateController::class)
+            ->parameters(['plantillas-proyecto' => 'project_template'])
             ->names('project-templates');
-        Route::post('project-templates/{project_template}/columns', [AdminProjectTemplateController::class, 'storeColumn'])
+        Route::post('plantillas-proyecto/{project_template}/columnas', [AdminProjectTemplateController::class, 'storeColumn'])
             ->name('project-templates.columns.store');
-        Route::put('project-templates/{project_template}/columns/{column}', [AdminProjectTemplateController::class, 'updateColumn'])
+        Route::put('plantillas-proyecto/{project_template}/columnas/{column}', [AdminProjectTemplateController::class, 'updateColumn'])
             ->name('project-templates.columns.update');
-        Route::delete('project-templates/{project_template}/columns/{column}', [AdminProjectTemplateController::class, 'destroyColumn'])
+        Route::delete('plantillas-proyecto/{project_template}/columnas/{column}', [AdminProjectTemplateController::class, 'destroyColumn'])
             ->name('project-templates.columns.destroy');
-        Route::post('project-templates/{project_template}/tasks', [AdminProjectTemplateController::class, 'storeTask'])
+        Route::post('plantillas-proyecto/{project_template}/tareas', [AdminProjectTemplateController::class, 'storeTask'])
             ->name('project-templates.tasks.store');
-        Route::put('project-templates/{project_template}/tasks/{task}', [AdminProjectTemplateController::class, 'updateTask'])
+        Route::put('plantillas-proyecto/{project_template}/tareas/{task}', [AdminProjectTemplateController::class, 'updateTask'])
             ->name('project-templates.tasks.update');
-        Route::delete('project-templates/{project_template}/tasks/{task}', [AdminProjectTemplateController::class, 'destroyTask'])
+        Route::delete('plantillas-proyecto/{project_template}/tareas/{task}', [AdminProjectTemplateController::class, 'destroyTask'])
             ->name('project-templates.tasks.destroy');
-        Route::post('project-templates/{project_template}/documents', [AdminProjectTemplateController::class, 'storeDocument'])
+        Route::post('plantillas-proyecto/{project_template}/documentos', [AdminProjectTemplateController::class, 'storeDocument'])
             ->name('project-templates.documents.store');
-        Route::put('project-templates/{project_template}/documents/{document}', [AdminProjectTemplateController::class, 'updateDocument'])
+        Route::put('plantillas-proyecto/{project_template}/documentos/{document}', [AdminProjectTemplateController::class, 'updateDocument'])
             ->name('project-templates.documents.update');
-        Route::delete('project-templates/{project_template}/documents/{document}', [AdminProjectTemplateController::class, 'destroyDocument'])
+        Route::delete('plantillas-proyecto/{project_template}/documentos/{document}', [AdminProjectTemplateController::class, 'destroyDocument'])
             ->name('project-templates.documents.destroy');
 
         // Creacion de proyectos desde plantilla: formulario
         // pre-rellenado y endpoint de aplicacion. Vive en el
         // ProjectController (no en ProjectTemplateController)
         // porque produce un Project, no un ProjectTemplate.
-        Route::get('projects/create-from-template/{project_template}', [AdminProjectController::class, 'createFromTemplate'])
+        Route::get('proyectos/crear-desde-plantilla/{project_template}', [AdminProjectController::class, 'createFromTemplate'])
             ->name('projects.create-from-template');
-        Route::post('projects/from-template/{project_template}', [AdminProjectController::class, 'storeFromTemplate'])
+        Route::post('proyectos/desde-plantilla/{project_template}', [AdminProjectController::class, 'storeFromTemplate'])
             ->name('projects.store-from-template');
 
         // Asignacion de agentes a proyectos. Cinco rutas planas
         // en vez de un resource porque el conjunto de acciones
         // no es el canonico de un CRUD (no hay show/edit propios,
         // solo edicion inline del override via `?edit=ID`).
-        Route::get('projects/{project}/agents', [AdminProjectAgentController::class, 'index'])
+        Route::get('proyectos/{project}/agentes', [AdminProjectAgentController::class, 'index'])
             ->name('projects.agents.index');
-        Route::post('projects/{project}/agents', [AdminProjectAgentController::class, 'store'])
+        Route::post('proyectos/{project}/agentes', [AdminProjectAgentController::class, 'store'])
             ->name('projects.agents.store');
-        Route::put('projects/{project}/agents/{agent}', [AdminProjectAgentController::class, 'update'])
+        Route::put('proyectos/{project}/agentes/{agent}', [AdminProjectAgentController::class, 'update'])
             ->name('projects.agents.update');
-        Route::delete('projects/{project}/agents/{agent}', [AdminProjectAgentController::class, 'destroy'])
+        Route::delete('proyectos/{project}/agentes/{agent}', [AdminProjectAgentController::class, 'destroy'])
             ->name('projects.agents.destroy');
-        Route::get('projects/{project}/agents/{agent}/export', [AdminProjectAgentController::class, 'export'])
+        Route::get('proyectos/{project}/agentes/{agent}/exportar', [AdminProjectAgentController::class, 'export'])
             ->name('projects.agents.export');
 
         // Calendario del proyecto. Toda la interaccion (navegacion,
         // modal, crear/editar/eliminar) se hace via componente
         // Livewire; este endpoint solo renderiza la vista.
-        Route::get('projects/{project}/calendar', [AdminProjectCalendarController::class, 'index'])
+        Route::get('proyectos/{project}/calendario', [AdminProjectCalendarController::class, 'index'])
             ->name('projects.calendar');
 
         // Registro de tiempo: dashboard por proyecto y CRUD HTTP
@@ -327,28 +333,28 @@ Route::middleware(['auth', 'admin'])
         // via componentes Livewire `TimeTracker` y
         // `ProjectTimeDashboard`; las rutas HTTP son fallback
         // para tests e integraciones externas).
-        Route::get('projects/{project}/time', [AdminProjectTimeController::class, 'index'])
+        Route::get('proyectos/{project}/tiempo', [AdminProjectTimeController::class, 'index'])
             ->name('projects.time.index');
-        Route::get('projects/{project}/time/export', [AdminProjectTimeController::class, 'export'])
+        Route::get('proyectos/{project}/tiempo/exportar', [AdminProjectTimeController::class, 'export'])
             ->name('projects.time.export');
-        Route::post('projects/{project}/tasks/{task}/time-entries', [AdminTimeEntryController::class, 'store'])
+        Route::post('proyectos/{project}/tareas/{task}/entradas-tiempo', [AdminTimeEntryController::class, 'store'])
             ->name('projects.tasks.time-entries.store');
-        Route::put('projects/{project}/tasks/{task}/time-entries/{entry}', [AdminTimeEntryController::class, 'update'])
+        Route::put('proyectos/{project}/tareas/{task}/entradas-tiempo/{entry}', [AdminTimeEntryController::class, 'update'])
             ->name('projects.tasks.time-entries.update');
-        Route::delete('projects/{project}/tasks/{task}/time-entries/{entry}', [AdminTimeEntryController::class, 'destroy'])
+        Route::delete('proyectos/{project}/tareas/{task}/entradas-tiempo/{entry}', [AdminTimeEntryController::class, 'destroy'])
             ->name('projects.tasks.time-entries.destroy');
 
         // Preferencias de notificacion del admin (solo las suyas)
         // y endpoints JSON para la campana in-app.
-        Route::get('notifications/preferences', [AdminNotificationPreferenceController::class, 'index'])
+        Route::get('notificaciones/preferencias', [AdminNotificationPreferenceController::class, 'index'])
             ->name('notifications.preferences');
-        Route::put('notifications/preferences', [AdminNotificationPreferenceController::class, 'update'])
+        Route::put('notificaciones/preferencias', [AdminNotificationPreferenceController::class, 'update'])
             ->name('notifications.preferences.update');
-        Route::get('notifications/inbox', [AdminNotificationController::class, 'index'])
+        Route::get('notificaciones/bandeja', [AdminNotificationController::class, 'index'])
             ->name('notifications.inbox');
-        Route::post('notifications/{notification}/read', [AdminNotificationController::class, 'markAsRead'])
+        Route::post('notificaciones/{notification}/leer', [AdminNotificationController::class, 'markAsRead'])
             ->name('notifications.read');
-        Route::post('notifications/read-all', [AdminNotificationController::class, 'markAllAsRead'])
+        Route::post('notificaciones/leer-todas', [AdminNotificationController::class, 'markAllAsRead'])
             ->name('notifications.read-all');
     });
 
@@ -361,41 +367,41 @@ Route::middleware(['auth', 'client'])
     ->name('portal.')
     ->group(function (): void {
         Route::get('/', fn () => redirect()->route('portal.dashboard'));
-        Route::get('dashboard', [PortalDashboardController::class, 'index'])->name('dashboard');
+        Route::get('tablero', [PortalDashboardController::class, 'index'])->name('dashboard');
 
-        Route::get('organizations/{organization}', [PortalProjectController::class, 'showOrganization'])
+        Route::get('organizaciones/{organization}', [PortalProjectController::class, 'showOrganization'])
             ->name('organizations.show');
 
-        Route::get('projects', [PortalProjectController::class, 'index'])->name('projects.index');
-        Route::get('projects/{project}', [PortalProjectController::class, 'show'])->name('projects.show');
-        Route::get('projects/{project}/board', [PortalKanbanController::class, 'index'])
+        Route::get('proyectos', [PortalProjectController::class, 'index'])->name('projects.index');
+        Route::get('proyectos/{project}', [PortalProjectController::class, 'show'])->name('projects.show');
+        Route::get('proyectos/{project}/tablero', [PortalKanbanController::class, 'index'])
             ->name('projects.board');
-        Route::get('projects/{project}/tasks/{task}', [PortalKanbanController::class, 'showTask'])
+        Route::get('proyectos/{project}/tareas/{task}', [PortalKanbanController::class, 'showTask'])
             ->name('projects.tasks.show');
 
         // Adjuntos de tareas: el portal solo descarga.
-        Route::get('projects/{project}/tasks/{task}/attachments/{attachment}', [PortalTaskAttachmentController::class, 'download'])
+        Route::get('proyectos/{project}/tareas/{task}/adjuntos/{attachment}', [PortalTaskAttachmentController::class, 'download'])
             ->name('projects.tasks.attachments.download');
 
         // Adjuntos de mensajes del chat: el cliente puede subir
         // (consistente con su permiso para enviar mensajes) y
         // descargar. Eliminar es exclusivo del admin.
-        Route::post('projects/{project}/messages/{message}/attachments', [PortalMessageAttachmentController::class, 'store'])
+        Route::post('proyectos/{project}/mensajes/{message}/adjuntos', [PortalMessageAttachmentController::class, 'store'])
             ->name('projects.messages.attachments.store');
-        Route::get('projects/{project}/messages/{message}/attachments/{attachment}', [PortalMessageAttachmentController::class, 'download'])
+        Route::get('proyectos/{project}/mensajes/{message}/adjuntos/{attachment}', [PortalMessageAttachmentController::class, 'download'])
             ->name('projects.messages.attachments.download');
 
         // Documentacion publica del proyecto: solo documentos con
         // `visibility = public` y proyectos visibles al cliente.
-        Route::get('projects/{project}/documents', [PortalProjectDocumentController::class, 'index'])
+        Route::get('proyectos/{project}/documentos', [PortalProjectDocumentController::class, 'index'])
             ->name('projects.documents.index');
-        Route::get('projects/{project}/documents/{document}', [PortalProjectDocumentController::class, 'show'])
+        Route::get('proyectos/{project}/documentos/{document}', [PortalProjectDocumentController::class, 'show'])
             ->name('projects.documents.show');
 
         // Chat del proyecto (cliente).
-        Route::get('projects/{project}/chat', [PortalProjectMessageController::class, 'index'])
+        Route::get('proyectos/{project}/chat', [PortalProjectMessageController::class, 'index'])
             ->name('projects.chat');
-        Route::post('projects/{project}/messages', [PortalProjectMessageController::class, 'store'])
+        Route::post('proyectos/{project}/mensajes', [PortalProjectMessageController::class, 'store'])
             ->name('projects.chat.store');
 
         // Feed de actividad del proyecto (cliente). Mismo
@@ -403,41 +409,41 @@ Route::middleware(['auth', 'client'])
         // con `portalMode = true` para que aplique el scope
         // `public` y el cliente solo vea los eventos que
         // `ActivityType::isPublic()` admite.
-        Route::get('projects/{project}/activity', [PortalProjectActivityController::class, 'index'])
+        Route::get('proyectos/{project}/actividad', [PortalProjectActivityController::class, 'index'])
             ->name('projects.activity');
 
         // Asistente IA por proyecto (portal cliente).
-        Route::get('projects/{project}/ai', [PortalAiChatController::class, 'index'])
+        Route::get('proyectos/{project}/ia', [PortalAiChatController::class, 'index'])
             ->name('projects.ai');
-        Route::post('projects/{project}/ai/sessions', [PortalAiChatController::class, 'store'])
+        Route::post('proyectos/{project}/ia/sesiones', [PortalAiChatController::class, 'store'])
             ->name('projects.ai.sessions.store');
-        Route::get('projects/{project}/ai/sessions/{session}', [PortalAiChatController::class, 'show'])
+        Route::get('proyectos/{project}/ia/sesiones/{session}', [PortalAiChatController::class, 'show'])
             ->name('projects.ai.show');
-        Route::delete('projects/{project}/ai/sessions/{session}', [PortalAiChatController::class, 'destroy'])
+        Route::delete('proyectos/{project}/ia/sesiones/{session}', [PortalAiChatController::class, 'destroy'])
             ->name('projects.ai.destroy');
 
         // Calendario del proyecto (cliente, solo lectura).
         // El mismo componente Livewire se monta con readOnly=true.
-        Route::get('projects/{project}/calendar', [PortalProjectCalendarController::class, 'index'])
+        Route::get('proyectos/{project}/calendario', [PortalProjectCalendarController::class, 'index'])
             ->name('projects.calendar');
 
         // Resumen de tiempo del proyecto (solo lectura).
         // Muestra totales agregados, sin descripciones
         // individuales ni desglose por tarea.
-        Route::get('projects/{project}/time', [PortalProjectTimeController::class, 'index'])
+        Route::get('proyectos/{project}/tiempo', [PortalProjectTimeController::class, 'index'])
             ->name('projects.time.index');
 
         // Preferencias de notificacion del cliente y endpoints
         // JSON para la campana in-app del portal. Mismas rutas
         // que el admin, con prefijo `portal.`.
-        Route::get('notifications/preferences', [PortalNotificationPreferenceController::class, 'index'])
+        Route::get('notificaciones/preferencias', [PortalNotificationPreferenceController::class, 'index'])
             ->name('notifications.preferences');
-        Route::put('notifications/preferences', [PortalNotificationPreferenceController::class, 'update'])
+        Route::put('notificaciones/preferencias', [PortalNotificationPreferenceController::class, 'update'])
             ->name('notifications.preferences.update');
-        Route::get('notifications/inbox', [PortalNotificationController::class, 'index'])
+        Route::get('notificaciones/bandeja', [PortalNotificationController::class, 'index'])
             ->name('notifications.inbox');
-        Route::post('notifications/{notification}/read', [PortalNotificationController::class, 'markAsRead'])
+        Route::post('notificaciones/{notification}/leer', [PortalNotificationController::class, 'markAsRead'])
             ->name('notifications.read');
-        Route::post('notifications/read-all', [PortalNotificationController::class, 'markAllAsRead'])
+        Route::post('notificaciones/leer-todas', [PortalNotificationController::class, 'markAllAsRead'])
             ->name('notifications.read-all');
     });
