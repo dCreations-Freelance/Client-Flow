@@ -60,6 +60,20 @@ services:
     networks:
       - clientflow
 
+  playwright:
+    profiles: ["test"]
+    image: mcr.microsoft.com/playwright:v1.52.0
+    container_name: clientflow_playwright
+    working_dir: /var/www/html
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - nginx
+    environment:
+      - PLAYWRIGHT_BASE_URL=http://nginx:80
+    networks:
+      - clientflow
+
 volumes:
   mysql_data:
 
