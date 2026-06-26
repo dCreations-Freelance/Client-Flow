@@ -29,12 +29,17 @@ class User extends Authenticatable
      * registro de clientes con su rol por defecto sin necesidad de un fill
      * explicito posterior.
      *
+     * `password` se omite a proposito (auditoria L-04): no queremos
+     * que un `User::create($request->all())` descuidado pueda fijar
+     * contrasena en claro. Los call sites internos asignan `password`
+     * individualmente y el cast `'hashed'` se encarga de hashearlo
+     * al persistir.
+     *
      * @var list<string>
      */
     protected $fillable = [
         'name',
         'email',
-        'password',
         'role',
     ];
 

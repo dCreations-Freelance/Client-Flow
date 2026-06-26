@@ -86,12 +86,18 @@ class InvitationAcceptanceController extends Controller
         }
 
         $user = DB::transaction(function () use ($request, $invitation): User {
-            $user = User::create([
+            // `forceFill` + `save` (no `User::create`) porque `password`
+            // ya no esta en `$fillable` (auditoria L-04) y un `create`
+            // intermedio violaria la restriccion NOT NULL. El cast
+            // `'hashed'` se encarga de hashear al persistir.
+            $user = new User;
+            $user->forceFill([
                 'name' => $request->string('name')->toString(),
                 'email' => $invitation->email,
-                'password' => $request->string('password')->toString(),
                 'role' => \App\Enums\UserRole::Client,
+                'password' => $request->string('password')->toString(),
             ]);
+            $user->save();
 
             $this->invitations->accept($invitation, $user);
 

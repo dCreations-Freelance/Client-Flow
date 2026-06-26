@@ -34,12 +34,23 @@ class McpSessionStore
     /**
      * Busca una sesion activa por su identificador publico.
      *
+     * Si se pasa `$userId`, la busqueda se restringe a sesiones de
+     * ese usuario. Esto evita que un admin pueda escuchar el stream
+     * SSE de otro admin pasandole un `session_id` ajeno (auditoria H-01).
+     *
      * @param  string  $sessionId
+     * @param  int|null  $userId  Si se indica, filtra por dueno.
      * @return McpSession|null
      */
-    public function find(string $sessionId): ?McpSession
+    public function find(string $sessionId, ?int $userId = null): ?McpSession
     {
-        return McpSession::where('session_id', $sessionId)->first();
+        $query = McpSession::where('session_id', $sessionId);
+
+        if ($userId !== null) {
+            $query->where('user_id', $userId);
+        }
+
+        return $query->first();
     }
 
     /**

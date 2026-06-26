@@ -106,10 +106,16 @@ Route::middleware('auth')
 
 Route::middleware('guest')->group(function (): void {
     Route::get('iniciar-sesion', [AuthenticatedSessionController::class, 'create'])->name('login');
-    Route::post('iniciar-sesion', [AuthenticatedSessionController::class, 'store']);
+    // 5 intentos por minuto por IP en login (auditoria H-02). Suficiente
+    // para typos legitimos, frena brute-force basico.
+    Route::post('iniciar-sesion', [AuthenticatedSessionController::class, 'store'])
+        ->middleware('throttle:5,1');
 
     Route::get('registro', [RegisteredUserController::class, 'create'])->name('register');
-    Route::post('registro', [RegisteredUserController::class, 'store']);
+    // 3 registros por hora por IP. Crea cuentas nuevas, no queremos
+    // abuso para acumulacion de cuentas de spam.
+    Route::post('registro', [RegisteredUserController::class, 'store'])
+        ->middleware('throttle:3,60');
 
     Route::get('recuperar-contrasena', [PasswordResetLinkController::class, 'create'])->name('password.request');
     Route::post('recuperar-contrasena', [PasswordResetLinkController::class, 'store'])->name('password.email');

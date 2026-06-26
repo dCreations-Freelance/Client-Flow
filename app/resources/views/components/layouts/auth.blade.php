@@ -6,6 +6,10 @@
     <meta name="theme-color" content="#FAFAF7">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    {{-- Meta tags adicionales (referrer policy, robots, etc.) --}}
+    {{-- Las vistas que necesiten sobreescribirlas usan @stack('meta'). --}}
+    @stack('meta')
+
     <title>{{ $title ?? 'ClientFlow' }}</title>
 
     <link rel="manifest" href="{{ route('pwa.manifest') }}">

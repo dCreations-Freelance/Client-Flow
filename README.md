@@ -71,7 +71,21 @@ Servicios locales:
 
 - Aplicacion: `http://localhost:8080`
 - Vite: `http://localhost:5173`
-- MySQL local: `127.0.0.1:3307`
+- MySQL: ya no se publica en el host (auditoria M-03). Es accesible
+  solo desde la red interna de Docker. Para conectar un cliente
+  externo (TablePlus, Sequel Ace, CLI) usa uno de estos metodos:
+
+  ```bash
+  # 1) Consola mysql dentro del contenedor
+  docker compose exec mysql mysql -uclientflow -pclientflow clientflow
+
+  # 2) Tunel al puerto local solo cuando lo necesites
+  docker compose exec mysql bash -c "apt-get update && apt-get install -y socat && socat TCP-LISTEN:3307,fork,reuseaddr TCP:mysql:3306"
+  # o un puerto local forward temporal con `docker compose port mysql 3306`
+  ```
+
+  Si vienes de una version anterior del README donde MySQL estaba en
+  `127.0.0.1:3307`, tu cliente dejara de conectar. Es esperado.
 
 ## Arranque sin Docker
 

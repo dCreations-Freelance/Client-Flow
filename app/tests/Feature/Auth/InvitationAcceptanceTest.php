@@ -142,4 +142,30 @@ class InvitationAcceptanceTest extends TestCase
             ->assertRedirect(route('login'))
             ->assertSessionHasErrors('email');
     }
+
+    /**
+     * La URL de invitacion contiene el token en claro. Sin la meta
+     * `referrer: no-referrer`, cualquier recurso externo (CSS, JS, fuente,
+     * analytics) recibira el token en la cabecera Referer. Auditado en M-05.
+     */
+    public function test_no_envia_referer_al_renderizar_la_invitacion(): void
+    {
+        $org = Organization::factory()->create();
+        $token = $this->createInvitationFor('seguro@example.com', $org);
+
+        $this->get(route('invitation.accept', ['token' => $token]))
+            ->assertOk()
+            ->assertSee('<meta name="referrer" content="no-referrer">', false);
+    }
+
+    /**
+     * El resto de pantallas auth (login, registro, reset) NO deben
+     * llevar `no-referrer` para no romper analytics ni enlaces entrantes.
+     */
+    public function test_otras_pantallas_auth_no_llevan_no_referrer(): void
+    {
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertDontSee('name="referrer" content="no-referrer"', false);
+    }
 }

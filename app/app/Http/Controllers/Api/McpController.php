@@ -130,7 +130,7 @@ class McpController extends Controller
             ], 400);
         }
 
-        $session = $this->sessions->find($sessionId);
+        $session = $this->sessions->find($sessionId, $request->user()?->id);
 
         if ($session === null) {
             return response()->json([
@@ -159,7 +159,13 @@ class McpController extends Controller
         try {
             $response = $this->server->handleMessage($request->user(), $payload);
         } catch (\Throwable $e) {
-            Log::error('Error en MCP messages', ['exception' => $e]);
+            // Loguear solo mensaje y codigo, sin stack trace: el trace
+            // puede contener argumentos de tools con datos sensibles
+            // del proyecto (titulos de tareas, contenido de docs, etc.).
+            Log::error('Error en MCP messages', [
+                'message' => $e->getMessage(),
+                'code' => $e->getCode(),
+            ]);
 
             $response = [
                 'jsonrpc' => '2.0',

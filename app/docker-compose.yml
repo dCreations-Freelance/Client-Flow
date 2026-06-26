@@ -31,8 +31,12 @@ services:
   mysql:
     image: mysql:8.4
     container_name: clientflow_mysql
-    ports:
-      - "3307:3306"
+    # Auditado en M-03: MySQL NO se publica al host. Solo es accesible
+    # desde la red interna `clientflow`. Para conectar desde el host
+    # (TablePlus, Sequel Ace, CLI), usar `docker compose exec mysql ...`
+    # o un tunel SSH al puerto.
+    expose:
+      - "3306"
     environment:
       MYSQL_DATABASE: clientflow
       MYSQL_USER: clientflow

@@ -65,13 +65,28 @@ class RegisterRequest extends FormRequest
      * centralizada para que sea imposible (incluso desde el codigo) crear
      * un admin por esta via.
      *
+     * Se usa `new User()` + `forceFill()` en vez de `User::create()`:
+     * la columna `password` ya no esta en `$fillable` (auditoria L-04),
+     * y `User::create()` ejecutaria un `save()` con password nulo, que
+     * viola la restriccion NOT NULL. `forceFill` sigue saltandose
+     * `$fillable` (es codigo interno, no input de usuario) y el cast
+     * `'hashed'` se encarga de hashear al persistir.
+     *
      * @return User
      */
     public function createUser(): User
     {
         $data = $this->validated();
-        $data['role'] = UserRole::Client;
 
-        return User::create($data);
+        $user = new User;
+        $user->forceFill([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'role' => UserRole::Client,
+            'password' => $data['password'],
+        ]);
+        $user->save();
+
+        return $user;
     }
 }

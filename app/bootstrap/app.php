@@ -4,6 +4,7 @@ use App\Console\Commands\NotificationsDailyDigest;
 use App\Console\Commands\NotificationsTaskDueSoon;
 use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\EnsureUserIsClient;
+use App\Services\Mcp\McpSessionStore;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -51,6 +52,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command(NotificationsTaskDueSoon::class)
             ->dailyAt('08:00')
             ->name('notifications-task-due-soon')
+            ->withoutOverlapping();
+
+        // Limpieza de sesiones MCP inactivas. Auditado en M-07: sin
+        // esta tarea, `mcp_sessions` crece sin limite. `cleanup()`
+        // elimina sesiones con `last_activity_at` > 30 min, suficiente
+        // para los streams SSE que se rotan cada 60s.
+        $schedule->call(fn () => app(McpSessionStore::class)->cleanup())
+            ->everyFifteenMinutes()
+            ->name('mcp-sessions-cleanup')
             ->withoutOverlapping();
     })
     ->withExceptions(function (Exceptions $exceptions): void {

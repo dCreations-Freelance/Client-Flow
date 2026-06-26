@@ -95,12 +95,18 @@ class CreateAdminUser extends Command
             return self::SUCCESS;
         }
 
-        User::create([
+        $user =         // `new User()` + `forceFill` + `save` (no `User::create`) porque
+        // `password` ya no esta en `$fillable` (auditoria L-04) y un
+        // `create` intermedio violaria la restriccion NOT NULL. El cast
+        // `'hashed'` se encarga de hashear al persistir.
+        $user = new User;
+        $user->forceFill([
             'name' => $name,
             'email' => $email,
-            'password' => $password,
             'role' => UserRole::Admin,
+            'password' => $password,
         ]);
+        $user->save();
 
         $this->info('Admin user created.');
 
