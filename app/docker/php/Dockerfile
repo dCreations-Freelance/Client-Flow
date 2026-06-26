@@ -4,10 +4,14 @@ RUN apk add --no-cache \
     bash \
     git \
     icu-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
     libzip-dev \
     zip \
     unzip \
+    freetype-dev \
     $PHPIZE_DEPS \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install \
     bcmath \
     gd \
