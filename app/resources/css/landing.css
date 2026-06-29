@@ -461,7 +461,78 @@
 }
 
 /* ------------------------------------------------------------------
-   Marquesina horizontal infinita.
+   Shimmer: barra de progreso animada.
+------------------------------------------------------------------ */
+@keyframes cf-shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.cf-bento-shimmer {
+    background-size: 200% 100%;
+    animation: cf-shimmer 3s ease-in-out infinite;
+}
+
+/* ------------------------------------------------------------------
+   Micro-interacciones group-hover en bento cards.
+------------------------------------------------------------------ */
+/* Kanban: task cards lift slightly */
+.cf-bento-task {
+    transform: translate3d(0, 0, 0);
+    transition:
+        transform 0.3s var(--cf-ease-out),
+        box-shadow 0.3s var(--cf-ease-out);
+}
+
+.cf-bento-card:hover .cf-bento-task {
+    transform: translate3d(0, -2px, 0);
+    box-shadow: 0 2px 8px rgba(17, 24, 39, 0.06);
+}
+
+/* Chat: messages shift laterally */
+.cf-bento-msg-in,
+.cf-bento-msg-out {
+    transition: transform 0.35s var(--cf-ease-out);
+}
+
+.cf-bento-card:hover .cf-bento-msg-in {
+    transform: translate3d(3px, 0, 0);
+    transition-delay: 0.05s;
+}
+
+.cf-bento-card:hover .cf-bento-msg-out {
+    transform: translate3d(-3px, 0, 0);
+    transition-delay: 0.1s;
+}
+
+/* Calendar: event dots scale up */
+.cf-bento-event-dot {
+    transition: transform 0.3s var(--cf-ease-out);
+}
+
+.cf-bento-card:hover .cf-bento-event-dot {
+    transform: translate3d(-50%, 0, 0) scale(1.5);
+}
+
+/* IA: response card gets subtle highlight */
+.cf-bento-ai-response {
+    transition: box-shadow 0.35s var(--cf-ease-out);
+}
+
+.cf-bento-card:hover .cf-bento-ai-response {
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+}
+
+/* PWA: notification card scales slightly */
+.cf-bento-push-card {
+    transition: transform 0.3s var(--cf-ease-out);
+}
+
+.cf-bento-card:hover .cf-bento-push-card {
+    transform: scale(1.02);
+}
+
+/* Marquesina horizontal infinita.
 ------------------------------------------------------------------ */
 .cf-marquee {
     display: flex;

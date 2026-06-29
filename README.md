@@ -103,10 +103,5 @@ composer run dev
 
 MIT.
 
-## PROMPT comienzo siempre
-Tienes estos agents disponibles @.opencode/agents/ y esta es la información del proyecto @docs necesito que hagas la primera fase de @TODOs.md 
-
-Una vez terminada la implementación de la funcionalidad debe redactarse en @docs/tasks/ , el código debe estar perfectamente comentado y entendible para cualquier persona sin conocimientos tecnicos así como usar phpdoc
-
 
 
