@@ -295,13 +295,20 @@
 
         elements.forEach((el) => {
             el.addEventListener('mousemove', (event) => {
-                const rect = el.getBoundingClientRect();
-                const x = event.clientX - rect.left - rect.width / 2;
-                const y = event.clientY - rect.top - rect.height / 2;
-                el.style.transform = `translate3d(${x * 0.12}px, ${y * 0.18}px, 0)`;
+                if (el._cfRaf) {
+                    return;
+                }
+                el._cfRaf = requestAnimationFrame(() => {
+                    el._cfRaf = 0;
+                    const rect = el.getBoundingClientRect();
+                    const x = event.clientX - rect.left - rect.width / 2;
+                    const y = event.clientY - rect.top - rect.height / 2;
+                    el.style.transform = `translate3d(${x * 0.12}px, ${y * 0.18}px, 0)`;
+                });
             });
 
             el.addEventListener('mouseleave', () => {
+                el._cfRaf = 0;
                 el.style.transform = '';
             });
         });
@@ -394,14 +401,21 @@
         let active = false;
 
         hero.addEventListener('mousemove', (event) => {
-            if (!active) {
-                spotlight.classList.add('is-active');
-                active = true;
+            if (spotlight._cfRaf) {
+                return;
             }
-            spotlight.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
+            spotlight._cfRaf = requestAnimationFrame(() => {
+                spotlight._cfRaf = 0;
+                if (!active) {
+                    spotlight.classList.add('is-active');
+                    active = true;
+                }
+                spotlight.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0) translate(-50%, -50%)`;
+            });
         });
 
         hero.addEventListener('mouseleave', () => {
+            spotlight._cfRaf = 0;
             spotlight.classList.remove('is-active');
             active = false;
         });

@@ -11,8 +11,8 @@
         <div class="cf-reveal relative overflow-hidden rounded-[32px] border border-[#E7E2D8] bg-white px-8 py-16 text-center shadow-[0_20px_60px_rgba(17,24,39,0.06)] sm:px-16 sm:py-20">
             {{-- Decoracion: blob suave detras --}}
             <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
-                <div class="absolute -left-12 -top-12 h-48 w-48 rounded-full bg-[#8B5CF6] opacity-[0.06] blur-3xl"></div>
-                <div class="absolute -bottom-12 -right-12 h-48 w-48 rounded-full bg-[#2563EB] opacity-[0.06] blur-3xl"></div>
+                <div class="absolute -left-12 -top-12 h-48 w-48 rounded-full bg-[#8B5CF6] opacity-[0.06] blur-2xl"></div>
+                <div class="absolute -bottom-12 -right-12 h-48 w-48 rounded-full bg-[#2563EB] opacity-[0.06] blur-2xl"></div>
             </div>
 
             <span class="cf-section-marker justify-center"><span>10</span><span>Empieza hoy</span></span>

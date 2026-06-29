@@ -26,8 +26,8 @@
          `cf-blob-b` les aplican una animacion de movimiento
          lento orgánico (definida en `landing.css`). --}}
     <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
-        <div class="cf-blob-a absolute -left-32 top-20 h-72 w-72 rounded-full bg-[#8B5CF6] opacity-[0.06] blur-3xl"></div>
-        <div class="cf-blob-b absolute right-0 top-40 h-96 w-96 rounded-full bg-[#2563EB] opacity-[0.05] blur-3xl"></div>
+        <div class="cf-blob-a absolute -left-32 top-20 h-72 w-72 rounded-full bg-[#8B5CF6] opacity-[0.06] blur-2xl"></div>
+        <div class="cf-blob-b absolute right-0 top-40 h-96 w-96 rounded-full bg-[#2563EB] opacity-[0.05] blur-2xl"></div>
     </div>
 
     <div class="mx-auto grid max-w-7xl gap-14 px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20 lg:px-10">
