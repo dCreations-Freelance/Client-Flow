@@ -30,7 +30,7 @@
         <div>
             <h3 class="text-xs font-semibold uppercase tracking-wider text-[#111827]">Recursos</h3>
             <ul class="mt-4 space-y-2.5 text-sm text-[#6B7280]">
-                <li><a href="https://github.com/anomalyco/opencode" rel="noopener" class="transition-colors hover:text-[#111827]">Código en GitHub</a></li>
+                <li><a href="https://github.com/dCreations-Freelance/Client-Flow" rel="noopener" class="transition-colors hover:text-[#111827]">Código en GitHub</a></li>
                 <li><a href="#faq" class="transition-colors hover:text-[#111827]">Preguntas frecuentes</a></li>
                 <li><a href="{{ route('register') }}" class="transition-colors hover:text-[#111827]">Crear cuenta</a></li>
             </ul>
